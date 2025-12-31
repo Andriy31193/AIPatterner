@@ -2,6 +2,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import type {
   ActionEventDto,
+  ActionEventListResponse,
   IngestEventResponse,
   ReminderCandidateListResponse,
   TransitionListResponse,
@@ -113,6 +114,18 @@ class ApiService {
   }
 
   // Event endpoints
+  async getEvents(params: {
+    personId?: string;
+    actionType?: string;
+    fromUtc?: string;
+    toUtc?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<ActionEventListResponse> {
+    const response = await this.client.get<ActionEventListResponse>('/api/v1/events', { params });
+    return response.data;
+  }
+
   async ingestEvent(event: ActionEventDto): Promise<IngestEventResponse> {
     const response = await this.client.post<IngestEventResponse>('/api/v1/events', event);
     return response.data;

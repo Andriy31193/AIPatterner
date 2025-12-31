@@ -10,5 +10,6 @@ public class CreateManualReminderCommand : IRequest<Guid>
     public string SuggestedAction { get; set; } = string.Empty;
     public DateTime CheckAtUtc { get; set; }
     public string Style { get; set; } = "Suggest";
+    public string? Occurrence { get; set; }
 }
 

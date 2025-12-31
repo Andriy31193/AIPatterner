@@ -3,6 +3,7 @@ namespace AIPatterner.Api.Controllers;
 
 using AIPatterner.Application.Commands;
 using AIPatterner.Application.DTOs;
+using AIPatterner.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,30 @@ public class EventsController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<ActionEventListResponse>> GetEvents(
+        [FromQuery] string? personId,
+        [FromQuery] string? actionType,
+        [FromQuery] DateTime? fromUtc,
+        [FromQuery] DateTime? toUtc,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var query = new GetEventsQuery
+        {
+            PersonId = personId,
+            ActionType = actionType,
+            FromUtc = fromUtc,
+            ToUtc = toUtc,
+            Page = page,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -29,8 +54,8 @@ public class EventsController : ControllerBase
         var response = await _mediator.Send(command);
 
         _logger.LogInformation(
-            "Ingested event for {PersonId}, action: {ActionType}, scheduled {Count} candidates",
-            eventDto.PersonId, eventDto.ActionType, response.ScheduledCandidateIds.Count);
+            "Ingested event for {PersonId}, action: {ActionType}, scheduled {Count} candidates, related reminder: {ReminderId}",
+            eventDto.PersonId, eventDto.ActionType, response.ScheduledCandidateIds.Count, response.RelatedReminderId);
 
         return Accepted(response);
     }

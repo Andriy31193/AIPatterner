@@ -13,6 +13,7 @@ public class ReminderCandidateDto
     public ReminderCandidateStatus Status { get; set; }
     public Guid? TransitionId { get; set; }
     public double Confidence { get; set; }
+    public string? Occurrence { get; set; }
 }
 
 public class ReminderCandidateListResponse

@@ -84,6 +84,14 @@ public class ReminderCandidateRepository : IReminderCandidateRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<ReminderCandidate>> GetByPersonAndActionAsync(string personId, string actionType, CancellationToken cancellationToken)
+    {
+        return await _context.ReminderCandidates
+            .Where(c => c.PersonId == personId && c.SuggestedAction == actionType)
+            .OrderByDescending(c => c.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(ReminderCandidate candidate, CancellationToken cancellationToken)
     {
         await _context.ReminderCandidates.AddAsync(candidate, cancellationToken);

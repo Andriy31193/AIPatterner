@@ -11,6 +11,7 @@ import { ConfidenceBadge } from '@/components/ConfidenceBadge';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import type { ReminderCandidateDto } from '@/types';
+import { ReminderCandidateStatus } from '@/types';
 
 const CONFIDENCE_THRESHOLD = 0.7; // High probability threshold
 
@@ -62,12 +63,16 @@ export default function RemindersPage() {
   };
 
   // Filter candidates by confidence
+  // Check if status is Scheduled (handles both string and enum)
+  const isScheduled = (status: ReminderCandidateStatus | string) => 
+    status === 'Scheduled' || status === ReminderCandidateStatus.Scheduled;
+  
   const highProbabilityCandidates = data?.items.filter(
-    (c: ReminderCandidateDto) => c.status === 'Scheduled' && (c.confidence || 0) >= CONFIDENCE_THRESHOLD
+    (c: ReminderCandidateDto) => isScheduled(c.status) && (c.confidence || 0) >= CONFIDENCE_THRESHOLD
   ) || [];
 
   const lowProbabilityCandidates = data?.items.filter(
-    (c: ReminderCandidateDto) => c.status === 'Scheduled' && (c.confidence || 0) < CONFIDENCE_THRESHOLD
+    (c: ReminderCandidateDto) => isScheduled(c.status) && (c.confidence || 0) < CONFIDENCE_THRESHOLD
   ) || [];
 
   const renderReminderTable = (candidates: ReminderCandidateDto[], title: string, isHighProbability: boolean) => {
@@ -92,6 +97,7 @@ export default function RemindersPage() {
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Confidence</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Check At</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Occurrence</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Style</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -107,6 +113,9 @@ export default function RemindersPage() {
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                       <DateTimeDisplay date={candidate.checkAtUtc} />
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                      {candidate.occurrence || <span className="text-gray-400">N/A</span>}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{candidate.style}</td>
                     <td className="px-3 py-2 whitespace-nowrap">
@@ -227,7 +236,7 @@ export default function RemindersPage() {
             )}
 
             {/* Other status reminders */}
-            {data && data.items.filter((c: ReminderCandidateDto) => c.status !== 'Scheduled').length > 0 && (
+            {data && data.items.filter((c: ReminderCandidateDto) => !isScheduled(c.status)).length > 0 && (
               <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
                 <div className="px-4 py-5 sm:p-6">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Other Reminders</h2>
@@ -244,7 +253,7 @@ export default function RemindersPage() {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {data.items
-                          .filter((c: ReminderCandidateDto) => c.status !== 'Scheduled')
+                          .filter((c: ReminderCandidateDto) => !isScheduled(c.status))
                           .map((candidate: ReminderCandidateDto) => (
                             <tr key={candidate.id}>
                               <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{candidate.personId}</td>

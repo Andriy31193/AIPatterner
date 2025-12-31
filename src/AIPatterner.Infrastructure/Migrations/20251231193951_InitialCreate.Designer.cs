@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIPatterner.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251231190510_InitialCreate")]
+    [Migration("20251231193951_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,10 +44,23 @@ namespace AIPatterner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("ProbabilityAction")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<double?>("ProbabilityValue")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid?>("RelatedReminderId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("TimestampUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RelatedReminderId");
 
                     b.HasIndex("PersonId", "TimestampUtc");
 
@@ -271,6 +284,10 @@ namespace AIPatterner.Infrastructure.Migrations
 
                     b.Property<DateTime?>("ExecutedAtUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Occurrence")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("PersonId")
                         .IsRequired()

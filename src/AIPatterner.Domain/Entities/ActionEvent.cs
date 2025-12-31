@@ -9,10 +9,19 @@ public class ActionEvent
     public DateTime TimestampUtc { get; private set; }
     public ActionContext Context { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
+    public double? ProbabilityValue { get; private set; }
+    public ProbabilityAction? ProbabilityAction { get; private set; }
+    public Guid? RelatedReminderId { get; private set; }
 
     private ActionEvent() { } // EF Core
 
-    public ActionEvent(string personId, string actionType, DateTime timestampUtc, ActionContext context)
+    public ActionEvent(
+        string personId, 
+        string actionType, 
+        DateTime timestampUtc, 
+        ActionContext context,
+        double? probabilityValue = null,
+        ProbabilityAction? probabilityAction = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -25,6 +34,13 @@ public class ActionEvent
         TimestampUtc = timestampUtc;
         Context = context ?? throw new ArgumentNullException(nameof(context));
         CreatedAtUtc = DateTime.UtcNow;
+        ProbabilityValue = probabilityValue;
+        ProbabilityAction = probabilityAction;
+    }
+
+    public void SetRelatedReminder(Guid reminderId)
+    {
+        RelatedReminderId = reminderId;
     }
 }
 

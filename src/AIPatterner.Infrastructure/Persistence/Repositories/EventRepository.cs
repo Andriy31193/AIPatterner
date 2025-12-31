@@ -21,6 +21,12 @@ public class EventRepository : IEventRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task UpdateAsync(ActionEvent actionEvent, CancellationToken cancellationToken)
+    {
+        _context.ActionEvents.Update(actionEvent);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<ActionEvent?> GetLastEventForPersonAsync(string personId, DateTime beforeUtc, CancellationToken cancellationToken)
     {
         return await _context.ActionEvents
@@ -33,6 +39,60 @@ public class EventRepository : IEventRepository
     {
         return await _context.ActionEvents
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+    }
+
+    public async Task<List<ActionEvent>> GetFilteredAsync(
+        string? personId,
+        string? actionType,
+        DateTime? fromUtc,
+        DateTime? toUtc,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var query = _context.ActionEvents.AsQueryable();
+
+        if (!string.IsNullOrEmpty(personId))
+            query = query.Where(e => e.PersonId == personId);
+
+        if (!string.IsNullOrEmpty(actionType))
+            query = query.Where(e => e.ActionType.Contains(actionType));
+
+        if (fromUtc.HasValue)
+            query = query.Where(e => e.TimestampUtc >= fromUtc.Value);
+
+        if (toUtc.HasValue)
+            query = query.Where(e => e.TimestampUtc <= toUtc.Value);
+
+        return await query
+            .OrderByDescending(e => e.TimestampUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetCountAsync(
+        string? personId,
+        string? actionType,
+        DateTime? fromUtc,
+        DateTime? toUtc,
+        CancellationToken cancellationToken)
+    {
+        var query = _context.ActionEvents.AsQueryable();
+
+        if (!string.IsNullOrEmpty(personId))
+            query = query.Where(e => e.PersonId == personId);
+
+        if (!string.IsNullOrEmpty(actionType))
+            query = query.Where(e => e.ActionType.Contains(actionType));
+
+        if (fromUtc.HasValue)
+            query = query.Where(e => e.TimestampUtc >= fromUtc.Value);
+
+        if (toUtc.HasValue)
+            query = query.Where(e => e.TimestampUtc <= toUtc.Value);
+
+        return await query.CountAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(ActionEvent actionEvent, CancellationToken cancellationToken)

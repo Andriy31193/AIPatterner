@@ -43,7 +43,8 @@ public class AdminController : ControllerBase
             PersonId = request.PersonId,
             SuggestedAction = request.SuggestedAction,
             CheckAtUtc = request.CheckAtUtc,
-            Style = request.Style ?? "Suggest"
+            Style = request.Style ?? "Suggest",
+            Occurrence = request.Occurrence
         };
 
         var reminderId = await _mediator.Send(command);
@@ -60,5 +61,6 @@ public class CreateManualReminderRequest
     public string SuggestedAction { get; set; } = string.Empty;
     public DateTime CheckAtUtc { get; set; }
     public string? Style { get; set; }
+    public string? Occurrence { get; set; }
 }
 

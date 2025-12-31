@@ -36,7 +36,8 @@ public class CreateManualReminderCommandHandler : IRequestHandler<CreateManualRe
             request.CheckAtUtc,
             style,
             null,
-            confidence);
+            confidence,
+            request.Occurrence);
 
         await _repository.AddAsync(reminder, cancellationToken);
 

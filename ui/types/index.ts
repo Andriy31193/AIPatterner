@@ -19,11 +19,18 @@ export enum ConfidenceLevel {
   High = 'high',
 }
 
+export enum ProbabilityAction {
+  Increase = 'Increase',
+  Decrease = 'Decrease',
+}
+
 export interface ActionEventDto {
   personId: string;
   actionType: string;
   timestampUtc: string;
   context: ActionContextDto;
+  probabilityValue?: number;
+  probabilityAction?: ProbabilityAction;
 }
 
 export interface ActionContextDto {
@@ -43,6 +50,7 @@ export interface ReminderCandidateDto {
   status: ReminderCandidateStatus;
   transitionId?: string;
   confidence: number;
+  occurrence?: string;
 }
 
 export interface ReminderCandidateListResponse {
@@ -77,6 +85,26 @@ export interface FeedbackDto {
 export interface IngestEventResponse {
   eventId: string;
   scheduledCandidateIds: string[];
+  relatedReminderId?: string;
+}
+
+export interface ActionEventListDto {
+  id: string;
+  personId: string;
+  actionType: string;
+  timestampUtc: string;
+  context: ActionContextDto;
+  createdAtUtc: string;
+  probabilityValue?: number;
+  probabilityAction?: ProbabilityAction;
+  relatedReminderId?: string;
+}
+
+export interface ActionEventListResponse {
+  items: ActionEventListDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }
 
 export interface ProcessReminderCandidateResponse {
@@ -162,6 +190,7 @@ export interface CreateManualReminderRequest {
   suggestedAction: string;
   checkAtUtc: string;
   style?: ReminderStyle;
+  occurrence?: string;
 }
 
 export interface CreateUserRequest {

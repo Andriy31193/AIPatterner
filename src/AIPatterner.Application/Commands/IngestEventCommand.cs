@@ -13,5 +13,6 @@ public class IngestEventResponse
 {
     public Guid EventId { get; set; }
     public List<Guid> ScheduledCandidateIds { get; set; } = new();
+    public Guid? RelatedReminderId { get; set; }
 }
 
