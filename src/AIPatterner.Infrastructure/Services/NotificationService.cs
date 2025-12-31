@@ -11,17 +11,20 @@ using System.Text.Json;
 public class NotificationService : INotificationService
 {
     private readonly IConfiguration _configuration;
+    private readonly IConfigurationRepository _configurationRepository;
     private readonly ILogger<NotificationService> _logger;
     private readonly HttpClient _httpClient;
     private readonly IExecutionHistoryService _executionHistoryService;
 
     public NotificationService(
         IConfiguration configuration,
+        IConfigurationRepository configurationRepository,
         ILogger<NotificationService> logger,
         IHttpClientFactory httpClientFactory,
         IExecutionHistoryService executionHistoryService)
     {
         _configuration = configuration;
+        _configurationRepository = configurationRepository;
         _logger = logger;
         _httpClient = httpClientFactory.CreateClient("Notification");
         _executionHistoryService = executionHistoryService;
@@ -32,7 +35,16 @@ public class NotificationService : INotificationService
         ReminderDecision decision,
         CancellationToken cancellationToken)
     {
-        var webhookUrl = _configuration.GetValue<string>("Notifications:WebhookUrl");
+        // Try to get webhook URL from database configuration first, fallback to appsettings.json
+        var webhookConfig = await _configurationRepository.GetByKeyAndCategoryAsync("WebhookUrl", "Notifications", cancellationToken);
+        var webhookUrl = webhookConfig?.Value;
+        
+        if (string.IsNullOrEmpty(webhookUrl))
+        {
+            // Fallback to appsettings.json
+            webhookUrl = _configuration.GetValue<string>("Notifications:WebhookUrl");
+        }
+        
         if (string.IsNullOrEmpty(webhookUrl))
         {
             _logger.LogWarning("Webhook URL not configured, skipping notification");

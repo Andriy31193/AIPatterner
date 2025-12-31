@@ -9,6 +9,15 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        // Map ActionContextDto to ActionContext
+        CreateMap<ActionContextDto, ActionContext>()
+            .ConstructUsing(dto => new ActionContext(
+                dto.TimeBucket,
+                dto.DayType,
+                dto.Location,
+                dto.PresentPeople,
+                dto.StateSignals));
+
         CreateMap<ActionEventDto, ActionEvent>()
             .ConstructUsing(dto => new ActionEvent(
                 dto.PersonId,
