@@ -1,0 +1,81 @@
+# Docker Compose configuration for AIPatterner service
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aipatterner-postgres
+    environment:
+      POSTGRES_DB: aipatterner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: aipatterner-redis
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aipatterner-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aipatterner-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=aipatterner;Username=postgres;Password=postgres
+      - ApiKeys__Default=${API_KEY:-changeme-in-production}
+      - ApiKeys__Admin=${ADMIN_API_KEY:-admin-changeme-in-production}
+      - Learning__SessionWindowMinutes=30
+      - Learning__ConfidenceAlpha=0.1
+      - Learning__DelayBeta=0.2
+      - Learning__DecayRate=0.01
+      - Policy__MinimumOccurrences=3
+      - Policy__MinimumConfidence=0.4
+      - Policy__MaxInterruptionCost=0.7
+      - Scheduler__PollIntervalSeconds=30
+      - Scheduler__BatchSize=10
+      - Cleanup__EventCleanupIntervalHours=24
+      - Cleanup__EventRetentionDays=30
+      - LLM__Enabled=false
+      - Memory__Enabled=false
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: aipatterner-ui
+    depends_on:
+      - aipatterner-api
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8080
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+

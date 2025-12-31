@@ -1,0 +1,67 @@
+// API controller for reminder candidates
+namespace AIPatterner.Api.Controllers;
+
+using AIPatterner.Application.Commands;
+using AIPatterner.Application.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("api/v1/reminder-candidates")]
+public class ReminderCandidatesController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    private readonly ILogger<ReminderCandidatesController> _logger;
+
+    public ReminderCandidatesController(IMediator mediator, ILogger<ReminderCandidatesController> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> GetReminderCandidates(
+        [FromQuery] string? personId,
+        [FromQuery] string? status,
+        [FromQuery] string? actionType,
+        [FromQuery] DateTime? fromUtc,
+        [FromQuery] DateTime? toUtc,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var query = new GetReminderCandidatesQuery
+        {
+            PersonId = personId,
+            Status = status,
+            ActionType = actionType,
+            FromUtc = fromUtc,
+            ToUtc = toUtc,
+            Page = page,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteReminderCandidate(Guid id)
+    {
+        var command = new DeleteReminderCandidateCommand { ReminderCandidateId = id };
+        var result = await _mediator.Send(command);
+
+        if (!result)
+        {
+            return NotFound(new { message = "Reminder candidate not found" });
+        }
+
+        _logger.LogInformation("Reminder candidate deleted: {Id}", id);
+        return NoContent();
+    }
+}
+
