@@ -31,7 +31,10 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ActionType).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.ProbabilityValue).HasPrecision(18, 4);
+            entity.Property(e => e.ProbabilityAction).HasConversion<string>().HasMaxLength(20);
             entity.HasIndex(e => new { e.PersonId, e.TimestampUtc });
+            entity.HasIndex(e => e.RelatedReminderId);
             entity.OwnsOne(e => e.Context, context =>
             {
                 context.Property(c => c.TimeBucket).IsRequired().HasMaxLength(50);
@@ -71,6 +74,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
+            entity.Property(e => e.Occurrence).HasMaxLength(200);
             entity.HasIndex(e => e.CheckAtUtc);
             entity.HasIndex(e => new { e.PersonId, e.Status });
             entity.HasIndex(e => new { e.PersonId, e.SuggestedAction, e.CheckAtUtc });

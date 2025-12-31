@@ -9,6 +9,15 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        // Map ActionContextDto to ActionContext
+        CreateMap<ActionContextDto, ActionContext>()
+            .ConstructUsing(dto => new ActionContext(
+                dto.TimeBucket,
+                dto.DayType,
+                dto.Location,
+                dto.PresentPeople,
+                dto.StateSignals));
+
         CreateMap<ActionEventDto, ActionEvent>()
             .ConstructUsing(dto => new ActionEvent(
                 dto.PersonId,
@@ -19,9 +28,23 @@ public class MappingProfile : Profile
                     dto.Context.DayType,
                     dto.Context.Location,
                     dto.Context.PresentPeople,
-                    dto.Context.StateSignals)));
+                    dto.Context.StateSignals),
+                dto.ProbabilityValue,
+                dto.ProbabilityAction))
+            .ForMember(dest => dest.Context, opt => opt.Ignore()) // Ignore since we're constructing it manually
+            .ForMember(dest => dest.RelatedReminderId, opt => opt.Ignore()); // Set separately
 
         CreateMap<ReminderCandidate, ReminderCandidateDto>();
+
+        CreateMap<ActionEvent, ActionEventListDto>()
+            .ForMember(dest => dest.Context, opt => opt.MapFrom(src => new ActionContextDto
+            {
+                TimeBucket = src.Context.TimeBucket,
+                DayType = src.Context.DayType,
+                Location = src.Context.Location,
+                PresentPeople = src.Context.PresentPeople,
+                StateSignals = src.Context.StateSignals
+            }));
 
         CreateMap<ExecutionHistory, ExecutionHistoryDto>();
 

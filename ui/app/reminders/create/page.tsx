@@ -16,6 +16,7 @@ export default function CreateReminderPage() {
     suggestedAction: '',
     checkAtUtc: new Date().toISOString().slice(0, 16),
     style: ReminderStyle.Suggest,
+    occurrence: '',
   });
 
   const createMutation = useMutation({
@@ -121,6 +122,23 @@ export default function CreateReminderPage() {
                 <strong>Ask:</strong> Direct question format<br />
                 <strong>Suggest:</strong> Gentle suggestion format<br />
                 <strong>Silent:</strong> No speech, just notification
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="occurrence" className="block text-sm font-medium text-gray-700">
+                Occurrence (optional)
+              </label>
+              <input
+                type="text"
+                id="occurrence"
+                value={formData.occurrence ?? ''}
+                onChange={(e) => setFormData({ ...formData, occurrence: e.target.value || undefined })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="e.g., daily, weekly, every 3 days, weekdays"
+              />
+              <p className="mt-1 text-sm text-gray-500">
+                Define how often the reminder should occur (e.g., &quot;daily&quot;, &quot;weekly&quot;, &quot;every 3 days&quot;, &quot;weekdays&quot;)
               </p>
             </div>
 

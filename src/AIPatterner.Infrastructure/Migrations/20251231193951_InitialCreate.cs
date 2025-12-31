@@ -24,7 +24,10 @@ namespace AIPatterner.Infrastructure.Migrations
                     Context_Location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     Context_PresentPeople = table.Column<string>(type: "jsonb", nullable: false),
                     Context_StateSignals = table.Column<string>(type: "jsonb", nullable: false),
-                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProbabilityValue = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: true),
+                    ProbabilityAction = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    RelatedReminderId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -127,6 +130,7 @@ namespace AIPatterner.Infrastructure.Migrations
                     Decision_ConfidenceLevel = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: true),
                     Decision_NaturalLanguagePhrase = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     Confidence = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: false),
+                    Occurrence = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExecutedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -190,6 +194,11 @@ namespace AIPatterner.Infrastructure.Migrations
                 name: "IX_actionevents_PersonId_TimestampUtc",
                 table: "actionevents",
                 columns: new[] { "PersonId", "TimestampUtc" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_actionevents_RelatedReminderId",
+                table: "actionevents",
+                column: "RelatedReminderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_actiontransitions_PersonId_FromAction_ContextBucket",

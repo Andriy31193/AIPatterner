@@ -25,7 +25,10 @@ public class CreateManualReminderCommandHandler : IRequestHandler<CreateManualRe
             ? parsedStyle 
             : ReminderStyle.Suggest;
 
+        // Manually created reminders should have confidence < 0.7 to appear in "Low Probability Reminders" list
         var defaultConfidence = _configuration.GetValue<double>("Policy:DefaultReminderConfidence", 0.5);
+        // Ensure confidence is always < 0.7 for manually created reminders
+        var confidence = Math.Min(defaultConfidence, 0.69);
 
         var reminder = new ReminderCandidate(
             request.PersonId,
@@ -33,7 +36,8 @@ public class CreateManualReminderCommandHandler : IRequestHandler<CreateManualRe
             request.CheckAtUtc,
             style,
             null,
-            defaultConfidence);
+            confidence,
+            request.Occurrence);
 
         await _repository.AddAsync(reminder, cancellationToken);
 

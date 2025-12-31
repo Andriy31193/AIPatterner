@@ -90,6 +90,11 @@ Raw probabilities are available via debug endpoints but are never pushed to Miri
 | `Policy__MinimumOccurrences` | Min occurrences to schedule reminder | `3` |
 | `Policy__MinimumConfidence` | Min confidence to schedule reminder | `0.4` |
 | `Policy__MaxInterruptionCost` | Max interruption cost allowed | `0.7` |
+| `Policy__DefaultReminderConfidence` | Default confidence for new reminders | `0.5` |
+| `Policy__ConfidenceStepValue` | Step value for probability updates | `0.1` |
+| `Policy__MinimumProbabilityForExecution` | Min probability for auto-execution (≥70%) | `0.7` |
+| `Policy__ReminderMatchTimeOffsetMinutes` | Time window for matching existing reminders | `30` |
+| `Policy__DefaultOccurrence` | Default occurrence pattern for new reminders | Empty |
 | `Scheduler__PollIntervalSeconds` | How often to check for due candidates | `30` |
 | `Scheduler__BatchSize` | Max candidates to process per cycle | `10` |
 | `Cleanup__EventRetentionDays` | Days to keep raw events | `30` |
@@ -97,7 +102,7 @@ Raw probabilities are available via debug endpoints but are never pushed to Miri
 | `LLM__Endpoint` | LLM service endpoint | Empty |
 | `Memory__Enabled` | Enable Mirix memory integration | `false` |
 | `Memory__Endpoint` | Mirix memory endpoint | Empty |
-| `Notifications__WebhookUrl` | Webhook URL for reminders | Empty |
+| `Notifications__WebhookUrl` | Webhook URL for reminders (can be overridden via Configuration tab) | Empty |
 
 ## API Endpoints
 

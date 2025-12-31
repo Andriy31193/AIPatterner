@@ -27,6 +27,7 @@ public class ReminderCandidate
     public ReminderCandidateStatus Status { get; private set; }
     public ReminderDecision? Decision { get; private set; }
     public double Confidence { get; private set; } // Probability/confidence level (0.0 to 1.0)
+    public string? Occurrence { get; private set; } // Occurrence pattern (e.g., "daily", "weekly", "every 3 days", "weekdays")
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? ExecutedAtUtc { get; private set; }
 
@@ -38,7 +39,8 @@ public class ReminderCandidate
         DateTime checkAtUtc,
         ReminderStyle style,
         Guid? transitionId = null,
-        double confidence = 0.5)
+        double confidence = 0.5,
+        string? occurrence = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -54,6 +56,7 @@ public class ReminderCandidate
         Style = style;
         TransitionId = transitionId;
         Confidence = confidence;
+        Occurrence = occurrence;
         Status = ReminderCandidateStatus.Scheduled;
         CreatedAtUtc = DateTime.UtcNow;
     }
@@ -64,6 +67,34 @@ public class ReminderCandidate
             throw new ArgumentException("Step value must be non-negative", nameof(stepValue));
         
         Confidence = Math.Min(1.0, Confidence + stepValue);
+    }
+
+    public void DecreaseConfidence(double stepValue)
+    {
+        if (stepValue < 0.0)
+            throw new ArgumentException("Step value must be non-negative", nameof(stepValue));
+        
+        Confidence = Math.Max(0.0, Confidence - stepValue);
+    }
+
+    public void UpdateConfidence(double value, ProbabilityAction action)
+    {
+        if (value < 0.0)
+            throw new ArgumentException("Value must be non-negative", nameof(value));
+
+        if (action == ProbabilityAction.Increase)
+        {
+            IncreaseConfidence(value);
+        }
+        else
+        {
+            DecreaseConfidence(value);
+        }
+    }
+
+    public void SetOccurrence(string? occurrence)
+    {
+        Occurrence = occurrence;
     }
 
     public void MarkAsExecuted(ReminderDecision decision)

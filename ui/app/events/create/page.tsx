@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
 import { apiService } from '@/services/api';
 import type { ActionEventDto } from '@/types';
+import { ProbabilityAction } from '@/types';
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -21,6 +22,8 @@ export default function CreateEventPage() {
       presentPeople: [],
       stateSignals: {},
     },
+    probabilityValue: undefined,
+    probabilityAction: undefined,
   });
   const [presentPeopleInput, setPresentPeopleInput] = useState('');
   const [stateSignalKey, setStateSignalKey] = useState('');
@@ -317,6 +320,45 @@ export default function CreateEventPage() {
                     ))}
                   </div>
                 )}
+            </div>
+
+            <div>
+              <label htmlFor="probabilityValue" className="block text-sm font-medium text-gray-700">
+                Probability Value (optional)
+              </label>
+              <input
+                type="number"
+                id="probabilityValue"
+                min="0"
+                max="1"
+                step="0.01"
+                value={formData.probabilityValue ?? ''}
+                onChange={(e) => setFormData({ ...formData, probabilityValue: e.target.value ? parseFloat(e.target.value) : undefined })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="0.0 - 1.0"
+              />
+              <p className="mt-1 text-sm text-gray-500">
+                Step value for probability update (0.0 to 1.0)
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="probabilityAction" className="block text-sm font-medium text-gray-700">
+                Probability Action (optional)
+              </label>
+              <select
+                id="probabilityAction"
+                value={formData.probabilityAction ?? ''}
+                onChange={(e) => setFormData({ ...formData, probabilityAction: e.target.value ? (e.target.value as ProbabilityAction) : undefined })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value="">None</option>
+                <option value={ProbabilityAction.Increase}>Increase</option>
+                <option value={ProbabilityAction.Decrease}>Decrease</option>
+              </select>
+              <p className="mt-1 text-sm text-gray-500">
+                Action to apply to reminder probability when event is created
+              </p>
             </div>
 
             <div className="flex gap-2">

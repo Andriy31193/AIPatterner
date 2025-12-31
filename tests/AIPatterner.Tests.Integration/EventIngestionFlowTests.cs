@@ -71,8 +71,10 @@ public class EventIngestionFlowTests
             eventRepo,
             transitionLearner,
             reminderScheduler,
+            candidateRepo,
             mapper,
-            mockExecutionHistoryService);
+            mockExecutionHistoryService,
+            config);
 
         var firstEvent = new ActionEventDto
         {
