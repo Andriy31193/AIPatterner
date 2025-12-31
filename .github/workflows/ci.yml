@@ -1,0 +1,39 @@
+# GitHub Actions CI workflow
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore -c Release
+
+    - name: Run unit tests
+      run: dotnet test tests/AIPatterner.Tests.Unit/AIPatterner.Tests.Unit.csproj --no-build --verbosity normal
+
+    - name: Run integration tests
+      run: dotnet test tests/AIPatterner.Tests.Integration/AIPatterner.Tests.Integration.csproj --no-build --verbosity normal
+
+    - name: Format check
+      run: dotnet format --verify --no-restore
+
+    - name: Build Docker image
+      run: docker build -t aipatterner:latest .
+

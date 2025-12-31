@@ -1,0 +1,244 @@
+// Centralized API service layer for all backend communication
+import axios, { AxiosInstance, AxiosError } from 'axios';
+import type {
+  ActionEventDto,
+  IngestEventResponse,
+  ReminderCandidateListResponse,
+  TransitionListResponse,
+  FeedbackDto,
+  ProcessReminderCandidateResponse,
+  LoginRequest,
+  LoginResponse,
+  ApiKey,
+  CreateApiKeyRequest,
+  CreateApiKeyResponse,
+  Configuration,
+  CreateConfigurationRequest,
+  UpdateConfigurationRequest,
+  CreateManualReminderRequest,
+  User,
+  CreateUserRequest,
+  ExecutionHistoryDto,
+  ExecutionHistoryListResponse,
+} from '@/types';
+
+class ApiService {
+  private client: AxiosInstance;
+
+  constructor() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    this.client = axios.create({
+      baseURL: apiUrl,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Add request interceptor to include auth token
+    this.client.interceptors.request.use((config) => {
+      const token = this.getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      const apiKey = this.getApiKey();
+      if (apiKey) {
+        config.headers['X-API-Key'] = apiKey;
+      }
+      return config;
+    });
+
+    // Add response interceptor for error handling
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        if (error.response?.status === 401) {
+          this.clearAuth();
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  private getToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('auth_token');
+  }
+
+  private getApiKey(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('api_key');
+  }
+
+  private clearAuth(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('api_key');
+    }
+  }
+
+  setToken(token: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auth_token', token);
+    }
+  }
+
+  setApiKey(apiKey: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('api_key', apiKey);
+    }
+  }
+
+  // Auth endpoints
+  async login(credentials: LoginRequest): Promise<LoginResponse> {
+    const response = await this.client.post<LoginResponse>('/api/v1/auth/login', credentials);
+    if (response.data.token) {
+      this.setToken(response.data.token);
+    }
+    return response.data;
+  }
+
+  async register(data: { username: string; email: string; password: string }): Promise<LoginResponse> {
+    const response = await this.client.post<LoginResponse>('/api/v1/auth/register', data);
+    if (response.data.token) {
+      this.setToken(response.data.token);
+    }
+    return response.data;
+  }
+
+  logout(): void {
+    this.clearAuth();
+  }
+
+  // Event endpoints
+  async ingestEvent(event: ActionEventDto): Promise<IngestEventResponse> {
+    const response = await this.client.post<IngestEventResponse>('/api/v1/events', event);
+    return response.data;
+  }
+
+  // Reminder candidate endpoints
+  async getReminderCandidates(params: {
+    personId?: string;
+    actionType?: string;
+    status?: string;
+    fromUtc?: string;
+    toUtc?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<ReminderCandidateListResponse> {
+    const response = await this.client.get<ReminderCandidateListResponse>('/api/v1/reminder-candidates', { params });
+    return response.data;
+  }
+
+  async processReminderCandidate(candidateId: string): Promise<ProcessReminderCandidateResponse> {
+    const response = await this.client.post<ProcessReminderCandidateResponse>(
+      `/api/v1/admin/force-check/${candidateId}`
+    );
+    return response.data;
+  }
+
+  // Transition endpoints
+  async getTransitions(personId: string): Promise<TransitionListResponse> {
+    const response = await this.client.get<TransitionListResponse>(`/api/v1/transitions/${personId}`);
+    return response.data;
+  }
+
+  // Feedback endpoints
+  async submitFeedback(feedback: FeedbackDto): Promise<void> {
+    await this.client.post('/api/v1/feedback', feedback);
+  }
+
+  // Webhook endpoints
+  async checkCandidate(candidateId: string): Promise<ProcessReminderCandidateResponse> {
+    const response = await this.client.post<ProcessReminderCandidateResponse>(
+      `/api/v1/webhooks/check/${candidateId}`
+    );
+    return response.data;
+  }
+
+  // API Key endpoints
+  async getApiKeys(userId?: string): Promise<ApiKey[]> {
+    const params = userId ? { userId } : {};
+    const response = await this.client.get<ApiKey[]>('/api/v1/api-keys', { params });
+    return response.data;
+  }
+
+  async createApiKey(request: CreateApiKeyRequest): Promise<CreateApiKeyResponse> {
+    const response = await this.client.post<CreateApiKeyResponse>('/api/v1/api-keys', request);
+    return response.data;
+  }
+
+  async deleteApiKey(id: string): Promise<void> {
+    await this.client.delete(`/api/v1/api-keys/${id}`);
+  }
+
+  // Configuration endpoints
+  async getConfigurations(category?: string): Promise<Configuration[]> {
+    const params = category ? { category } : {};
+    const response = await this.client.get<Configuration[]>('/api/v1/configurations', { params });
+    return response.data;
+  }
+
+  async createConfiguration(request: CreateConfigurationRequest): Promise<Configuration> {
+    const response = await this.client.post<Configuration>('/api/v1/configurations', request);
+    return response.data;
+  }
+
+  async updateConfiguration(category: string, key: string, request: UpdateConfigurationRequest): Promise<Configuration> {
+    const response = await this.client.put<Configuration>(`/api/v1/configurations/${category}/${key}`, request);
+    return response.data;
+  }
+
+  // Manual reminder endpoint
+  async createManualReminder(request: CreateManualReminderRequest): Promise<{ id: string }> {
+    const response = await this.client.post<{ id: string }>('/api/v1/admin/reminders', request);
+    return response.data;
+  }
+
+  // User management endpoints
+  async getUsers(): Promise<User[]> {
+    const response = await this.client.get<User[]>('/api/v1/users');
+    return response.data;
+  }
+
+  async createUser(request: CreateUserRequest): Promise<User> {
+    const response = await this.client.post<User>('/api/v1/users', request);
+    return response.data;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.client.delete(`/api/v1/users/${id}`);
+  }
+
+  // Execution history endpoints
+  async getExecutionHistory(params: {
+    personId?: string;
+    actionType?: string;
+    fromUtc?: string;
+    toUtc?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<ExecutionHistoryListResponse> {
+    const response = await this.client.get<ExecutionHistoryListResponse>('/api/v1/execution-history', { params });
+    return response.data;
+  }
+
+  async deleteExecutionHistory(id: string): Promise<void> {
+    await this.client.delete(`/api/v1/execution-history/${id}`);
+  }
+
+  // Delete event endpoint
+  async deleteEvent(id: string): Promise<void> {
+    await this.client.delete(`/api/v1/events/${id}`);
+  }
+
+  // Delete reminder candidate endpoint
+  async deleteReminderCandidate(id: string): Promise<void> {
+    await this.client.delete(`/api/v1/reminder-candidates/${id}`);
+  }
+}
+
+export const apiService = new ApiService();
+
