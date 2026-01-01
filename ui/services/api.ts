@@ -28,31 +28,41 @@ import type {
 class ApiService {
   private client: AxiosInstance;
 
-  constructor() {
+  private getApiBaseUrl(): string {
     // Get API URL dynamically at runtime
     // In browser: use current hostname with API port (works when accessing from different machines)
     // In SSR: use environment variable or default
-    let apiUrl: string;
     if (typeof window !== 'undefined') {
       // Browser environment - construct URL from current location
+      // This ensures API calls use the same hostname as the UI (works from any machine)
       const protocol = window.location.protocol;
       const hostname = window.location.hostname;
-      const apiPort = process.env.NEXT_PUBLIC_API_PORT || '8080';
-      apiUrl = `${protocol}//${hostname}:${apiPort}`;
+      // Use port 8080 for API (UI is on 3000)
+      const apiPort = '8080';
+      const apiUrl = `${protocol}//${hostname}:${apiPort}`;
+      return apiUrl;
     } else {
       // Server-side rendering - use environment variable or default
-      apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     }
-    
+  }
+
+  constructor() {
+    // Initialize with a default URL (will be overridden in browser requests)
     this.client = axios.create({
-      baseURL: apiUrl,
+      baseURL: this.getApiBaseUrl(),
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    // Add request interceptor to include auth token
+    // Add request interceptor to include auth token and update baseURL dynamically
     this.client.interceptors.request.use((config) => {
+      // Update baseURL dynamically for each request (ensures it uses current window.location in browser)
+      if (typeof window !== 'undefined') {
+        config.baseURL = this.getApiBaseUrl();
+      }
+      
       const token = this.getToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
