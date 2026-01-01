@@ -31,6 +31,7 @@ export interface ActionEventDto {
   context: ActionContextDto;
   probabilityValue?: number;
   probabilityAction?: ProbabilityAction;
+  customData?: Record<string, string>;
 }
 
 export interface ActionContextDto {
@@ -51,6 +52,8 @@ export interface ReminderCandidateDto {
   transitionId?: string;
   confidence: number;
   occurrence?: string;
+  sourceEventId?: string;
+  customData?: Record<string, string>;
 }
 
 export interface ReminderCandidateListResponse {
@@ -98,6 +101,7 @@ export interface ActionEventListDto {
   probabilityValue?: number;
   probabilityAction?: ProbabilityAction;
   relatedReminderId?: string;
+  customData?: Record<string, string>;
 }
 
 export interface ActionEventListResponse {

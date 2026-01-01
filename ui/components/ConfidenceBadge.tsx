@@ -14,6 +14,7 @@ export function ConfidenceBadge({ confidence, threshold = 0.7 }: ConfidenceBadge
   const isMedium = confidence >= 0.4 && confidence < threshold;
   const isLow = confidence < 0.4;
 
+  // Color coding: high = green, medium = yellow, low = red
   const bgColor = isHigh ? 'bg-green-100' : isMedium ? 'bg-yellow-100' : 'bg-red-100';
   const textColor = isHigh ? 'text-green-800' : isMedium ? 'text-yellow-800' : 'text-red-800';
   const borderColor = isHigh ? 'border-green-300' : isMedium ? 'border-yellow-300' : 'border-red-300';

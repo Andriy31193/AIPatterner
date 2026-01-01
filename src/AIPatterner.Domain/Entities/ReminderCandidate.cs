@@ -30,6 +30,8 @@ public class ReminderCandidate
     public string? Occurrence { get; private set; } // Occurrence pattern (e.g., "daily", "weekly", "every 3 days", "weekdays")
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? ExecutedAtUtc { get; private set; }
+    public Guid? SourceEventId { get; private set; } // Event ID that created this reminder
+    public Dictionary<string, string>? CustomData { get; private set; } // Custom data from source event
 
     private ReminderCandidate() { } // EF Core
 
@@ -40,7 +42,9 @@ public class ReminderCandidate
         ReminderStyle style,
         Guid? transitionId = null,
         double confidence = 0.5,
-        string? occurrence = null)
+        string? occurrence = null,
+        Guid? sourceEventId = null,
+        Dictionary<string, string>? customData = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -57,6 +61,8 @@ public class ReminderCandidate
         TransitionId = transitionId;
         Confidence = confidence;
         Occurrence = occurrence;
+        SourceEventId = sourceEventId;
+        CustomData = customData;
         Status = ReminderCandidateStatus.Scheduled;
         CreatedAtUtc = DateTime.UtcNow;
     }
@@ -95,6 +101,16 @@ public class ReminderCandidate
     public void SetOccurrence(string? occurrence)
     {
         Occurrence = occurrence;
+    }
+
+    public void UpdateCheckAtUtc(DateTime checkAtUtc)
+    {
+        CheckAtUtc = checkAtUtc;
+    }
+
+    public void UpdateCustomData(Dictionary<string, string>? customData)
+    {
+        CustomData = customData;
     }
 
     public void MarkAsExecuted(ReminderDecision decision)

@@ -77,6 +77,7 @@ public interface IReminderCandidateRepository
     Task<ReminderCandidate?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<ReminderCandidate>> GetDueCandidatesAsync(DateTime now, int limit, CancellationToken cancellationToken);
     Task<List<ReminderCandidate>> GetByPersonAndActionAsync(string personId, string actionType, CancellationToken cancellationToken);
+    Task<List<ReminderCandidate>> GetBySourceEventIdAsync(Guid eventId, CancellationToken cancellationToken);
     Task AddAsync(ReminderCandidate candidate, CancellationToken cancellationToken);
     Task UpdateAsync(ReminderCandidate candidate, CancellationToken cancellationToken);
     Task DeleteAsync(ReminderCandidate candidate, CancellationToken cancellationToken);

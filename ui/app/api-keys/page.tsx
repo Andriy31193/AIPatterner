@@ -71,7 +71,7 @@ export default function ApiKeysPage() {
             onClick={() => setShowCreateForm(!showCreateForm)}
             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
           >
-            {showCreateForm ? 'Cancel' : 'Generate New API Key'}
+            {showCreateForm ? '❌ Cancel' : '🔑 Generate New API Key'}
           </button>
         </div>
 
@@ -93,7 +93,7 @@ export default function ApiKeysPage() {
                     onClick={() => copyToClipboard(createdKey)}
                     className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
                   >
-                    Copy
+                    📋 Copy
                   </button>
                 </div>
               </div>
@@ -160,14 +160,14 @@ export default function ApiKeysPage() {
                   disabled={createMutation.isPending}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
                 >
-                  {createMutation.isPending ? 'Creating...' : 'Create API Key'}
+                  {createMutation.isPending ? '⏳ Creating...' : '🔑 Create API Key'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 inline-flex items-center gap-2"
                 >
-                  Cancel
+                  ❌ Cancel
                 </button>
               </div>
             </form>
@@ -231,7 +231,7 @@ export default function ApiKeysPage() {
                             onClick={() => handleDelete(key.id)}
                             className="text-red-600 hover:text-red-900"
                           >
-                            Delete
+                            🗑️ Delete
                           </button>
                         </td>
                       </tr>

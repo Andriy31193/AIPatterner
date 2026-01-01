@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIPatterner.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251231193951_InitialCreate")]
+    [Migration("20260101171303_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -38,6 +38,9 @@ namespace AIPatterner.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomData")
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("PersonId")
                         .IsRequired()
@@ -282,6 +285,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomData")
+                        .HasColumnType("jsonb");
+
                     b.Property<DateTime?>("ExecutedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -293,6 +299,9 @@ namespace AIPatterner.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("SourceEventId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -311,6 +320,8 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CheckAtUtc");
+
+                    b.HasIndex("SourceEventId");
 
                     b.HasIndex("PersonId", "Status");
 

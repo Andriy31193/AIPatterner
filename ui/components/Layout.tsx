@@ -71,12 +71,6 @@ export function Layout({ children, requireAuth = true, requireAdmin = false }: L
                   Events
                 </Link>
                 <Link
-                  href="/reminders"
-                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
-                >
-                  Reminders
-                </Link>
-                <Link
                   href="/history"
                   className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
                 >
@@ -89,20 +83,12 @@ export function Layout({ children, requireAuth = true, requireAdmin = false }: L
                   Configuration
                 </Link>
                 {isAdmin && (
-                  <>
-                    <Link
-                      href="/users"
-                      className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Users
-                    </Link>
-                    <Link
-                      href="/api-keys"
-                      className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      API Keys
-                    </Link>
-                  </>
+                  <Link
+                    href="/users"
+                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
+                  >
+                    Users
+                  </Link>
                 )}
               </div>
             </div>
@@ -111,7 +97,7 @@ export function Layout({ children, requireAuth = true, requireAdmin = false }: L
                 onClick={logout}
                 className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
               >
-                Logout
+                🚪 Logout
               </button>
             </div>
           </div>

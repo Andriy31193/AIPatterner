@@ -6,6 +6,7 @@ using MediatR;
 public class ProcessReminderCandidateCommand : IRequest<ProcessReminderCandidateResponse>
 {
     public Guid CandidateId { get; set; }
+    public bool BypassDateCheck { get; set; } = false;
 }
 
 public class ProcessReminderCandidateResponse

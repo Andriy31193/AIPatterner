@@ -67,6 +67,11 @@ public class EventIngestionFlowTests
         // Mock execution history service for tests
         var mockExecutionHistoryService = new MockExecutionHistoryService();
         
+        // Create matching services
+        var configRepo = new ConfigurationRepository(context);
+        var matchingPolicyService = new MatchingPolicyService(configRepo, config);
+        var matchingRemindersService = new MatchingRemindersService(eventRepo, context, mapper);
+        
         var handler = new IngestEventCommandHandler(
             eventRepo,
             transitionLearner,
@@ -74,7 +79,9 @@ public class EventIngestionFlowTests
             candidateRepo,
             mapper,
             mockExecutionHistoryService,
-            config);
+            config,
+            matchingRemindersService,
+            matchingPolicyService);
 
         var firstEvent = new ActionEventDto
         {

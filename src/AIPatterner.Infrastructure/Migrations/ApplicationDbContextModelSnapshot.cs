@@ -36,6 +36,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomData")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("PersonId")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -279,6 +282,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomData")
+                        .HasColumnType("jsonb");
+
                     b.Property<DateTime?>("ExecutedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -290,6 +296,9 @@ namespace AIPatterner.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("SourceEventId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -308,6 +317,8 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CheckAtUtc");
+
+                    b.HasIndex("SourceEventId");
 
                     b.HasIndex("PersonId", "Status");
 

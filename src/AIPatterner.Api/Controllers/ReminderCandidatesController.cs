@@ -63,5 +63,31 @@ public class ReminderCandidatesController : ControllerBase
         _logger.LogInformation("Reminder candidate deleted: {Id}", id);
         return NoContent();
     }
+
+    [HttpPut("{id}/occurrence")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> UpdateReminderOccurrence(Guid id, [FromBody] UpdateReminderOccurrenceRequest request)
+    {
+        var command = new UpdateReminderOccurrenceCommand
+        {
+            ReminderCandidateId = id,
+            Occurrence = request.Occurrence
+        };
+        var result = await _mediator.Send(command);
+
+        if (!result)
+        {
+            return NotFound(new { message = "Reminder candidate not found" });
+        }
+
+        _logger.LogInformation("Reminder candidate occurrence updated: {Id}", id);
+        return Ok(new { message = "Occurrence updated successfully" });
+    }
+}
+
+public class UpdateReminderOccurrenceRequest
+{
+    public string? Occurrence { get; set; }
 }
 

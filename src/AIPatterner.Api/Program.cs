@@ -102,6 +102,7 @@ builder.Services.AddScoped<AIPatterner.Application.Handlers.IReminderCandidateRe
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IExecutionHistoryRepository, AIPatterner.Infrastructure.Persistence.Repositories.ExecutionHistoryRepository>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IApiKeyRepository, AIPatterner.Infrastructure.Persistence.Repositories.ApiKeyRepository>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IConfigurationRepository, AIPatterner.Infrastructure.Persistence.Repositories.ConfigurationRepository>();
+builder.Services.AddScoped<AIPatterner.Application.Handlers.IUserPreferencesRepository, AIPatterner.Infrastructure.Persistence.Repositories.UserPreferencesRepository>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.ICooldownService, AIPatterner.Infrastructure.Services.CooldownService>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IReminderScheduler, ReminderScheduler>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IReminderEvaluationService, ReminderEvaluationService>();
@@ -109,6 +110,8 @@ builder.Services.AddScoped<AIPatterner.Application.Handlers.INotificationService
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IMemoryGateway, MemoryGateway>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IApiKeyService, ApiKeyService>();
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IExecutionHistoryService, ExecutionHistoryService>();
+builder.Services.AddScoped<AIPatterner.Application.Services.IMatchingRemindersService, MatchingRemindersService>();
+builder.Services.AddScoped<AIPatterner.Application.Services.IMatchingPolicyService, MatchingPolicyService>();
 
 // Domain services
 builder.Services.AddScoped<AIPatterner.Domain.Services.ITransitionLearner, TransitionLearner>();
