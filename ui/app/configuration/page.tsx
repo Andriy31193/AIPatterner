@@ -210,7 +210,7 @@ function PoliciesTab() {
 // User Preferences Tab Component  
 function UserPreferencesTab() {
   const queryClient = useQueryClient();
-  const [personId, setPersonId] = useState('');
+  const { user } = useAuth();
   const [preferences, setPreferences] = useState({
     defaultStyle: 'Suggest' as ReminderStyle,
     dailyLimit: 10,
@@ -219,6 +219,9 @@ function UserPreferencesTab() {
   });
   const [isDirty, setIsDirty] = useState(false);
   const [intervalMinutes, setIntervalMinutes] = useState(15);
+
+  // Use username as personId for the logged-in user
+  const personId = user?.username || '';
 
   const { data: loadedPreferences, isLoading } = useQuery({
     queryKey: ['userPreferences', personId],
@@ -278,43 +281,24 @@ function UserPreferencesTab() {
     setIsDirty(true);
   };
 
+  if (!user) {
+    return (
+      <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">
+        Please log in to view and manage your preferences.
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="mb-4">
-          <label htmlFor="personId" className="block text-sm font-medium text-gray-700 mb-2">
-            Person ID
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              id="personId"
-              value={personId}
-              onChange={(e) => setPersonId(e.target.value)}
-              className="flex-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Enter person ID (e.g., alex)"
-            />
-            <button
-              onClick={() => {
-                if (!personId.trim()) {
-                  alert('Please enter a Person ID');
-                  return;
-                }
-                queryClient.invalidateQueries({ queryKey: ['userPreferences', personId] });
-              }}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-            >
-              📥 Load
-            </button>
-          </div>
-        </div>
-      </div>
-
       {isLoading ? (
         <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">Loading...</div>
       ) : (
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Preferences</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Configure your reminder preferences. These settings control how reminders are delivered and managed for your account.
+          </p>
           <div className="space-y-6">
             <div>
               <label htmlFor="enabled" className="flex items-center">
@@ -330,6 +314,9 @@ function UserPreferencesTab() {
                 />
                 <span className="ml-2 text-sm font-medium text-gray-900">Enable Reminders</span>
               </label>
+              <p className="mt-1 text-sm text-gray-500">
+                When disabled, no reminders will be sent
+              </p>
             </div>
             <div>
               <label htmlFor="defaultStyle" className="block text-sm font-medium text-gray-900 mb-2">
@@ -348,6 +335,9 @@ function UserPreferencesTab() {
                 <option value={ReminderStyle.Suggest}>Suggest</option>
                 <option value={ReminderStyle.Silent}>Silent</option>
               </select>
+              <p className="mt-1 text-sm text-gray-500">
+                Default style for new reminders (Ask = ask user, Suggest = suggest action, Silent = no notification)
+              </p>
             </div>
             <div>
               <label htmlFor="dailyLimit" className="block text-sm font-medium text-gray-900 mb-2">
@@ -364,6 +354,9 @@ function UserPreferencesTab() {
                 }}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+              <p className="mt-1 text-sm text-gray-500">
+                Maximum number of reminders that can be executed per day
+              </p>
             </div>
             <div>
               <label htmlFor="minimumInterval" className="block text-sm font-medium text-gray-900 mb-2">
@@ -377,18 +370,17 @@ function UserPreferencesTab() {
                 onChange={(e) => handleIntervalChange(parseInt(e.target.value) || 0)}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+              <p className="mt-1 text-sm text-gray-500">
+                Minimum time between reminder executions (in minutes)
+              </p>
             </div>
             <div className="pt-4 border-t border-gray-200">
               <button
                 onClick={() => {
-                  if (!personId.trim()) {
-                    alert('Please enter a Person ID');
-                    return;
-                  }
                   updateMutation.mutate();
                 }}
-                disabled={!isDirty || !personId.trim() || updateMutation.isPending}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+                disabled={!isDirty || updateMutation.isPending}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {updateMutation.isPending ? '⏳ Saving...' : '💾 Save Preferences'}
               </button>
