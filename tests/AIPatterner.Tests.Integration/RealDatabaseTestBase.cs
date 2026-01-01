@@ -27,6 +27,7 @@ public abstract class RealDatabaseTestBase : IDisposable
 
     protected RealDatabaseTestBase()
     {
+        //REVERT
         // Get connection string from environment or use default
         var connectionString = Environment.GetEnvironmentVariable("TEST_DB_CONNECTION_STRING")
             ?? "Host=localhost;Port=5433;Database=aipatterner_test;Username=postgres;Password=postgres";
