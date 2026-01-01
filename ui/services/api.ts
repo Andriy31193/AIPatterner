@@ -29,7 +29,21 @@ class ApiService {
   private client: AxiosInstance;
 
   constructor() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    // Get API URL dynamically at runtime
+    // In browser: use current hostname with API port (works when accessing from different machines)
+    // In SSR: use environment variable or default
+    let apiUrl: string;
+    if (typeof window !== 'undefined') {
+      // Browser environment - construct URL from current location
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      const apiPort = process.env.NEXT_PUBLIC_API_PORT || '8080';
+      apiUrl = `${protocol}//${hostname}:${apiPort}`;
+    } else {
+      // Server-side rendering - use environment variable or default
+      apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    }
+    
     this.client = axios.create({
       baseURL: apiUrl,
       headers: {
