@@ -38,7 +38,15 @@ public class LLMClient : ILLMClient
             var prompt = $"Generate a natural, friendly reminder phrase for the action '{action}' for person '{personId}'. " +
                         "Keep it short (under 50 words) and conversational.";
 
-            var request = new { prompt = prompt };
+            var request = new
+            {
+                model = _configuration.GetValue<string>("LLM:Model"),
+                messages = new[]
+                {
+                   new { role = "system", content = "You are a helpful assistant." },
+                   new { role = "user", content = prompt }
+                }
+            };
             var response = await _httpClient.PostAsJsonAsync(endpoint, request, cancellationToken);
             
             if (response.IsSuccessStatusCode)

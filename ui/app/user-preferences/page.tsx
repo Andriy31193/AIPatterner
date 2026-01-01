@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '@/components/Layout';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
 import { ReminderStyle } from '@/types';
 
 export default function UserPreferencesPage() {
   const queryClient = useQueryClient();
-  const [personId, setPersonId] = useState('');
+  const { user } = useAuth();
   const [preferences, setPreferences] = useState({
     defaultStyle: ReminderStyle.Suggest,
     dailyLimit: 10,
@@ -16,6 +17,9 @@ export default function UserPreferencesPage() {
     enabled: true,
   });
   const [isDirty, setIsDirty] = useState(false);
+
+  // Use username as personId for the logged-in user
+  const personId = user?.username || '';
 
   const { data: loadedPreferences, isLoading } = useQuery({
     queryKey: ['userPreferences', personId],
@@ -49,19 +53,7 @@ export default function UserPreferencesPage() {
     }
   }, [loadedPreferences]);
 
-  const handleLoad = () => {
-    if (!personId.trim()) {
-      alert('Please enter a Person ID');
-      return;
-    }
-    queryClient.invalidateQueries({ queryKey: ['userPreferences', personId] });
-  };
-
   const handleSave = () => {
-    if (!personId.trim()) {
-      alert('Please enter a Person ID');
-      return;
-    }
     updateMutation.mutate();
   };
 
@@ -98,35 +90,23 @@ export default function UserPreferencesPage() {
     setIsDirty(true);
   };
 
+  if (!user) {
+    return (
+      <Layout>
+        <div className="px-4 py-6 sm:px-0">
+          <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">
+            Please log in to view and manage your preferences.
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="px-4 py-6 sm:px-0">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">User Reminder Preferences</h1>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <div className="mb-4">
-            <label htmlFor="personId" className="block text-sm font-medium text-gray-700 mb-2">
-              Person ID
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                id="personId"
-                value={personId}
-                onChange={(e) => setPersonId(e.target.value)}
-                className="flex-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Enter person ID (e.g., alex)"
-              />
-              <button
-                onClick={handleLoad}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-              >
-                Load
-              </button>
-            </div>
-          </div>
         </div>
 
         {isLoading ? (
@@ -135,7 +115,7 @@ export default function UserPreferencesPage() {
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Preferences</h2>
             <p className="text-sm text-gray-600 mb-6">
-              Configure reminder preferences for the selected person. These settings control how reminders are delivered and managed.
+              Configure your reminder preferences. These settings control how reminders are delivered and managed for your account.
             </p>
 
             <div className="space-y-6">
@@ -221,8 +201,8 @@ export default function UserPreferencesPage() {
               <div className="pt-4 border-t border-gray-200">
                 <button
                   onClick={handleSave}
-                  disabled={!isDirty || !personId.trim() || updateMutation.isPending}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+                  disabled={!isDirty || updateMutation.isPending}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {updateMutation.isPending ? 'Saving...' : 'Save Preferences'}
                 </button>
