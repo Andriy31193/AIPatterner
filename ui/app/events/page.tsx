@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
 import { DateTimeDisplay } from '@/components/DateTimeDisplay';
 import { ConfidenceBadge } from '@/components/ConfidenceBadge';
+import { MatchingRemindersModal } from '@/components/MatchingRemindersModal';
 import { apiService } from '@/services/api';
 import type { ActionEventListDto } from '@/types';
 import { ProbabilityAction } from '@/types';
@@ -21,6 +22,8 @@ export default function EventsPage() {
   const [toDate, setToDate] = useState('');
   const [page, setPage] = useState(1);
   const pageSize = 20;
+  const [selectedEvent, setSelectedEvent] = useState<ActionEventListDto | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['events', { personId, actionType, fromDate, toDate, page, pageSize }],
@@ -119,7 +122,7 @@ export default function EventsPage() {
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
               >
-                Clear Filters
+                🗑️ Clear Filters
               </button>
             </div>
           </div>
@@ -170,16 +173,16 @@ export default function EventsPage() {
                               </span>
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm">
-                              {event.relatedReminderId ? (
-                                <button
-                                  onClick={() => router.push(`/reminders?highlight=${event.relatedReminderId}`)}
-                                  className="text-indigo-600 hover:text-indigo-900"
-                                >
-                                  View
-                                </button>
-                              ) : (
-                                <span className="text-gray-400">None</span>
-                              )}
+                              <button
+                                onClick={() => {
+                                  setSelectedEvent(event);
+                                  setIsModalOpen(true);
+                                }}
+                                className="text-indigo-600 hover:text-indigo-900 text-lg"
+                                title="View"
+                              >
+                                👁️
+                              </button>
                             </td>
                             <td className="px-3 py-2 text-sm text-gray-500">
                               <div className="text-xs">
@@ -245,6 +248,18 @@ export default function EventsPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* Matching Reminders Modal */}
+        {selectedEvent && (
+          <MatchingRemindersModal
+            event={selectedEvent}
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedEvent(null);
+            }}
+          />
         )}
       </div>
     </Layout>

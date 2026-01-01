@@ -59,12 +59,15 @@ public class NotificationService : INotificationService
             naturalLanguagePhrase = decision.NaturalLanguagePhrase,
             style = candidate.Style.ToString(),
             confidence = decision.ConfidenceLevel,
-            reason = decision.Reason
+            reason = decision.Reason,
+            customData = candidate.CustomData,
+            sourceEventId = candidate.SourceEventId
         };
 
         try
         {
             var requestJson = JsonSerializer.Serialize(payload);
+            _logger.LogInformation("POST webhook sent");
             var response = await _httpClient.PostAsJsonAsync(webhookUrl, payload, cancellationToken);
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();

@@ -27,7 +27,8 @@ namespace AIPatterner.Infrastructure.Migrations
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ProbabilityValue = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: true),
                     ProbabilityAction = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    RelatedReminderId = table.Column<Guid>(type: "uuid", nullable: true)
+                    RelatedReminderId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CustomData = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -132,7 +133,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     Confidence = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: false),
                     Occurrence = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ExecutedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ExecutedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SourceEventId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CustomData = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -260,6 +263,11 @@ namespace AIPatterner.Infrastructure.Migrations
                 name: "IX_remindercandidates_PersonId_SuggestedAction_CheckAtUtc",
                 table: "remindercandidates",
                 columns: new[] { "PersonId", "SuggestedAction", "CheckAtUtc" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_remindercandidates_SourceEventId",
+                table: "remindercandidates",
+                column: "SourceEventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_remindercooldowns_PersonId_ActionType_SuppressedUntilUtc",

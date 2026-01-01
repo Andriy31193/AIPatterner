@@ -3,7 +3,9 @@ namespace AIPatterner.Application.Handlers;
 
 using AIPatterner.Application.Commands;
 using AIPatterner.Application.DTOs;
+using AIPatterner.Application.Helpers;
 using AIPatterner.Application.Mappings;
+using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using AIPatterner.Domain.Services;
 using AutoMapper;
@@ -19,6 +21,8 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
     private readonly IMapper _mapper;
     private readonly IExecutionHistoryService _executionHistoryService;
     private readonly IConfiguration _configuration;
+    private readonly IMatchingRemindersService _matchingService;
+    private readonly IMatchingPolicyService _policyService;
 
     public IngestEventCommandHandler(
         IEventRepository eventRepository,
@@ -27,7 +31,9 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         IReminderCandidateRepository reminderRepository,
         IMapper mapper,
         IExecutionHistoryService executionHistoryService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IMatchingRemindersService matchingService,
+        IMatchingPolicyService policyService)
     {
         _eventRepository = eventRepository;
         _transitionLearner = transitionLearner;
@@ -36,6 +42,8 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         _mapper = mapper;
         _executionHistoryService = executionHistoryService;
         _configuration = configuration;
+        _matchingService = matchingService;
+        _policyService = policyService;
     }
 
     public async Task<IngestEventResponse> Handle(IngestEventCommand request, CancellationToken cancellationToken)
@@ -45,27 +53,51 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
 
         await _transitionLearner.UpdateTransitionsAsync(actionEvent, cancellationToken);
 
-        // Immediate reminder creation/update logic
+        // Find matching reminder using strict policy-based matching
         Guid? relatedReminderId = null;
         if (request.Event.ProbabilityValue.HasValue && request.Event.ProbabilityAction.HasValue)
         {
-            // Check for existing reminder for same person and action type
-            var existingReminders = await _reminderRepository.GetByPersonAndActionAsync(
-                actionEvent.PersonId,
-                actionEvent.ActionType,
+            // Get matching policies from configuration
+            var matchingCriteria = await _policyService.GetMatchingCriteriaAsync(cancellationToken);
+            
+            // Find matching reminders using strict criteria
+            var matchingResult = await _matchingService.FindMatchingRemindersAsync(
+                actionEvent.Id,
+                matchingCriteria,
                 cancellationToken);
 
-            var matchingReminder = existingReminders
-                .Where(r => r.Status == ReminderCandidateStatus.Scheduled)
-                .OrderByDescending(r => r.CreatedAtUtc)
-                .FirstOrDefault();
+            ReminderCandidate? matchingReminder = null;
+            if (matchingResult.Items.Any())
+            {
+                // Get the best matching reminder (highest confidence, most recent)
+                var bestMatch = matchingResult.Items
+                    .OrderByDescending(r => r.Confidence)
+                    .ThenByDescending(r => r.CheckAtUtc)
+                    .First();
+                
+                matchingReminder = await _reminderRepository.GetByIdAsync(bestMatch.Id, cancellationToken);
+            }
 
             if (matchingReminder != null)
             {
-                // Update existing reminder probability
+                // Update existing reminder probability (increase/decrease based on event)
                 matchingReminder.UpdateConfidence(
                     request.Event.ProbabilityValue.Value,
                     request.Event.ProbabilityAction.Value);
+                
+                // CheckAtUtc must always be identical to Event TimestampUtc
+                matchingReminder.UpdateCheckAtUtc(actionEvent.TimestampUtc);
+                
+                // Regenerate occurrence from the new CheckAtUtc
+                var newOccurrence = OccurrenceGenerator.GenerateOccurrence(actionEvent.TimestampUtc);
+                matchingReminder.SetOccurrence(newOccurrence);
+                
+                // Update CustomData if provided
+                if (actionEvent.CustomData != null)
+                {
+                    matchingReminder.UpdateCustomData(actionEvent.CustomData);
+                }
+                
                 await _reminderRepository.UpdateAsync(matchingReminder, cancellationToken);
                 relatedReminderId = matchingReminder.Id;
                 actionEvent.SetRelatedReminder(matchingReminder.Id);
@@ -73,21 +105,25 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
             }
             else
             {
-                // Create new reminder with default confidence
+                // No matching reminder found - create new one
                 var defaultConfidence = _configuration.GetValue<double>("Policy:DefaultReminderConfidence", 0.5);
-                var defaultOccurrence = _configuration.GetValue<string?>("Policy:DefaultOccurrence", null);
                 
-                // Calculate next check time (default: 24 hours from now)
-                var nextCheckAt = DateTime.UtcNow.AddHours(24);
+                // CheckAtUtc must be identical to Event TimestampUtc
+                var checkAtUtc = actionEvent.TimestampUtc;
+                
+                // Auto-generate Occurrence from CheckAtUtc
+                var occurrence = OccurrenceGenerator.GenerateOccurrence(checkAtUtc);
                 
                 var newReminder = new ReminderCandidate(
                     actionEvent.PersonId,
                     actionEvent.ActionType,
-                    nextCheckAt,
+                    checkAtUtc, // Use event timestamp
                     ReminderStyle.Suggest,
                     null,
                     defaultConfidence,
-                    defaultOccurrence);
+                    occurrence, // Auto-generated occurrence
+                    actionEvent.Id, // SourceEventId
+                    actionEvent.CustomData); // Copy CustomData
 
                 await _reminderRepository.AddAsync(newReminder, cancellationToken);
                 relatedReminderId = newReminder.Id;

@@ -33,6 +33,11 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ActionType).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ProbabilityValue).HasPrecision(18, 4);
             entity.Property(e => e.ProbabilityAction).HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.CustomData)
+                .HasConversion(
+                    v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+                    v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
+                .HasColumnType("jsonb");
             entity.HasIndex(e => new { e.PersonId, e.TimestampUtc });
             entity.HasIndex(e => e.RelatedReminderId);
             entity.OwnsOne(e => e.Context, context =>
@@ -75,7 +80,13 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.Property(e => e.Occurrence).HasMaxLength(200);
+            entity.Property(e => e.CustomData)
+                .HasConversion(
+                    v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+                    v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
+                .HasColumnType("jsonb");
             entity.HasIndex(e => e.CheckAtUtc);
+            entity.HasIndex(e => e.SourceEventId);
             entity.HasIndex(e => new { e.PersonId, e.Status });
             entity.HasIndex(e => new { e.PersonId, e.SuggestedAction, e.CheckAtUtc });
             entity.OwnsOne(e => e.Decision, decision =>

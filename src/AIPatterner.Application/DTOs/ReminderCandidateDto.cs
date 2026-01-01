@@ -14,6 +14,8 @@ public class ReminderCandidateDto
     public Guid? TransitionId { get; set; }
     public double Confidence { get; set; }
     public string? Occurrence { get; set; }
+    public Guid? SourceEventId { get; set; }
+    public Dictionary<string, string>? CustomData { get; set; }
 }
 
 public class ReminderCandidateListResponse

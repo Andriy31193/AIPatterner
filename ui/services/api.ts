@@ -21,6 +21,8 @@ import type {
   CreateUserRequest,
   ExecutionHistoryDto,
   ExecutionHistoryListResponse,
+  UserReminderPreferences,
+  ReminderStyle,
 } from '@/types';
 
 class ApiService {
@@ -250,6 +252,73 @@ class ApiService {
   // Delete reminder candidate endpoint
   async deleteReminderCandidate(id: string): Promise<void> {
     await this.client.delete(`/api/v1/reminder-candidates/${id}`);
+  }
+
+  // Get matching reminders for an event (using matching criteria)
+  async getMatchingReminders(
+    eventId: string,
+    criteria: {
+      matchByActionType?: boolean;
+      matchByDayType?: boolean;
+      matchByPeoplePresent?: boolean;
+      matchByStateSignals?: boolean;
+      matchByTimeBucket?: boolean;
+      matchByLocation?: boolean;
+      timeOffsetMinutes?: number;
+    }
+  ): Promise<ReminderCandidateListResponse> {
+    const params: Record<string, string | number> = {};
+    if (criteria.matchByActionType !== undefined) params.matchByActionType = criteria.matchByActionType.toString();
+    if (criteria.matchByDayType !== undefined) params.matchByDayType = criteria.matchByDayType.toString();
+    if (criteria.matchByPeoplePresent !== undefined) params.matchByPeoplePresent = criteria.matchByPeoplePresent.toString();
+    if (criteria.matchByStateSignals !== undefined) params.matchByStateSignals = criteria.matchByStateSignals.toString();
+    if (criteria.matchByTimeBucket !== undefined) params.matchByTimeBucket = criteria.matchByTimeBucket.toString();
+    if (criteria.matchByLocation !== undefined) params.matchByLocation = criteria.matchByLocation.toString();
+    if (criteria.timeOffsetMinutes !== undefined) params.timeOffsetMinutes = criteria.timeOffsetMinutes.toString();
+
+    const response = await this.client.get<ReminderCandidateListResponse>(
+      `/api/v1/events/${eventId}/matching-reminders`,
+      { params }
+    );
+    return response.data;
+  }
+
+  // Get related reminders for an event (by SourceEventId)
+  async getRelatedReminders(eventId: string): Promise<ReminderCandidateListResponse> {
+    const response = await this.client.get<ReminderCandidateListResponse>(
+      `/api/v1/events/${eventId}/related-reminders`
+    );
+    return response.data;
+  }
+
+  // Execute reminder now (bypass date check)
+  async executeReminderNow(candidateId: string): Promise<ProcessReminderCandidateResponse> {
+    const response = await this.client.post<ProcessReminderCandidateResponse>(
+      `/api/v1/admin/force-check/${candidateId}?bypassDateCheck=true`
+    );
+    return response.data;
+  }
+
+  // Update reminder occurrence
+  async updateReminderOccurrence(candidateId: string, occurrence: string | null): Promise<void> {
+    await this.client.put(`/api/v1/reminder-candidates/${candidateId}/occurrence`, {
+      occurrence: occurrence || null,
+    });
+  }
+
+  // User preferences endpoints
+  async getUserPreferences(personId: string): Promise<UserReminderPreferences> {
+    const response = await this.client.get<UserReminderPreferences>(`/api/v1/user-preferences/${personId}`);
+    return response.data;
+  }
+
+  async updateUserPreferences(personId: string, preferences: {
+    defaultStyle?: ReminderStyle;
+    dailyLimit?: number;
+    minimumInterval?: string;
+    enabled?: boolean;
+  }): Promise<void> {
+    await this.client.put(`/api/v1/user-preferences/${personId}`, preferences);
   }
 }
 

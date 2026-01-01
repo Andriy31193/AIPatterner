@@ -21,9 +21,13 @@ public class AdminController : ControllerBase
     [HttpPost("force-check/{candidateId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> ForceCheck(Guid candidateId)
+    public async Task<ActionResult> ForceCheck(Guid candidateId, [FromQuery] bool bypassDateCheck = false)
     {
-        var command = new ProcessReminderCandidateCommand { CandidateId = candidateId };
+        var command = new ProcessReminderCandidateCommand 
+        { 
+            CandidateId = candidateId,
+            BypassDateCheck = bypassDateCheck
+        };
         var result = await _mediator.Send(command);
         return Ok(result);
     }

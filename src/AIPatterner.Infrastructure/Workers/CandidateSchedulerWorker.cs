@@ -47,14 +47,19 @@ public class CandidateSchedulerWorker : BackgroundService
 
                 var dueCandidates = await repository.GetDueCandidatesAsync(DateTime.UtcNow, batchSize, stoppingToken);
                 
-                // Prioritize high-confidence candidates for auto-execution
+                // Only process high-confidence candidates for auto-execution
+                // Low probability reminders should NOT be executed automatically
                 var minProbability = configuration.GetValue<double>("Policy:MinimumProbabilityForExecution", 0.7);
-                var sortedCandidates = dueCandidates
-                    .OrderByDescending(c => c.Confidence >= minProbability)
-                    .ThenByDescending(c => c.Confidence)
+                var highProbabilityCandidates = dueCandidates
+                    .Where(c => c.Confidence >= minProbability)
+                    .OrderByDescending(c => c.Confidence)
                     .ToList();
 
-                foreach (var candidate in sortedCandidates)
+                _logger.LogInformation(
+                    "Found {TotalDue} due candidates, processing {HighProbability} high-probability candidates (threshold: {Threshold})",
+                    dueCandidates.Count, highProbabilityCandidates.Count, minProbability);
+
+                foreach (var candidate in highProbabilityCandidates)
                 {
                     try
                     {
@@ -67,9 +72,9 @@ public class CandidateSchedulerWorker : BackgroundService
                     }
                 }
 
-                if (dueCandidates.Any())
+                if (highProbabilityCandidates.Any())
                 {
-                    _logger.LogInformation("Processed {Count} due reminder candidates", dueCandidates.Count);
+                    _logger.LogInformation("Processed {Count} high-probability reminder candidates", highProbabilityCandidates.Count);
                 }
             }
             catch (Exception ex)

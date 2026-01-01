@@ -14,6 +14,7 @@ public class ActionEventListDto
     public double? ProbabilityValue { get; set; }
     public ProbabilityAction? ProbabilityAction { get; set; }
     public Guid? RelatedReminderId { get; set; }
+    public Dictionary<string, string>? CustomData { get; set; }
 }
 
 public class ActionEventListResponse

@@ -28,6 +28,8 @@ export default function CreateEventPage() {
   const [presentPeopleInput, setPresentPeopleInput] = useState('');
   const [stateSignalKey, setStateSignalKey] = useState('');
   const [stateSignalValue, setStateSignalValue] = useState('');
+  const [customDataKey, setCustomDataKey] = useState('');
+  const [customDataValue, setCustomDataValue] = useState('');
 
   const createMutation = useMutation({
     mutationFn: (event: ActionEventDto) => apiService.ingestEvent(event),
@@ -103,6 +105,29 @@ export default function CreateEventPage() {
         ...formData.context,
         stateSignals: newSignals,
       },
+    });
+  };
+
+  const addCustomData = () => {
+    if (customDataKey.trim() && customDataValue.trim()) {
+      setFormData({
+        ...formData,
+        customData: {
+          ...(formData.customData || {}),
+          [customDataKey.trim()]: customDataValue.trim(),
+        },
+      });
+      setCustomDataKey('');
+      setCustomDataValue('');
+    }
+  };
+
+  const removeCustomData = (key: string) => {
+    const newCustomData = { ...(formData.customData || {}) };
+    delete newCustomData[key];
+    setFormData({
+      ...formData,
+      customData: Object.keys(newCustomData).length > 0 ? newCustomData : undefined,
     });
   };
 
@@ -359,6 +384,60 @@ export default function CreateEventPage() {
               <p className="mt-1 text-sm text-gray-500">
                 Action to apply to reminder probability when event is created
               </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Custom Data (optional)
+              </label>
+              <p className="mb-2 text-sm text-gray-500">
+                Custom data will be copied to reminders created from this event
+              </p>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={customDataKey}
+                  onChange={(e) => setCustomDataKey(e.target.value)}
+                  placeholder="Key"
+                  className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+                <input
+                  type="text"
+                  value={customDataValue}
+                  onChange={(e) => setCustomDataValue(e.target.value)}
+                  placeholder="Value"
+                  className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={addCustomData}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                >
+                  Add
+                </button>
+              </div>
+              {formData.customData &&
+                Object.keys(formData.customData).length > 0 && (
+                  <div className="space-y-1">
+                    {Object.entries(formData.customData).map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between px-3 py-1 bg-gray-50 rounded"
+                      >
+                        <span className="text-sm">
+                          <strong>{key}:</strong> {value}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeCustomData(key)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
             </div>
 
             <div className="flex gap-2">

@@ -30,7 +30,8 @@ public class MappingProfile : Profile
                     dto.Context.PresentPeople,
                     dto.Context.StateSignals),
                 dto.ProbabilityValue,
-                dto.ProbabilityAction))
+                dto.ProbabilityAction,
+                dto.CustomData))
             .ForMember(dest => dest.Context, opt => opt.Ignore()) // Ignore since we're constructing it manually
             .ForMember(dest => dest.RelatedReminderId, opt => opt.Ignore()); // Set separately
 
@@ -47,6 +48,10 @@ public class MappingProfile : Profile
             }));
 
         CreateMap<ExecutionHistory, ExecutionHistoryDto>();
+
+        CreateMap<Domain.Entities.UserReminderPreferences, DTOs.UserReminderPreferencesDto>()
+            .ForMember(dest => dest.MinimumInterval, opt => opt.MapFrom(src => 
+                System.Xml.XmlConvert.ToString(src.MinimumInterval)));
 
         CreateMap<ActionTransition, TransitionDto>()
             .ForMember(dest => dest.ConfidenceLabel, opt => opt.MapFrom(src => GetConfidenceLabel(src.Confidence)))

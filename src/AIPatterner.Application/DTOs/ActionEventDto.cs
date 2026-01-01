@@ -11,6 +11,7 @@ public class ActionEventDto
     public ActionContextDto Context { get; set; } = null!;
     public double? ProbabilityValue { get; set; }
     public ProbabilityAction? ProbabilityAction { get; set; }
+    public Dictionary<string, string>? CustomData { get; set; }
 }
 
 public class ActionContextDto

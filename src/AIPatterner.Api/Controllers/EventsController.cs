@@ -77,5 +77,47 @@ public class EventsController : ControllerBase
         _logger.LogInformation("Event deleted: {Id}", id);
         return NoContent();
     }
+
+    [HttpGet("{id}/matching-reminders")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetMatchingReminders(
+        Guid id,
+        [FromQuery] bool matchByActionType = true,
+        [FromQuery] bool matchByDayType = true,
+        [FromQuery] bool matchByPeoplePresent = true,
+        [FromQuery] bool matchByStateSignals = true,
+        [FromQuery] bool matchByTimeBucket = false,
+        [FromQuery] bool matchByLocation = false,
+        [FromQuery] int timeOffsetMinutes = 30)
+    {
+        var query = new GetMatchingRemindersQuery
+        {
+            EventId = id,
+            Criteria = new MatchingCriteria
+            {
+                MatchByActionType = matchByActionType,
+                MatchByDayType = matchByDayType,
+                MatchByPeoplePresent = matchByPeoplePresent,
+                MatchByStateSignals = matchByStateSignals,
+                MatchByTimeBucket = matchByTimeBucket,
+                MatchByLocation = matchByLocation,
+                TimeOffsetMinutes = timeOffsetMinutes
+            }
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/related-reminders")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ReminderCandidateListResponse>> GetRelatedReminders(Guid id)
+    {
+        var query = new GetRemindersByEventIdQuery { EventId = id };
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
 }
 

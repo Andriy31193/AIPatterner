@@ -2,6 +2,7 @@
 namespace AIPatterner.Infrastructure.Services;
 
 using AIPatterner.Application.Handlers;
+using AIPatterner.Application.Helpers;
 using AIPatterner.Domain.Entities;
 using AIPatterner.Domain.Services;
 using AIPatterner.Infrastructure.Persistence;
@@ -90,19 +91,28 @@ public class ReminderScheduler : IReminderScheduler
                 else
                 {
                     // Create new reminder with default confidence
+                    // CheckAtUtc must be identical to Event TimestampUtc
+                    var checkAtUtc = actionEvent.TimestampUtc;
+                    
+                    // Auto-generate Occurrence from CheckAtUtc
+                    var occurrence = OccurrenceGenerator.GenerateOccurrence(checkAtUtc);
+                    
                     var candidate = new ReminderCandidate(
                         actionEvent.PersonId,
                         transition.ToAction,
-                        policyDecision.SuggestedCheckAt,
+                        checkAtUtc, // Use event timestamp
                         policyDecision.Style,
                         transition.Id,
-                        defaultConfidence);
+                        defaultConfidence,
+                        occurrence, // Auto-generated occurrence
+                        actionEvent.Id, // SourceEventId
+                        actionEvent.CustomData); // Copy CustomData
 
                     await _context.ReminderCandidates.AddAsync(candidate, cancellationToken);
                     candidates.Add(candidate);
                     _logger.LogInformation(
                         "Scheduled reminder candidate {CandidateId} for {PersonId}, action: {Action}, check at: {CheckAt}, confidence: {Confidence}",
-                        candidate.Id, actionEvent.PersonId, transition.ToAction, policyDecision.SuggestedCheckAt, candidate.Confidence);
+                        candidate.Id, actionEvent.PersonId, transition.ToAction, checkAtUtc, candidate.Confidence);
                 }
             }
         }

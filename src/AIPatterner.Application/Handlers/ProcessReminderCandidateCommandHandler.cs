@@ -39,7 +39,7 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
             throw new InvalidOperationException($"ReminderCandidate {request.CandidateId} not found");
         }
 
-        if (!candidate.IsDue(DateTime.UtcNow))
+        if (!request.BypassDateCheck && !candidate.IsDue(DateTime.UtcNow))
         {
             return new ProcessReminderCandidateResponse
             {
@@ -53,6 +53,18 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
         var minProbabilityForExecution = _configuration.GetValue<double>("Policy:MinimumProbabilityForExecution", 0.7);
         var shouldAutoExecute = candidate.Confidence >= minProbabilityForExecution;
 
+        // Low probability reminders should NOT be executed automatically
+        // They can only be executed manually via "Execute now" button (BypassDateCheck = true)
+        if (!request.BypassDateCheck && candidate.Confidence < minProbabilityForExecution)
+        {
+            return new ProcessReminderCandidateResponse
+            {
+                Executed = false,
+                ShouldSpeak = false,
+                Reason = $"Low probability reminder (confidence: {candidate.Confidence:P0} < threshold: {minProbabilityForExecution:P0}). Only high-probability reminders are auto-executed."
+            };
+        }
+
         var decision = await _evaluationService.EvaluateAsync(candidate, cancellationToken);
 
         // Auto-execute if high confidence, otherwise use decision
@@ -63,14 +75,16 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
             candidate.MarkAsExecuted(decision);
             await _candidateRepository.UpdateAsync(candidate, cancellationToken);
 
-            // Record execution history
+            // Record execution history with CustomData
             var requestPayload = System.Text.Json.JsonSerializer.Serialize(new
             {
                 candidateId = candidate.Id,
                 personId = candidate.PersonId,
                 suggestedAction = candidate.SuggestedAction,
                 confidence = candidate.Confidence,
-                checkAtUtc = candidate.CheckAtUtc
+                checkAtUtc = candidate.CheckAtUtc,
+                customData = candidate.CustomData,
+                sourceEventId = candidate.SourceEventId
             });
 
             var responsePayload = System.Text.Json.JsonSerializer.Serialize(new
