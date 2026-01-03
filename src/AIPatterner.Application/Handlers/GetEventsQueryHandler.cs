@@ -3,6 +3,7 @@ namespace AIPatterner.Application.Handlers;
 
 using AIPatterner.Application.DTOs;
 using AIPatterner.Application.Queries;
+using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using AutoMapper;
 using MediatR;
@@ -11,11 +12,13 @@ public class GetEventsQueryHandler : IRequestHandler<GetEventsQuery, ActionEvent
 {
     private readonly IEventRepository _repository;
     private readonly IMapper _mapper;
+    private readonly IUserContextService _userContextService;
 
-    public GetEventsQueryHandler(IEventRepository repository, IMapper mapper)
+    public GetEventsQueryHandler(IEventRepository repository, IMapper mapper, IUserContextService userContextService)
     {
         _repository = repository;
         _mapper = mapper;
+        _userContextService = userContextService;
     }
 
     public async Task<ActionEventListResponse> Handle(GetEventsQuery request, CancellationToken cancellationToken)
@@ -35,6 +38,16 @@ public class GetEventsQueryHandler : IRequestHandler<GetEventsQuery, ActionEvent
             request.FromUtc,
             request.ToUtc,
             cancellationToken);
+
+        // Apply user isolation: filter by userId if not admin
+        var currentUserId = await _userContextService.GetCurrentUserIdAsync();
+        var isAdmin = _userContextService.IsAdmin();
+
+        if (!isAdmin && currentUserId.HasValue)
+        {
+            events = events.Where(e => e.UserId == currentUserId.Value).ToList();
+            totalCount = events.Count; // Recalculate after filtering
+        }
 
         return new ActionEventListResponse
         {

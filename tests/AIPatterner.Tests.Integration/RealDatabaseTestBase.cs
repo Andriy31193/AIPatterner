@@ -114,6 +114,9 @@ public abstract class RealDatabaseTestBase : IDisposable
             Configuration,
             loggerFactory.CreateLogger<RoutineLearningService>());
 
+        // Mock user context service for tests (returns null userId by default for backward compatibility)
+        var mockUserContextService = new MockUserContextService();
+
         EventHandler = new IngestEventCommandHandler(
             EventRepository,
             transitionLearner,
@@ -124,7 +127,8 @@ public abstract class RealDatabaseTestBase : IDisposable
             Configuration,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService);
+            routineLearningService,
+            mockUserContextService);
 
         // Setup matching policies
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();

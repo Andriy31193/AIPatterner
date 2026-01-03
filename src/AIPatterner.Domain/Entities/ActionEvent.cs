@@ -10,9 +10,6 @@ public class ActionEvent
     public DateTime TimestampUtc { get; private set; }
     public ActionContext Context { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
-    public Guid? CreatedByUserId { get; private set; } // Audit: who created this event
-    public DateTime? LastModifiedAtUtc { get; private set; } // Audit: when last modified
-    public Guid? LastModifiedByUserId { get; private set; } // Audit: who last modified
     public double? ProbabilityValue { get; private set; }
     public ProbabilityAction? ProbabilityAction { get; private set; }
     public Guid? RelatedReminderId { get; private set; }
@@ -26,12 +23,11 @@ public class ActionEvent
         string actionType, 
         DateTime timestampUtc, 
         ActionContext context,
+        Guid? userId = null,
         double? probabilityValue = null,
         ProbabilityAction? probabilityAction = null,
         Dictionary<string, string>? customData = null,
-        EventType eventType = EventType.Action,
-        Guid? userId = null,
-        Guid? createdByUserId = null)
+        EventType eventType = EventType.Action)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -45,7 +41,6 @@ public class ActionEvent
         TimestampUtc = timestampUtc;
         Context = context ?? throw new ArgumentNullException(nameof(context));
         CreatedAtUtc = DateTime.UtcNow;
-        CreatedByUserId = createdByUserId;
         ProbabilityValue = probabilityValue;
         ProbabilityAction = probabilityAction;
         CustomData = customData;
@@ -55,17 +50,6 @@ public class ActionEvent
     public void SetRelatedReminder(Guid reminderId)
     {
         RelatedReminderId = reminderId;
-    }
-
-    public void SetUserId(Guid userId)
-    {
-        UserId = userId;
-    }
-
-    public void UpdateAuditInfo(Guid? modifiedByUserId)
-    {
-        LastModifiedAtUtc = DateTime.UtcNow;
-        LastModifiedByUserId = modifiedByUserId;
     }
 }
 

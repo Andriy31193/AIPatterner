@@ -108,6 +108,7 @@ public class ReminderScheduler : IReminderScheduler
                         transition.ToAction,
                         checkAtUtc, // Use event timestamp
                         policyDecision.Style,
+                        actionEvent.UserId,
                         transition.Id,
                         defaultConfidence,
                         occurrence, // Auto-generated occurrence

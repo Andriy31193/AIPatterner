@@ -62,17 +62,25 @@ public class RoutineLearningService : IRoutineLearningService
         }
 
         // Find or create routine for this intent
+        // First try to find by PersonId and IntentType, then filter by UserId if available
         var routine = await _routineRepository.GetByPersonAndIntentAsync(
             intentEvent.PersonId,
             intentEvent.ActionType,
             cancellationToken);
+
+        // Ensure user isolation: if userId is set, the routine must belong to that user
+        if (routine != null && intentEvent.UserId.HasValue && routine.UserId != intentEvent.UserId.Value)
+        {
+            // Routine exists but belongs to different user - create new one for this user
+            routine = null;
+        }
 
         var observationWindowMinutes = _configuration.GetValue<int>("Routine:ObservationWindowMinutes", 45);
 
         if (routine == null)
         {
             // Create new routine
-            routine = new Routine(intentEvent.PersonId, intentEvent.ActionType, intentEvent.TimestampUtc);
+            routine = new Routine(intentEvent.PersonId, intentEvent.ActionType, intentEvent.TimestampUtc, intentEvent.UserId);
             routine.OpenObservationWindow(intentEvent.TimestampUtc, observationWindowMinutes);
             await _routineRepository.AddAsync(routine, cancellationToken);
             _logger.LogInformation(
@@ -102,6 +110,12 @@ public class RoutineLearningService : IRoutineLearningService
         var routines = await _routineRepository.GetByPersonAsync(observedEvent.PersonId, cancellationToken);
         // Use the event's timestamp to check if windows were open when the event occurred
         var eventTime = observedEvent.TimestampUtc;
+
+        // Filter by userId to ensure user isolation
+        if (observedEvent.UserId.HasValue)
+        {
+            routines = routines.Where(r => r.UserId == observedEvent.UserId.Value).ToList();
+        }
 
         foreach (var routine in routines)
         {
@@ -167,6 +181,7 @@ public class RoutineLearningService : IRoutineLearningService
                 routine.PersonId,
                 observedEvent.ActionType,
                 defaultProbability,
+                observedEvent.UserId,
                 observedEvent.CustomData);
             
             newReminder.RecordObservation(observedEvent.TimestampUtc);

@@ -12,15 +12,12 @@ public class Routine
     public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public string IntentType { get; private set; } // The ActionType of the StateChange event (e.g., "ArrivalHome")
     public DateTime CreatedAtUtc { get; private set; }
-    public Guid? CreatedByUserId { get; private set; } // Audit: who created this routine
-    public DateTime? LastModifiedAtUtc { get; private set; } // Audit: when last modified
-    public Guid? LastModifiedByUserId { get; private set; } // Audit: who last modified
     public DateTime? LastIntentOccurredAtUtc { get; private set; }
     public DateTime? ObservationWindowEndsAtUtc { get; private set; } // When the current observation window closes
 
     private Routine() { } // EF Core
 
-    public Routine(string personId, string intentType, DateTime intentOccurredAtUtc, Guid? userId = null, Guid? createdByUserId = null)
+    public Routine(string personId, string intentType, DateTime intentOccurredAtUtc, Guid? userId = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -32,7 +29,6 @@ public class Routine
         UserId = userId;
         IntentType = intentType;
         CreatedAtUtc = DateTime.UtcNow;
-        CreatedByUserId = createdByUserId;
         LastIntentOccurredAtUtc = intentOccurredAtUtc;
     }
 
@@ -60,17 +56,6 @@ public class Routine
     public void CloseObservationWindow()
     {
         ObservationWindowEndsAtUtc = null;
-    }
-
-    public void SetUserId(Guid userId)
-    {
-        UserId = userId;
-    }
-
-    public void UpdateAuditInfo(Guid? modifiedByUserId)
-    {
-        LastModifiedAtUtc = DateTime.UtcNow;
-        LastModifiedByUserId = modifiedByUserId;
     }
 }
 

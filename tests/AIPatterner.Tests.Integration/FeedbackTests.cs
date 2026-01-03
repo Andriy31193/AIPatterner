@@ -94,6 +94,8 @@ public class FeedbackTests : IDisposable
             config,
             loggerFactory.CreateLogger<RoutineLearningService>());
 
+        var mockUserContextService = new MockUserContextService();
+        
         _eventHandler = new IngestEventCommandHandler(
             eventRepo,
             transitionLearner,
@@ -104,7 +106,8 @@ public class FeedbackTests : IDisposable
             config,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService);
+            routineLearningService,
+            mockUserContextService);
 
         // Setup HTTP client for API tests
         _apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "http://localhost:8080/api";

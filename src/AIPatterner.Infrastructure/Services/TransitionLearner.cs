@@ -69,7 +69,8 @@ public class TransitionLearner : ITransitionLearner
                 actionEvent.PersonId,
                 lastEvent.ActionType,
                 actionEvent.ActionType,
-                contextBucket);
+                contextBucket,
+                actionEvent.UserId);
 
             transition.UpdateWithObservation(timeSinceLastEvent, alpha, beta);
             await _transitionRepository.AddAsync(transition, cancellationToken);

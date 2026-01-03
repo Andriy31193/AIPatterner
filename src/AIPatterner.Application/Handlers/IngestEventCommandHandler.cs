@@ -24,6 +24,7 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
     private readonly IMatchingRemindersService _matchingService;
     private readonly IMatchingPolicyService _policyService;
     private readonly IRoutineLearningService _routineLearningService;
+    private readonly IUserContextService _userContextService;
 
     public IngestEventCommandHandler(
         IEventRepository eventRepository,
@@ -35,7 +36,8 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         IConfiguration configuration,
         IMatchingRemindersService matchingService,
         IMatchingPolicyService policyService,
-        IRoutineLearningService routineLearningService)
+        IRoutineLearningService routineLearningService,
+        IUserContextService userContextService)
     {
         _eventRepository = eventRepository;
         _transitionLearner = transitionLearner;
@@ -47,11 +49,31 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         _matchingService = matchingService;
         _policyService = policyService;
         _routineLearningService = routineLearningService;
+        _userContextService = userContextService;
     }
 
     public async Task<IngestEventResponse> Handle(IngestEventCommand request, CancellationToken cancellationToken)
     {
-        var actionEvent = _mapper.Map<ActionEvent>(request.Event);
+        // Get userId from user context
+        var userId = await _userContextService.GetCurrentUserIdAsync();
+        
+        // Create ActionEvent manually to include userId (since mapper can't do async operations)
+        var actionEvent = new ActionEvent(
+            request.Event.PersonId,
+            request.Event.ActionType,
+            request.Event.TimestampUtc,
+            new ActionContext(
+                request.Event.Context.TimeBucket,
+                request.Event.Context.DayType,
+                request.Event.Context.Location,
+                request.Event.Context.PresentPeople,
+                request.Event.Context.StateSignals),
+            userId,
+            request.Event.ProbabilityValue,
+            request.Event.ProbabilityAction,
+            request.Event.CustomData,
+            request.Event.EventType);
+        
         await _eventRepository.AddAsync(actionEvent, cancellationToken);
 
         // CRITICAL: StateChange events (intents) must NOT go through transition learning or reminder scheduling
@@ -150,11 +172,12 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                     actionEvent.ActionType,
                     checkAtUtc, // Use event timestamp
                     ReminderStyle.Suggest,
-                    null,
-                    defaultConfidence,
+                    userId: null, // TODO: Get from user context
+                    transitionId: null,
+                    confidence: defaultConfidence,
                     occurrence: null, // Start with no fixed occurrence pattern
-                    actionEvent.Id, // SourceEventId
-                    actionEvent.CustomData); // Copy CustomData
+                    sourceEventId: actionEvent.Id,
+                    customData: actionEvent.CustomData); // Copy CustomData
                 
                 // The constructor already called InitializeEvidenceTracking, but we need to ensure
                 // the pattern inference is run to set initial status

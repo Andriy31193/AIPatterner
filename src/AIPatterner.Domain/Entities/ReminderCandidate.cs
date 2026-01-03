@@ -59,9 +59,6 @@ public class ReminderCandidate
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? ExecutedAtUtc { get; private set; }
     public Guid? SourceEventId { get; private set; } // Event ID that created this reminder
-    public Guid? CreatedByUserId { get; private set; } // Audit: who created this reminder
-    public DateTime? LastModifiedAtUtc { get; private set; } // Audit: when last modified
-    public Guid? LastModifiedByUserId { get; private set; } // Audit: who last modified
     public Dictionary<string, string>? CustomData { get; private set; } // Custom data from source event
     
     // Evidence tracking fields for gradual pattern learning
@@ -112,13 +109,12 @@ public class ReminderCandidate
         string suggestedAction,
         DateTime checkAtUtc,
         ReminderStyle style,
+        Guid? userId = null,
         Guid? transitionId = null,
         double confidence = 0.5,
         string? occurrence = null,
         Guid? sourceEventId = null,
-        Dictionary<string, string>? customData = null,
-        Guid? userId = null,
-        Guid? createdByUserId = null)
+        Dictionary<string, string>? customData = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -138,7 +134,6 @@ public class ReminderCandidate
         Occurrence = occurrence;
         SourceEventId = sourceEventId;
         CustomData = customData;
-        CreatedByUserId = createdByUserId;
         Status = ReminderCandidateStatus.Scheduled;
         CreatedAtUtc = DateTime.UtcNow;
         
@@ -428,17 +423,6 @@ public class ReminderCandidate
         InferredWeekday = null;
         var flexibleTimeStr = TimeWindowCenter?.ToString(@"hh\:mm") ?? "00:00";
         Occurrence = $"Occurs around {flexibleTimeStr} (flexible timing)";
-    }
-
-    public void SetUserId(Guid userId)
-    {
-        UserId = userId;
-    }
-
-    public void UpdateAuditInfo(Guid? modifiedByUserId)
-    {
-        LastModifiedAtUtc = DateTime.UtcNow;
-        LastModifiedByUserId = modifiedByUserId;
     }
 }
 

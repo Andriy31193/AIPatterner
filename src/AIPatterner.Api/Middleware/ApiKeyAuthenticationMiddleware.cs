@@ -110,6 +110,9 @@ public class ApiKeyAuthenticationMiddleware
         apiKey.UpdateLastUsed();
         await dbContext.SaveChangesAsync();
 
+        // Store API key in HttpContext.Items for UserContextService
+        context.Items["ApiKey"] = apiKey;
+
         // Check if admin endpoint requires admin role
         var requiresAdmin = path.StartsWith("/api/v1/admin");
         if (requiresAdmin && apiKey.Role != "admin")

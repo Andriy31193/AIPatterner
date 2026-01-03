@@ -27,6 +27,7 @@ import type {
   RoutineDetailDto,
   RoutineReminderDto,
 } from '@/types';
+import { ProbabilityAction } from '@/types';
 
 class ApiService {
   private client: AxiosInstance;

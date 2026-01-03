@@ -14,9 +14,6 @@ public class RoutineReminder
     public string SuggestedAction { get; private set; }
     public double Confidence { get; private set; } // Probability/confidence level (0.0 to 1.0)
     public DateTime CreatedAtUtc { get; private set; }
-    public Guid? CreatedByUserId { get; private set; } // Audit: who created this reminder
-    public DateTime? LastModifiedAtUtc { get; private set; } // Audit: when last modified
-    public Guid? LastModifiedByUserId { get; private set; } // Audit: who last modified
     public DateTime? LastObservedAtUtc { get; private set; }
     public int ObservationCount { get; private set; } = 0;
     public Dictionary<string, string>? CustomData { get; private set; }
@@ -28,9 +25,8 @@ public class RoutineReminder
         string personId,
         string suggestedAction,
         double confidence,
-        Dictionary<string, string>? customData = null,
         Guid? userId = null,
-        Guid? createdByUserId = null)
+        Dictionary<string, string>? customData = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -46,7 +42,6 @@ public class RoutineReminder
         SuggestedAction = suggestedAction;
         Confidence = confidence;
         CreatedAtUtc = DateTime.UtcNow;
-        CreatedByUserId = createdByUserId;
         CustomData = customData;
     }
 
@@ -93,17 +88,6 @@ public class RoutineReminder
     public void UpdateCustomData(Dictionary<string, string>? customData)
     {
         CustomData = customData;
-    }
-
-    public void SetUserId(Guid userId)
-    {
-        UserId = userId;
-    }
-
-    public void UpdateAuditInfo(Guid? modifiedByUserId)
-    {
-        LastModifiedAtUtc = DateTime.UtcNow;
-        LastModifiedByUserId = modifiedByUserId;
     }
 }
 

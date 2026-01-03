@@ -39,9 +39,6 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.EventType)
                 .HasConversion<int>()
                 .HasDefaultValue(EventType.Action);
-            entity.Property(e => e.CreatedByUserId).IsRequired(false);
-            entity.Property(e => e.LastModifiedAtUtc).IsRequired(false);
-            entity.Property(e => e.LastModifiedByUserId).IsRequired(false);
             entity.Property(e => e.CustomData)
                 .HasConversion(
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
@@ -50,7 +47,6 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => new { e.PersonId, e.TimestampUtc });
             entity.HasIndex(e => new { e.UserId, e.TimestampUtc });
             entity.HasIndex(e => e.RelatedReminderId);
-            entity.HasIndex(e => e.UserId);
             entity.OwnsOne(e => e.Context, context =>
             {
                 context.Property(c => c.TimeBucket).IsRequired().HasMaxLength(50);
@@ -75,12 +71,15 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("actiontransitions");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.FromAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ToAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ContextBucket).IsRequired().HasMaxLength(500);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.HasIndex(e => new { e.PersonId, e.FromAction, e.ContextBucket });
+            entity.HasIndex(e => new { e.UserId, e.FromAction, e.ContextBucket });
             entity.HasIndex(e => new { e.PersonId, e.ToAction });
+            entity.HasIndex(e => new { e.UserId, e.ToAction });
         });
 
         modelBuilder.Entity<ReminderCandidate>(entity =>
@@ -92,9 +91,6 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.Property(e => e.Occurrence).HasMaxLength(200);
-            entity.Property(e => e.CreatedByUserId).IsRequired(false);
-            entity.Property(e => e.LastModifiedAtUtc).IsRequired(false);
-            entity.Property(e => e.LastModifiedByUserId).IsRequired(false);
             entity.Property(e => e.CustomData)
                 .HasConversion(
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
@@ -122,7 +118,6 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => new { e.UserId, e.Status });
             entity.HasIndex(e => new { e.PersonId, e.SuggestedAction, e.CheckAtUtc });
             entity.HasIndex(e => new { e.UserId, e.SuggestedAction, e.CheckAtUtc });
-            entity.HasIndex(e => e.UserId);
             entity.OwnsOne(e => e.Decision, decision =>
             {
                 decision.Property(d => d.ShouldSpeak);
@@ -139,8 +134,10 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("remindercooldowns");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.ActionType).IsRequired().HasMaxLength(100);
             entity.HasIndex(e => new { e.PersonId, e.ActionType, e.SuppressedUntilUtc });
+            entity.HasIndex(e => new { e.UserId, e.ActionType, e.SuppressedUntilUtc });
         });
 
         modelBuilder.Entity<UserReminderPreferences>(entity =>
@@ -148,7 +145,9 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("userreminderpreferences");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.UserId).IsRequired(false);
             entity.HasIndex(e => e.PersonId).IsUnique();
+            entity.HasIndex(e => e.UserId).IsUnique();
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -209,11 +208,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.IntentType).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.CreatedByUserId).IsRequired(false);
-            entity.Property(e => e.LastModifiedAtUtc).IsRequired(false);
-            entity.Property(e => e.LastModifiedByUserId).IsRequired(false);
             entity.HasIndex(e => new { e.PersonId, e.IntentType }).IsUnique();
-            entity.HasIndex(e => new { e.UserId, e.IntentType });
+            entity.HasIndex(e => new { e.UserId, e.IntentType }).IsUnique();
             entity.HasIndex(e => e.PersonId);
             entity.HasIndex(e => e.UserId);
         });
@@ -227,9 +223,6 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
-            entity.Property(e => e.CreatedByUserId).IsRequired(false);
-            entity.Property(e => e.LastModifiedAtUtc).IsRequired(false);
-            entity.Property(e => e.LastModifiedByUserId).IsRequired(false);
             entity.Property(e => e.CustomData)
                 .HasConversion(
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
