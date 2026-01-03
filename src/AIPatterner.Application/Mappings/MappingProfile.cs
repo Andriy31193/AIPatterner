@@ -29,7 +29,6 @@ public class MappingProfile : Profile
                     dto.Context.Location,
                     dto.Context.PresentPeople,
                     dto.Context.StateSignals),
-                null, // userId - TODO: Get from user context
                 dto.ProbabilityValue,
                 dto.ProbabilityAction,
                 dto.CustomData,

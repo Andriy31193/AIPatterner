@@ -10,7 +10,6 @@ public class RoutineReminder
     public Guid Id { get; private set; }
     public Guid RoutineId { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public string SuggestedAction { get; private set; }
     public double Confidence { get; private set; } // Probability/confidence level (0.0 to 1.0)
     public DateTime CreatedAtUtc { get; private set; }
@@ -25,7 +24,6 @@ public class RoutineReminder
         string personId,
         string suggestedAction,
         double confidence,
-        Guid? userId = null,
         Dictionary<string, string>? customData = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
@@ -38,7 +36,6 @@ public class RoutineReminder
         Id = Guid.NewGuid();
         RoutineId = routineId;
         PersonId = personId;
-        UserId = userId;
         SuggestedAction = suggestedAction;
         Confidence = confidence;
         CreatedAtUtc = DateTime.UtcNow;

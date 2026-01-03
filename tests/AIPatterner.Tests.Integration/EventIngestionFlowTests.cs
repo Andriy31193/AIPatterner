@@ -81,8 +81,6 @@ public class EventIngestionFlowTests
             config,
             loggerFactory.CreateLogger<RoutineLearningService>());
         
-        var mockUserContextService = new MockUserContextService();
-        
         var handler = new IngestEventCommandHandler(
             eventRepo,
             transitionLearner,
@@ -93,8 +91,7 @@ public class EventIngestionFlowTests
             config,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService,
-            mockUserContextService);
+            routineLearningService);
 
         var firstEvent = new ActionEventDto
         {

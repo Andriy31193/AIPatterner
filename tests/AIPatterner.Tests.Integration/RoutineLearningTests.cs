@@ -277,12 +277,11 @@ public class RoutineLearningTests : RealDatabaseTestBase
             "PlayMusic",
             now,
             ReminderStyle.Suggest,
-            userId: null,
-            transitionId: null,
-            confidence: 0.6,
-            occurrence: null,
-            sourceEventId: null,
-            customData: null);
+            null,
+            0.6,
+            null,
+            null,
+            null);
 
         await ReminderRepository.AddAsync(generalReminder, CancellationToken.None);
 

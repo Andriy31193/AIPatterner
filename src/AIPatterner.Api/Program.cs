@@ -128,12 +128,6 @@ builder.Services.AddScoped<ILLMClient, LLMClient>();
 // Authentication service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// HTTP Context Accessor (for UserContextService)
-builder.Services.AddHttpContextAccessor();
-
-// User Context Service
-builder.Services.AddScoped<AIPatterner.Application.Services.IUserContextService, AIPatterner.Infrastructure.Services.UserContextService>();
-
 // HTTP clients
 builder.Services.AddHttpClient("Notification");
 builder.Services.AddHttpClient("LLM");

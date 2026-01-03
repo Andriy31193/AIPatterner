@@ -47,7 +47,6 @@ public class ReminderCandidate
 {
     public Guid Id { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public string SuggestedAction { get; private set; }
     public DateTime CheckAtUtc { get; private set; }
     public Guid? TransitionId { get; private set; }
@@ -109,7 +108,6 @@ public class ReminderCandidate
         string suggestedAction,
         DateTime checkAtUtc,
         ReminderStyle style,
-        Guid? userId = null,
         Guid? transitionId = null,
         double confidence = 0.5,
         string? occurrence = null,
@@ -125,7 +123,6 @@ public class ReminderCandidate
 
         Id = Guid.NewGuid();
         PersonId = personId;
-        UserId = userId;
         SuggestedAction = suggestedAction;
         CheckAtUtc = checkAtUtc;
         Style = style;

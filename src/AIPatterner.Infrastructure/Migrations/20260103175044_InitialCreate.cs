@@ -17,7 +17,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     ActionType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     TimestampUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Context_TimeBucket = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
@@ -43,7 +42,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     FromAction = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ToAction = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ContextBucket = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
@@ -69,6 +67,7 @@ namespace AIPatterner.Infrastructure.Migrations
                     KeyPrefix = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     ExpiresAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastUsedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -123,7 +122,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     SuggestedAction = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CheckAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     TransitionId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -159,7 +157,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     ActionType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     SuppressedUntilUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Reason = table.Column<string>(type: "text", nullable: true),
@@ -177,7 +174,6 @@ namespace AIPatterner.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     RoutineId = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     SuggestedAction = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Confidence = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -196,7 +192,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     IntentType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastIntentOccurredAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -213,7 +208,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     DefaultStyle = table.Column<int>(type: "integer", nullable: false),
                     DailyLimit = table.Column<int>(type: "integer", nullable: false),
                     MinimumInterval = table.Column<TimeSpan>(type: "interval", nullable: false),
@@ -254,11 +248,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 column: "RelatedReminderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_actionevents_UserId_TimestampUtc",
-                table: "actionevents",
-                columns: new[] { "UserId", "TimestampUtc" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_actiontransitions_PersonId_FromAction_ContextBucket",
                 table: "actiontransitions",
                 columns: new[] { "PersonId", "FromAction", "ContextBucket" });
@@ -267,16 +256,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 name: "IX_actiontransitions_PersonId_ToAction",
                 table: "actiontransitions",
                 columns: new[] { "PersonId", "ToAction" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_actiontransitions_UserId_FromAction_ContextBucket",
-                table: "actiontransitions",
-                columns: new[] { "UserId", "FromAction", "ContextBucket" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_actiontransitions_UserId_ToAction",
-                table: "actiontransitions",
-                columns: new[] { "UserId", "ToAction" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_apikeys_KeyHash",
@@ -335,24 +314,9 @@ namespace AIPatterner.Infrastructure.Migrations
                 column: "SourceEventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_remindercandidates_UserId_Status",
-                table: "remindercandidates",
-                columns: new[] { "UserId", "Status" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_remindercandidates_UserId_SuggestedAction_CheckAtUtc",
-                table: "remindercandidates",
-                columns: new[] { "UserId", "SuggestedAction", "CheckAtUtc" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_remindercooldowns_PersonId_ActionType_SuppressedUntilUtc",
                 table: "remindercooldowns",
                 columns: new[] { "PersonId", "ActionType", "SuppressedUntilUtc" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_remindercooldowns_UserId_ActionType_SuppressedUntilUtc",
-                table: "remindercooldowns",
-                columns: new[] { "UserId", "ActionType", "SuppressedUntilUtc" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_routinereminders_PersonId",
@@ -371,11 +335,6 @@ namespace AIPatterner.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_routinereminders_UserId",
-                table: "routinereminders",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_routines_PersonId",
                 table: "routines",
                 column: "PersonId");
@@ -387,26 +346,9 @@ namespace AIPatterner.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_routines_UserId",
-                table: "routines",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_routines_UserId_IntentType",
-                table: "routines",
-                columns: new[] { "UserId", "IntentType" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_userreminderpreferences_PersonId",
                 table: "userreminderpreferences",
                 column: "PersonId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_userreminderpreferences_UserId",
-                table: "userreminderpreferences",
-                column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

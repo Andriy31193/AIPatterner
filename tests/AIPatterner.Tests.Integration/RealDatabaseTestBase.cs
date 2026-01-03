@@ -114,9 +114,6 @@ public abstract class RealDatabaseTestBase : IDisposable
             Configuration,
             loggerFactory.CreateLogger<RoutineLearningService>());
 
-        // Mock user context service for tests (returns null userId by default for backward compatibility)
-        var mockUserContextService = new MockUserContextService();
-
         EventHandler = new IngestEventCommandHandler(
             EventRepository,
             transitionLearner,
@@ -127,8 +124,7 @@ public abstract class RealDatabaseTestBase : IDisposable
             Configuration,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService,
-            mockUserContextService);
+            routineLearningService);
 
         // Setup matching policies
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();
@@ -168,7 +164,9 @@ public abstract class RealDatabaseTestBase : IDisposable
     {
         // Clean up test data with specific prefixes
         var testPersonIds = new[] { "user", "api_user", "api_test_user", "api_related_user", "api_feedback_user", 
-            "feedback_user", "daily_user", "weekly_user", "user_a", "user_b", "user_c", "routine_test_user" };
+            "feedback_user", "daily_user", "weekly_user", "user_a", "user_b", "user_c", "routine_test_user",
+            "event_person", "reminder_person", "routine_person", "duplicate_test_person", "matched_user",
+            "user_for_id", "testuser_dual", "testuser1", "testuser2", "adminuser" };
 
         foreach (var personIdPrefix in testPersonIds)
         {
@@ -199,7 +197,7 @@ public abstract class RealDatabaseTestBase : IDisposable
 
         // Clean up routines and routine reminders
         var routineTestPersonIds = Context.Routines
-            .Where(r => r.PersonId.StartsWith("routine_test_user"))
+            .Where(r => r.PersonId.StartsWith("routine_test_user") || r.PersonId.StartsWith("routine_person"))
             .Select(r => r.PersonId)
             .Distinct()
             .ToList();
@@ -220,6 +218,13 @@ public abstract class RealDatabaseTestBase : IDisposable
             
             Context.Routines.RemoveRange(routines);
         }
+
+        // Clean up test users
+        var testUsernames = new[] { "testuser1", "testuser2", "adminuser", "matched_user", "user_for_id", "testuser_dual" };
+        var testUsers = Context.Users
+            .Where(u => testUsernames.Contains(u.Username))
+            .ToList();
+        Context.Users.RemoveRange(testUsers);
 
         Context.SaveChanges();
     }

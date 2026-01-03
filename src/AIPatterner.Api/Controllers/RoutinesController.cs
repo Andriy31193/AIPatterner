@@ -1,6 +1,7 @@
 // API controller for routines
 namespace AIPatterner.Api.Controllers;
 
+using AIPatterner.Api.Extensions;
 using AIPatterner.Application.Queries;
 using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
@@ -27,11 +28,32 @@ public class RoutinesController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> GetRoutines(
         [FromQuery] string? personId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
+        // Validate personId access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // For user role: personId is required and must match their own
+        if (!isAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(personId))
+            {
+                // If no personId provided, use the API key's personId
+                personId = apiKeyPersonId;
+            }
+            else if (personId != apiKeyPersonId)
+            {
+                // User trying to access different personId - forbidden
+                return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+            }
+        }
+        // For admin: any personId is allowed
+
         var query = new GetRoutinesQuery
         {
             PersonId = personId,
@@ -55,6 +77,8 @@ public class RoutinesController : ControllerBase
 
     [HttpGet("active")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> GetActiveRoutines(
         [FromQuery] string personId)
     {
@@ -62,6 +86,18 @@ public class RoutinesController : ControllerBase
         {
             return BadRequest(new { message = "personId is required" });
         }
+
+        // Validate personId access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // For user role: personId must match their own
+        if (!isAdmin && personId != apiKeyPersonId)
+        {
+            // User trying to access different personId - forbidden
+            return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+        }
+        // For admin: any personId is allowed
 
         var query = new GetRoutinesQuery
         {

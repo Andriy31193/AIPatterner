@@ -5,7 +5,6 @@ public class UserReminderPreferences
 {
     public Guid Id { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public ReminderStyle DefaultStyle { get; private set; }
     public int DailyLimit { get; private set; }
     public TimeSpan MinimumInterval { get; private set; }
@@ -19,8 +18,7 @@ public class UserReminderPreferences
         string personId,
         ReminderStyle defaultStyle = ReminderStyle.Ask,
         int dailyLimit = 10,
-        TimeSpan? minimumInterval = null,
-        Guid? userId = null)
+        TimeSpan? minimumInterval = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -29,7 +27,6 @@ public class UserReminderPreferences
 
         Id = Guid.NewGuid();
         PersonId = personId;
-        UserId = userId;
         DefaultStyle = defaultStyle;
         DailyLimit = dailyLimit;
         MinimumInterval = minimumInterval ?? TimeSpan.FromMinutes(15);

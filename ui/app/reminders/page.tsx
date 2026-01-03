@@ -1,7 +1,7 @@
 // Reminder candidates management page with High/Low probability lists
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
@@ -19,7 +19,7 @@ const CONFIDENCE_THRESHOLD = 0.7; // High probability threshold
 
 export default function RemindersPage() {
   const router = useRouter();
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [personId, setPersonId] = useState('');
   const [actionType, setActionType] = useState('');
   const [status, setStatus] = useState('');
@@ -29,6 +29,20 @@ export default function RemindersPage() {
   const [editingReminder, setEditingReminder] = useState<ReminderCandidateDto | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [executingReminders, setExecutingReminders] = useState<Set<string>>(new Set());
+
+  // For non-admin users, set personId to their username on mount
+  useEffect(() => {
+    if (!isAdmin && user?.username) {
+      setPersonId(user.username);
+    }
+  }, [isAdmin, user]);
+
+  // Fetch personIds for admin dropdown
+  const { data: personIdsData } = useQuery({
+    queryKey: ['personIds'],
+    queryFn: () => apiService.getPersonIds(),
+    enabled: isAdmin,
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['reminderCandidates', { personId, actionType, status, page, pageSize }],
@@ -253,13 +267,33 @@ export default function RemindersPage() {
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700">
                 Person ID
               </label>
-              <input
-                type="text"
-                id="personId"
-                value={personId}
-                onChange={(e) => setPersonId(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+              {isAdmin ? (
+                <select
+                  id="personId"
+                  value={personId}
+                  onChange={(e) => {
+                    setPersonId(e.target.value);
+                    setPage(1);
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">All Persons</option>
+                  {personIdsData?.map((p) => (
+                    <option key={p.personId} value={p.personId}>
+                      {p.displayName} ({p.personId})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  id="personId"
+                  value={personId}
+                  disabled
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 text-gray-600 sm:text-sm cursor-not-allowed"
+                  title="Your personId is fixed to your username"
+                />
+              )}
             </div>
             <div>
               <label htmlFor="actionType" className="block text-sm font-medium text-gray-700">

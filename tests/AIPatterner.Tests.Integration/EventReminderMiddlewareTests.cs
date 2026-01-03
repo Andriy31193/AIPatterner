@@ -88,8 +88,6 @@ public class EventReminderMiddlewareTests : IDisposable
             _configuration,
             loggerFactory.CreateLogger<RoutineLearningService>());
 
-        var mockUserContextService = new MockUserContextService();
-        
         _handler = new IngestEventCommandHandler(
             _eventRepository,
             transitionLearner,
@@ -100,8 +98,7 @@ public class EventReminderMiddlewareTests : IDisposable
             _configuration,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService,
-            mockUserContextService);
+            routineLearningService);
 
         // Setup matching policies in configuration
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();

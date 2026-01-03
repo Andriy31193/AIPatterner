@@ -8,6 +8,7 @@ import { Layout } from '@/components/Layout';
 import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
 import { LearningBadge } from '@/components/LearningBadge';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
 import type { ActionEventDto, ReminderCandidateDto, RoutineDto } from '@/types';
 import { ProbabilityAction, EventType } from '@/types';
 
@@ -32,6 +33,7 @@ const COMMON_TOOLS = [
 
 export default function CreateEventPage() {
   const router = useRouter();
+  const { user, isAdmin } = useAuth();
   const [eventType, setEventType] = useState<EventType>(EventType.Action);
   const [intentType, setIntentType] = useState<string>('');
   const [customIntentType, setCustomIntentType] = useState('');
@@ -54,6 +56,20 @@ export default function CreateEventPage() {
     },
     probabilityValue: undefined,
     probabilityAction: undefined,
+  });
+
+  // For non-admin users, set personId to their username on mount
+  useEffect(() => {
+    if (!isAdmin && user?.username) {
+      setFormData(prev => ({ ...prev, personId: user.username }));
+    }
+  }, [isAdmin, user]);
+
+  // Fetch personIds for admin dropdown
+  const { data: personIdsData } = useQuery({
+    queryKey: ['personIds'],
+    queryFn: () => apiService.getPersonIds(),
+    enabled: isAdmin,
   });
 
   // Fetch existing reminders and routines for preview
@@ -353,15 +369,32 @@ export default function CreateEventPage() {
                   <label htmlFor="personId" className="block text-sm font-medium text-gray-900 mb-2">
                     Person ID *
                   </label>
-                  <input
-                    type="text"
-                    id="personId"
-                    value={formData.personId}
-                    onChange={(e) => setFormData({ ...formData, personId: e.target.value })}
-                    required
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    placeholder="e.g., alex, mom, dad"
-                  />
+                  {isAdmin ? (
+                    <select
+                      id="personId"
+                      value={formData.personId}
+                      onChange={(e) => setFormData({ ...formData, personId: e.target.value })}
+                      required
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    >
+                      <option value="">Select a person...</option>
+                      {personIdsData?.map((p) => (
+                        <option key={p.personId} value={p.personId}>
+                          {p.displayName} ({p.personId})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      id="personId"
+                      value={formData.personId}
+                      disabled
+                      required
+                      className="block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 text-gray-600 sm:text-sm cursor-not-allowed"
+                      title="Your personId is fixed to your username"
+                    />
+                  )}
                   <p className="mt-1 text-xs text-gray-500">
                     Who is performing this action or expressing this intent?
                   </p>

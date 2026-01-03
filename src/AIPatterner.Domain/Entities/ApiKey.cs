@@ -9,6 +9,7 @@ public class ApiKey
     public string KeyPrefix { get; private set; } // First 8 chars for display
     public string Role { get; private set; }
     public Guid? UserId { get; private set; }
+    public string? PersonId { get; private set; }
     public DateTime? ExpiresAtUtc { get; private set; }
     public DateTime? LastUsedAtUtc { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
@@ -16,7 +17,7 @@ public class ApiKey
 
     private ApiKey() { } // EF Core
 
-    public ApiKey(string name, string keyHash, string keyPrefix, string role, Guid? userId = null, DateTime? expiresAtUtc = null)
+    public ApiKey(string name, string keyHash, string keyPrefix, string role, Guid? userId = null, string? personId = null, DateTime? expiresAtUtc = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Name cannot be null or empty", nameof(name));
@@ -33,6 +34,7 @@ public class ApiKey
         KeyPrefix = keyPrefix;
         Role = role;
         UserId = userId;
+        PersonId = personId;
         ExpiresAtUtc = expiresAtUtc;
         IsActive = true;
         CreatedAtUtc = DateTime.UtcNow;

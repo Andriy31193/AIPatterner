@@ -45,6 +45,7 @@ public class ApiKeysController : ControllerBase
         {
             Name = request.Name,
             Role = request.Role ?? "user",
+            PersonId = request.PersonId,
             ExpiresAtUtc = request.ExpiresAtUtc
         };
 

@@ -5,7 +5,6 @@ public class ReminderCooldown
 {
     public Guid Id { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public string ActionType { get; private set; }
     public DateTime SuppressedUntilUtc { get; private set; }
     public string? Reason { get; private set; }
@@ -17,7 +16,6 @@ public class ReminderCooldown
         string personId,
         string actionType,
         DateTime suppressedUntilUtc,
-        Guid? userId = null,
         string? reason = null)
     {
         if (string.IsNullOrWhiteSpace(personId))
@@ -27,7 +25,6 @@ public class ReminderCooldown
 
         Id = Guid.NewGuid();
         PersonId = personId;
-        UserId = userId;
         ActionType = actionType;
         SuppressedUntilUtc = suppressedUntilUtc;
         Reason = reason;

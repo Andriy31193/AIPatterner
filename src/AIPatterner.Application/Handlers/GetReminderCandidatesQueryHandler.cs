@@ -4,7 +4,6 @@ namespace AIPatterner.Application.Handlers;
 using AIPatterner.Application.DTOs;
 using AIPatterner.Application.Mappings;
 using AIPatterner.Application.Queries;
-using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using AutoMapper;
 using MediatR;
@@ -14,16 +13,11 @@ public class GetReminderCandidatesQueryHandler : IRequestHandler<GetReminderCand
 {
     private readonly IReminderCandidateRepository _repository;
     private readonly IMapper _mapper;
-    private readonly IUserContextService _userContextService;
 
-    public GetReminderCandidatesQueryHandler(
-        IReminderCandidateRepository repository, 
-        IMapper mapper,
-        IUserContextService userContextService)
+    public GetReminderCandidatesQueryHandler(IReminderCandidateRepository repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
-        _userContextService = userContextService;
     }
 
     public async Task<ReminderCandidateListResponse> Handle(GetReminderCandidatesQuery request, CancellationToken cancellationToken)
@@ -36,15 +30,6 @@ public class GetReminderCandidatesQueryHandler : IRequestHandler<GetReminderCand
             request.Page,
             request.PageSize,
             cancellationToken);
-
-        // Apply user isolation: filter by userId if not admin
-        var currentUserId = await _userContextService.GetCurrentUserIdAsync();
-        var isAdmin = _userContextService.IsAdmin();
-
-        if (!isAdmin && currentUserId.HasValue)
-        {
-            candidates = candidates.Where(c => c.UserId == currentUserId.Value).ToList();
-        }
 
         // Filter by action type if provided
         var filteredCandidates = candidates;
@@ -60,20 +45,10 @@ public class GetReminderCandidatesQueryHandler : IRequestHandler<GetReminderCand
             request.ToUtc,
             cancellationToken);
 
-        // Recalculate total count after user filtering
-        if (!isAdmin && currentUserId.HasValue)
-        {
-            totalCount = filteredCandidates.Count;
-        }
-        else if (!string.IsNullOrWhiteSpace(request.ActionType))
-        {
-            totalCount = filteredCandidates.Count;
-        }
-
         return new ReminderCandidateListResponse
         {
             Items = _mapper.Map<List<ReminderCandidateDto>>(filteredCandidates),
-            TotalCount = totalCount,
+            TotalCount = !string.IsNullOrWhiteSpace(request.ActionType) ? filteredCandidates.Count : totalCount,
             Page = request.Page,
             PageSize = request.PageSize
         };

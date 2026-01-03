@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIPatterner.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260103161426_InitialCreate")]
+    [Migration("20260103175044_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -66,16 +66,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("TimestampUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RelatedReminderId");
 
                     b.HasIndex("PersonId", "TimestampUtc");
-
-                    b.HasIndex("UserId", "TimestampUtc");
 
                     b.ToTable("actionevents", (string)null);
                 });
@@ -125,18 +120,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId", "ToAction");
 
-                    b.HasIndex("UserId", "ToAction");
-
                     b.HasIndex("PersonId", "FromAction", "ContextBucket");
-
-                    b.HasIndex("UserId", "FromAction", "ContextBucket");
 
                     b.ToTable("actiontransitions", (string)null);
                 });
@@ -173,6 +161,10 @@ namespace AIPatterner.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("PersonId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -361,9 +353,6 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<Guid?>("TransitionId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CheckAtUtc");
@@ -372,11 +361,7 @@ namespace AIPatterner.Infrastructure.Migrations
 
                     b.HasIndex("PersonId", "Status");
 
-                    b.HasIndex("UserId", "Status");
-
                     b.HasIndex("PersonId", "SuggestedAction", "CheckAtUtc");
-
-                    b.HasIndex("UserId", "SuggestedAction", "CheckAtUtc");
 
                     b.ToTable("remindercandidates", (string)null);
                 });
@@ -406,14 +391,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("SuppressedUntilUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId", "ActionType", "SuppressedUntilUtc");
-
-                    b.HasIndex("UserId", "ActionType", "SuppressedUntilUtc");
 
                     b.ToTable("remindercooldowns", (string)null);
                 });
@@ -443,19 +423,11 @@ namespace AIPatterner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("PersonId", "IntentType")
-                        .IsUnique();
-
-                    b.HasIndex("UserId", "IntentType")
                         .IsUnique();
 
                     b.ToTable("routines", (string)null);
@@ -496,16 +468,11 @@ namespace AIPatterner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
 
                     b.HasIndex("RoutineId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("RoutineId", "SuggestedAction")
                         .IsUnique();
@@ -585,15 +552,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
                         .IsUnique();
 
                     b.ToTable("userreminderpreferences", (string)null);

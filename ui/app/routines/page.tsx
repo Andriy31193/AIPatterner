@@ -1,7 +1,7 @@
 // Routines page - card-based list view and detail view
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
@@ -9,15 +9,31 @@ import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
 import { LearningBadge } from '@/components/LearningBadge';
 import { DateTimeDisplay } from '@/components/DateTimeDisplay';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
 import type { RoutineDto, RoutineDetailDto, RoutineReminderDto } from '@/types';
 import { ProbabilityAction } from '@/types';
 
 export default function RoutinesPage() {
   const router = useRouter();
+  const { user, isAdmin } = useAuth();
   const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(null);
   const [personId, setPersonId] = useState('');
   const [page, setPage] = useState(1);
   const pageSize = 20;
+
+  // For non-admin users, set personId to their username on mount
+  useEffect(() => {
+    if (!isAdmin && user?.username) {
+      setPersonId(user.username);
+    }
+  }, [isAdmin, user]);
+
+  // Fetch personIds for admin dropdown
+  const { data: personIdsData } = useQuery({
+    queryKey: ['personIds'],
+    queryFn: () => apiService.getPersonIds(),
+    enabled: isAdmin,
+  });
 
   const { data: routinesData, isLoading } = useQuery({
     queryKey: ['routines', { personId, page, pageSize }],
@@ -218,17 +234,33 @@ export default function RoutinesPage() {
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700 mb-1">
                 Person ID
               </label>
-              <input
-                type="text"
-                id="personId"
-                value={personId}
-                onChange={(e) => {
-                  setPersonId(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Filter by person..."
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+              {isAdmin ? (
+                <select
+                  id="personId"
+                  value={personId}
+                  onChange={(e) => {
+                    setPersonId(e.target.value);
+                    setPage(1);
+                  }}
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">All Persons</option>
+                  {personIdsData?.map((p) => (
+                    <option key={p.personId} value={p.personId}>
+                      {p.displayName} ({p.personId})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  id="personId"
+                  value={personId}
+                  disabled
+                  className="block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 text-gray-600 sm:text-sm cursor-not-allowed"
+                  title="Your personId is fixed to your username"
+                />
+              )}
             </div>
           </div>
         </div>

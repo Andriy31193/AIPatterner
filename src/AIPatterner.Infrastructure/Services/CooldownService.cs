@@ -29,7 +29,6 @@ public class CooldownService : ICooldownService
             personId,
             actionType,
             DateTime.UtcNow.Add(duration),
-            userId: null, // TODO: Get from user context
             reason);
 
         await _context.ReminderCooldowns.AddAsync(cooldown, cancellationToken);

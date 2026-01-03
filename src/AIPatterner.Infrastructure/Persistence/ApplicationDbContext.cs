@@ -32,7 +32,6 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("actionevents"); // lowercase
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.ActionType).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ProbabilityValue).HasPrecision(18, 4);
             entity.Property(e => e.ProbabilityAction).HasConversion<string>().HasMaxLength(20);
@@ -45,7 +44,6 @@ public class ApplicationDbContext : DbContext
                     v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
                 .HasColumnType("jsonb");
             entity.HasIndex(e => new { e.PersonId, e.TimestampUtc });
-            entity.HasIndex(e => new { e.UserId, e.TimestampUtc });
             entity.HasIndex(e => e.RelatedReminderId);
             entity.OwnsOne(e => e.Context, context =>
             {
@@ -71,15 +69,12 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("actiontransitions");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.FromAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ToAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ContextBucket).IsRequired().HasMaxLength(500);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.HasIndex(e => new { e.PersonId, e.FromAction, e.ContextBucket });
-            entity.HasIndex(e => new { e.UserId, e.FromAction, e.ContextBucket });
             entity.HasIndex(e => new { e.PersonId, e.ToAction });
-            entity.HasIndex(e => new { e.UserId, e.ToAction });
         });
 
         modelBuilder.Entity<ReminderCandidate>(entity =>
@@ -87,7 +82,6 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("remindercandidates");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.Property(e => e.Occurrence).HasMaxLength(200);
@@ -115,9 +109,7 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.CheckAtUtc);
             entity.HasIndex(e => e.SourceEventId);
             entity.HasIndex(e => new { e.PersonId, e.Status });
-            entity.HasIndex(e => new { e.UserId, e.Status });
             entity.HasIndex(e => new { e.PersonId, e.SuggestedAction, e.CheckAtUtc });
-            entity.HasIndex(e => new { e.UserId, e.SuggestedAction, e.CheckAtUtc });
             entity.OwnsOne(e => e.Decision, decision =>
             {
                 decision.Property(d => d.ShouldSpeak);
@@ -134,10 +126,8 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("remindercooldowns");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.ActionType).IsRequired().HasMaxLength(100);
             entity.HasIndex(e => new { e.PersonId, e.ActionType, e.SuppressedUntilUtc });
-            entity.HasIndex(e => new { e.UserId, e.ActionType, e.SuppressedUntilUtc });
         });
 
         modelBuilder.Entity<UserReminderPreferences>(entity =>
@@ -145,9 +135,7 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("userreminderpreferences");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.HasIndex(e => e.PersonId).IsUnique();
-            entity.HasIndex(e => e.UserId).IsUnique();
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -170,6 +158,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.KeyHash).IsRequired().HasMaxLength(500);
             entity.Property(e => e.KeyPrefix).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Role).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.PersonId).HasMaxLength(100);
             entity.HasIndex(e => e.KeyHash);
             entity.HasIndex(e => e.UserId);
         });
@@ -206,12 +195,9 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("routines");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.IntentType).IsRequired().HasMaxLength(100);
             entity.HasIndex(e => new { e.PersonId, e.IntentType }).IsUnique();
-            entity.HasIndex(e => new { e.UserId, e.IntentType }).IsUnique();
             entity.HasIndex(e => e.PersonId);
-            entity.HasIndex(e => e.UserId);
         });
 
         modelBuilder.Entity<RoutineReminder>(entity =>
@@ -220,7 +206,6 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.RoutineId).IsRequired();
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.UserId).IsRequired(false);
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.Property(e => e.CustomData)
@@ -231,7 +216,6 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => new { e.RoutineId, e.SuggestedAction }).IsUnique();
             entity.HasIndex(e => e.RoutineId);
             entity.HasIndex(e => e.PersonId);
-            entity.HasIndex(e => e.UserId);
         });
     }
 }

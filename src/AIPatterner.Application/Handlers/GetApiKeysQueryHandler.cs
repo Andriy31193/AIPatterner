@@ -25,6 +25,7 @@ public class GetApiKeysQueryHandler : IRequestHandler<GetApiKeysQuery, List<ApiK
             KeyPrefix = k.KeyPrefix,
             Role = k.Role,
             UserId = k.UserId,
+            PersonId = k.PersonId,
             ExpiresAtUtc = k.ExpiresAtUtc,
             LastUsedAtUtc = k.LastUsedAtUtc,
             CreatedAtUtc = k.CreatedAtUtc,

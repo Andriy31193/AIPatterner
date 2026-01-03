@@ -377,6 +377,12 @@ class ApiService {
     });
     return response.data;
   }
+
+  // Get all unique personIds
+  async getPersonIds(): Promise<{ personId: string; displayName: string }[]> {
+    const response = await this.client.get<{ personId: string; displayName: string }[]>('/api/v1/person-ids');
+    return response.data;
+  }
 }
 
 export const apiService = new ApiService();

@@ -51,9 +51,25 @@ public class ApiKeyAuthenticationMiddleware
             return;
         }
 
-        // Allow requests that are already authenticated via JWT
+        // Handle JWT authentication - extract user info and store in HttpContext
         if (context.User?.Identity?.IsAuthenticated == true)
         {
+            // Get user info from JWT claims
+            var userIdClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var usernameClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.Name);
+            var roleClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role);
+            
+            if (userIdClaim != null && usernameClaim != null)
+            {
+                // Store user info in HttpContext (similar to API key info)
+                context.Items["JwtUserId"] = userIdClaim.Value;
+                context.Items["JwtUsername"] = usernameClaim.Value;
+                context.Items["JwtRole"] = roleClaim?.Value ?? "user";
+                // For JWT users, personId is their username
+                context.Items["ApiKeyPersonId"] = usernameClaim.Value;
+                context.Items["ApiKeyRole"] = roleClaim?.Value ?? "user";
+            }
+            
             await _next(context);
             return;
         }
@@ -110,8 +126,22 @@ public class ApiKeyAuthenticationMiddleware
         apiKey.UpdateLastUsed();
         await dbContext.SaveChangesAsync();
 
-        // Store API key in HttpContext.Items for UserContextService
+        // Resolve personId: use ApiKey.PersonId if set, otherwise use User's username if UserId is set
+        string? resolvedPersonId = apiKey.PersonId;
+        if (string.IsNullOrEmpty(resolvedPersonId) && apiKey.UserId.HasValue)
+        {
+            var user = await dbContext.Users.FindAsync(new object[] { apiKey.UserId.Value });
+            if (user != null)
+            {
+                resolvedPersonId = user.Username;
+            }
+        }
+
+        // Store API key info in HttpContext for controllers to access
         context.Items["ApiKey"] = apiKey;
+        context.Items["ApiKeyRole"] = apiKey.Role;
+        context.Items["ApiKeyPersonId"] = resolvedPersonId;
+        context.Items["ApiKeyUserId"] = apiKey.UserId;
 
         // Check if admin endpoint requires admin role
         var requiresAdmin = path.StartsWith("/api/v1/admin");

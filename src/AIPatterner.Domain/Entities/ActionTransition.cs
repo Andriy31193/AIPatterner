@@ -5,7 +5,6 @@ public class ActionTransition
 {
     public Guid Id { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public string FromAction { get; private set; }
     public string ToAction { get; private set; }
     public string ContextBucket { get; private set; }
@@ -22,8 +21,7 @@ public class ActionTransition
         string personId,
         string fromAction,
         string toAction,
-        string contextBucket,
-        Guid? userId = null)
+        string contextBucket)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -36,7 +34,6 @@ public class ActionTransition
 
         Id = Guid.NewGuid();
         PersonId = personId;
-        UserId = userId;
         FromAction = fromAction;
         ToAction = toAction;
         ContextBucket = contextBucket;

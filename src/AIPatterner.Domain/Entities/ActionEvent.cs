@@ -5,7 +5,6 @@ public class ActionEvent
 {
     public Guid Id { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility and system events
     public string ActionType { get; private set; }
     public DateTime TimestampUtc { get; private set; }
     public ActionContext Context { get; private set; }
@@ -23,7 +22,6 @@ public class ActionEvent
         string actionType, 
         DateTime timestampUtc, 
         ActionContext context,
-        Guid? userId = null,
         double? probabilityValue = null,
         ProbabilityAction? probabilityAction = null,
         Dictionary<string, string>? customData = null,
@@ -36,7 +34,6 @@ public class ActionEvent
 
         Id = Guid.NewGuid();
         PersonId = personId;
-        UserId = userId;
         ActionType = actionType;
         TimestampUtc = timestampUtc;
         Context = context ?? throw new ArgumentNullException(nameof(context));

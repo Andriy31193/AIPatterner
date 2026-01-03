@@ -31,6 +31,7 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, C
             keyPrefix,
             request.Role,
             request.UserId,
+            request.PersonId,
             request.ExpiresAtUtc);
 
         await _repository.AddAsync(apiKey, cancellationToken);
@@ -43,6 +44,7 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, C
             KeyPrefix = apiKey.KeyPrefix,
             Role = apiKey.Role,
             UserId = apiKey.UserId,
+            PersonId = apiKey.PersonId,
             ExpiresAtUtc = apiKey.ExpiresAtUtc,
             LastUsedAtUtc = apiKey.LastUsedAtUtc,
             CreatedAtUtc = apiKey.CreatedAtUtc,

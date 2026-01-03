@@ -9,7 +9,6 @@ public class Routine
 {
     public Guid Id { get; private set; }
     public string PersonId { get; private set; }
-    public Guid? UserId { get; private set; } // Nullable for backward compatibility
     public string IntentType { get; private set; } // The ActionType of the StateChange event (e.g., "ArrivalHome")
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? LastIntentOccurredAtUtc { get; private set; }
@@ -17,7 +16,7 @@ public class Routine
 
     private Routine() { } // EF Core
 
-    public Routine(string personId, string intentType, DateTime intentOccurredAtUtc, Guid? userId = null)
+    public Routine(string personId, string intentType, DateTime intentOccurredAtUtc)
     {
         if (string.IsNullOrWhiteSpace(personId))
             throw new ArgumentException("PersonId cannot be null or empty", nameof(personId));
@@ -26,7 +25,6 @@ public class Routine
 
         Id = Guid.NewGuid();
         PersonId = personId;
-        UserId = userId;
         IntentType = intentType;
         CreatedAtUtc = DateTime.UtcNow;
         LastIntentOccurredAtUtc = intentOccurredAtUtc;
