@@ -9,6 +9,7 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { DateTimeDisplay } from '@/components/DateTimeDisplay';
 import { ConfidenceBadge } from '@/components/ConfidenceBadge';
 import { EditOccurrenceModal } from '@/components/EditOccurrenceModal';
+import { ReminderDetailModal } from '@/components/ReminderDetailModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
@@ -28,6 +29,8 @@ export default function RemindersPage() {
   const queryClient = useQueryClient();
   const [editingReminder, setEditingReminder] = useState<ReminderCandidateDto | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [detailReminder, setDetailReminder] = useState<ReminderCandidateDto | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [executingReminders, setExecutingReminders] = useState<Set<string>>(new Set());
 
   // For non-admin users, set personId to their username on mount
@@ -128,6 +131,50 @@ export default function RemindersPage() {
     setIsEditModalOpen(true);
   };
 
+  const handleCardClick = (candidate: ReminderCandidateDto, e: React.MouseEvent) => {
+    // Don't open modal if clicking on buttons
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
+    setDetailReminder(candidate);
+    setIsDetailModalOpen(true);
+  };
+
+  // Extract state signal conditions from customData
+  const extractStateSignals = (candidate: ReminderCandidateDto): string[] => {
+    if (!candidate.customData) return [];
+    
+    const signals: string[] = [];
+    Object.entries(candidate.customData).forEach(([key, value]) => {
+      // Check if it looks like a state signal
+      if (key.toLowerCase().includes('state') || 
+          key.toLowerCase().includes('signal') ||
+          key.toLowerCase().includes('location') ||
+          key.toLowerCase().includes('home') ||
+          key.toLowerCase().includes('music') ||
+          key.toLowerCase().includes('device')) {
+        // Format as human-readable
+        const name = key
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/_/g, ' ')
+          .replace(/^\w/, c => c.toUpperCase())
+          .trim();
+        signals.push(name);
+      }
+    });
+    return signals;
+  };
+
+  // Format condition name for display
+  const formatConditionName = (key: string): string => {
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/_/g, ' ')
+      .replace(/^\w/, c => c.toUpperCase())
+      .trim();
+  };
+
   const handleSaveOccurrence = async (occurrence: string | null) => {
     if (editingReminder) {
       await updateOccurrenceMutation.mutateAsync({
@@ -164,10 +211,27 @@ export default function RemindersPage() {
       ? 'bg-green-50 border-green-200 hover:border-green-300' 
       : 'bg-yellow-50 border-yellow-200 hover:border-yellow-300';
     
+    const stateSignals = extractStateSignals(candidate);
+    const maxVisibleTags = 2;
+    const visibleTags = stateSignals.slice(0, maxVisibleTags);
+    const hasMoreTags = stateSignals.length > maxVisibleTags;
+    // Show "More..." as 3rd item if there are 3+ conditions
+    const showMoreButton = stateSignals.length >= 3;
+    
     return (
       <div
         key={candidate.id}
-        className={`border rounded-lg p-4 transition-all ${cardBgColor} ${isExecuting ? 'ring-2 ring-indigo-500' : ''}`}
+        className={`border rounded-lg p-4 transition-all ${cardBgColor} ${isExecuting ? 'ring-2 ring-indigo-500' : ''} cursor-pointer`}
+        onClick={(e) => handleCardClick(candidate, e)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleCardClick(candidate, e as any);
+          }
+        }}
+        aria-label={`View details for reminder: ${candidate.suggestedAction}`}
       >
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
@@ -192,12 +256,6 @@ export default function RemindersPage() {
                 <DateTimeDisplay date={candidate.checkAtUtc} />
               </p>
             </div>
-            {candidate.occurrence && (
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Pattern</p>
-                <p className="text-sm text-gray-700">{candidate.occurrence}</p>
-              </div>
-            )}
           </div>
         </div>
 
@@ -207,9 +265,49 @@ export default function RemindersPage() {
           </div>
         )}
 
+        {/* Occurrence Pattern and Condition Tags */}
+        {(candidate.occurrence || stateSignals.length > 0) && (
+          <div className="mb-3 space-y-2">
+            {candidate.occurrence && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Pattern</p>
+                <p className="text-sm text-gray-700">{candidate.occurrence}</p>
+              </div>
+            )}
+            {stateSignals.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                {visibleTags.map((signal, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300"
+                  >
+                    {signal}
+                  </span>
+                ))}
+                {showMoreButton && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDetailReminder(candidate);
+                      setIsDetailModalOpen(true);
+                    }}
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    aria-label={`View ${stateSignals.length - maxVisibleTags} more conditions`}
+                  >
+                    More…
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
           <button
-            onClick={() => handleForceCheck(candidate.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleForceCheck(candidate.id);
+            }}
             disabled={isExecuting}
             className="text-xs px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded disabled:opacity-50"
             title="Check"
@@ -217,7 +315,10 @@ export default function RemindersPage() {
             Check
           </button>
           <button
-            onClick={() => handleExecuteNow(candidate.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleExecuteNow(candidate.id);
+            }}
             disabled={isExecuting}
             className="text-xs px-3 py-1.5 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"
             title="Execute now"
@@ -225,7 +326,10 @@ export default function RemindersPage() {
             Execute
           </button>
           <button
-            onClick={() => handleEdit(candidate)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(candidate);
+            }}
             disabled={isExecuting}
             className="text-xs px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
             title="Edit"
@@ -234,7 +338,10 @@ export default function RemindersPage() {
           </button>
           {isAdmin && (
             <button
-              onClick={() => handleDelete(candidate.id, candidate.suggestedAction)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(candidate.id, candidate.suggestedAction);
+              }}
               disabled={isExecuting}
               className="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
               title="Delete"
@@ -524,6 +631,17 @@ export default function RemindersPage() {
             onSave={handleSaveOccurrence}
           />
         )}
+
+        {/* Reminder Detail Modal */}
+        <ReminderDetailModal
+          reminder={detailReminder}
+          isOpen={isDetailModalOpen}
+          onClose={() => {
+            setIsDetailModalOpen(false);
+            setDetailReminder(null);
+          }}
+          confidenceThreshold={CONFIDENCE_THRESHOLD}
+        />
       </div>
     </Layout>
   );

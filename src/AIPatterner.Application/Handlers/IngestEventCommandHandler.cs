@@ -123,9 +123,12 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                     request.Event.ProbabilityValue!.Value,
                     request.Event.ProbabilityAction!.Value);
                 
-                // Record new evidence for this matching event
+                // Record new evidence for this matching event with context information
                 // This accumulates evidence across days without locking into a specific day/weekday
-                matchingReminder.RecordEvidence(actionEvent.TimestampUtc);
+                matchingReminder.RecordEvidence(
+                    actionEvent.TimestampUtc,
+                    actionEvent.Context.TimeBucket,
+                    actionEvent.Context.DayType);
                 
                 // Update CheckAtUtc to the most recent event (for scheduling purposes)
                 // But note: matching is now based on TimeWindowCenter, not CheckAtUtc
@@ -150,36 +153,112 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
             }
             else
             {
-                // No matching reminder found - create new one as a hypothesis
-                var defaultConfidence = _configuration.GetValue<double>("Policy:DefaultReminderConfidence", 0.25);
-                
-                // CheckAtUtc must be identical to Event TimestampUtc (for scheduling)
-                var checkAtUtc = actionEvent.TimestampUtc;
-                
-                // DO NOT set occurrence immediately - it starts as Unknown/Flexible
-                // The ReminderCandidate constructor will initialize evidence tracking
-                // Occurrence will be inferred gradually as evidence accumulates
-                var newReminder = new ReminderCandidate(
+                // No matching reminder found - check if one exists for this person+action
+                // to avoid creating duplicates (prefer scheduled reminders within time window)
+                var existingReminders = await _reminderRepository.GetByPersonAndActionAsync(
                     actionEvent.PersonId,
                     actionEvent.ActionType,
-                    checkAtUtc, // Use event timestamp
-                    ReminderStyle.Suggest,
-                    null,
-                    defaultConfidence,
-                    occurrence: null, // Start with no fixed occurrence pattern
-                    actionEvent.Id, // SourceEventId
-                    actionEvent.CustomData); // Copy CustomData
+                    cancellationToken);
                 
-                // The constructor already called InitializeEvidenceTracking, but we need to ensure
-                // the pattern inference is run to set initial status
-                var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
-                var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
-                newReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                // Prefer scheduled reminders that are within time window, otherwise any scheduled reminder
+                var timeWindowSize = 45; // minutes
+                ReminderCandidate? existingReminder = null;
+                
+                if (existingReminders.Any())
+                {
+                    // First try to find one within time window
+                    var eventTimeOfDay = actionEvent.TimestampUtc.TimeOfDay;
+                    existingReminder = existingReminders
+                        .Where(r => r.Status == ReminderCandidateStatus.Scheduled && r.TimeWindowCenter.HasValue)
+                        .Where(r =>
+                        {
+                            var reminderTime = r.TimeWindowCenter.Value;
+                            var timeDiff = Math.Abs((eventTimeOfDay - reminderTime).TotalMinutes);
+                            if (timeDiff > 12 * 60) timeDiff = 24 * 60 - timeDiff;
+                            return timeDiff <= timeWindowSize;
+                        })
+                        .OrderByDescending(r => r.CreatedAtUtc)
+                        .FirstOrDefault();
+                    
+                    // If none in time window, use any scheduled reminder
+                    if (existingReminder == null)
+                    {
+                        existingReminder = existingReminders
+                            .Where(r => r.Status == ReminderCandidateStatus.Scheduled)
+                            .OrderByDescending(r => r.CreatedAtUtc)
+                            .FirstOrDefault();
+                    }
+                }
+                
+                if (existingReminder != null)
+                {
+                    // Update existing reminder instead of creating duplicate
+                    existingReminder.UpdateConfidence(
+                        request.Event.ProbabilityValue!.Value,
+                        request.Event.ProbabilityAction!.Value);
+                    
+                    // Record new evidence with context
+                    existingReminder.RecordEvidence(
+                        actionEvent.TimestampUtc,
+                        actionEvent.Context.TimeBucket,
+                        actionEvent.Context.DayType);
+                    
+                    existingReminder.UpdateCheckAtUtc(actionEvent.TimestampUtc);
+                    
+                    // Update CustomData if provided
+                    if (actionEvent.CustomData != null)
+                    {
+                        existingReminder.UpdateCustomData(actionEvent.CustomData);
+                    }
+                    
+                    // Re-evaluate pattern inference
+                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                    existingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                    
+                    await _reminderRepository.UpdateAsync(existingReminder, cancellationToken);
+                    relatedReminderId = existingReminder.Id;
+                    actionEvent.SetRelatedReminder(existingReminder.Id);
+                    await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
+                }
+                else
+                {
+                    // No existing reminder - create new one as a hypothesis
+                    var defaultConfidence = _configuration.GetValue<double>("Policy:DefaultReminderConfidence", 0.25);
+                    
+                    // CheckAtUtc must be identical to Event TimestampUtc (for scheduling)
+                    var checkAtUtc = actionEvent.TimestampUtc;
+                    
+                    // DO NOT set occurrence immediately - it starts as Unknown/Flexible
+                    // The ReminderCandidate constructor will initialize evidence tracking
+                    // Occurrence will be inferred gradually as evidence accumulates
+                    var newReminder = new ReminderCandidate(
+                        actionEvent.PersonId,
+                        actionEvent.ActionType,
+                        checkAtUtc, // Use event timestamp
+                        ReminderStyle.Suggest,
+                        null,
+                        defaultConfidence,
+                        occurrence: null, // Start with no fixed occurrence pattern
+                        actionEvent.Id, // SourceEventId
+                        actionEvent.CustomData); // Copy CustomData
+                    
+                    // Record the first evidence with context information
+                    newReminder.RecordEvidence(
+                        actionEvent.TimestampUtc,
+                        actionEvent.Context.TimeBucket,
+                        actionEvent.Context.DayType);
+                    
+                    // The pattern inference is run to set initial status
+                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                    newReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
 
-                await _reminderRepository.AddAsync(newReminder, cancellationToken);
-                relatedReminderId = newReminder.Id;
-                actionEvent.SetRelatedReminder(newReminder.Id);
-                await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
+                    await _reminderRepository.AddAsync(newReminder, cancellationToken);
+                    relatedReminderId = newReminder.Id;
+                    actionEvent.SetRelatedReminder(newReminder.Id);
+                    await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
+                }
             }
         }
 

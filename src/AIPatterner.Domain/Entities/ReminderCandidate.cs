@@ -100,6 +100,30 @@ public class ReminderCandidate
     /// If PatternInferenceStatus is Weekly, this stores the inferred weekday (0=Sunday, 6=Saturday).
     /// </summary>
     public int? InferredWeekday { get; private set; }
+    
+    /// <summary>
+    /// Histogram of observations per time bucket (morning, afternoon, evening, night).
+    /// Stored as JSON object: {"morning": 5, "afternoon": 2, "evening": 8, "night": 1}
+    /// </summary>
+    public string? ObservedTimeBucketHistogramJson { get; private set; }
+    
+    /// <summary>
+    /// Histogram of observations per day type (weekday, weekend).
+    /// Stored as JSON object: {"weekday": 10, "weekend": 3}
+    /// </summary>
+    public string? ObservedDayTypeHistogramJson { get; private set; }
+    
+    /// <summary>
+    /// Most common time bucket observed (morning, afternoon, evening, night).
+    /// Calculated from ObservedTimeBucketHistogramJson.
+    /// </summary>
+    public string? MostCommonTimeBucket { get; private set; }
+    
+    /// <summary>
+    /// Most common day type observed (weekday, weekend).
+    /// Calculated from ObservedDayTypeHistogramJson.
+    /// </summary>
+    public string? MostCommonDayType { get; private set; }
 
     private ReminderCandidate() { } // EF Core
 
@@ -135,13 +159,14 @@ public class ReminderCandidate
         CreatedAtUtc = DateTime.UtcNow;
         
         // Initialize evidence tracking from the first event
+        // Note: Time bucket and day type will be set when first evidence is recorded with context
         InitializeEvidenceTracking(checkAtUtc);
     }
     
     /// <summary>
     /// Initializes evidence tracking fields from the first observed event timestamp.
     /// </summary>
-    private void InitializeEvidenceTracking(DateTime firstEventTimestamp)
+    private void InitializeEvidenceTracking(DateTime firstEventTimestamp, string? timeBucket = null, string? dayType = null)
     {
         TimeWindowCenter = firstEventTimestamp.TimeOfDay;
         EvidenceCount = 1;
@@ -159,6 +184,40 @@ public class ReminderCandidate
         }
         histogram[(int)firstEventTimestamp.DayOfWeek] = 1;
         ObservedDayOfWeekHistogramJson = System.Text.Json.JsonSerializer.Serialize(histogram);
+        
+        // Initialize time bucket histogram
+        if (!string.IsNullOrEmpty(timeBucket))
+        {
+            var timeBucketHistogram = new Dictionary<string, int>
+            {
+                { "morning", 0 },
+                { "afternoon", 0 },
+                { "evening", 0 },
+                { "night", 0 }
+            };
+            if (timeBucketHistogram.ContainsKey(timeBucket))
+            {
+                timeBucketHistogram[timeBucket] = 1;
+                MostCommonTimeBucket = timeBucket;
+            }
+            ObservedTimeBucketHistogramJson = System.Text.Json.JsonSerializer.Serialize(timeBucketHistogram);
+        }
+        
+        // Initialize day type histogram
+        if (!string.IsNullOrEmpty(dayType))
+        {
+            var dayTypeHistogram = new Dictionary<string, int>
+            {
+                { "weekday", 0 },
+                { "weekend", 0 }
+            };
+            if (dayTypeHistogram.ContainsKey(dayType))
+            {
+                dayTypeHistogram[dayType] = 1;
+                MostCommonDayType = dayType;
+            }
+            ObservedDayTypeHistogramJson = System.Text.Json.JsonSerializer.Serialize(dayTypeHistogram);
+        }
         
         PatternInferenceStatus = PatternInferenceStatus.Unknown;
     }
@@ -239,12 +298,12 @@ public class ReminderCandidate
     /// Records a new matching event observation, updating evidence tracking.
     /// This is called when an event matches this reminder's ActionType and TimeWindow.
     /// </summary>
-    public void RecordEvidence(DateTime eventTimestamp)
+    public void RecordEvidence(DateTime eventTimestamp, string? timeBucket = null, string? dayType = null)
     {
         if (!TimeWindowCenter.HasValue)
         {
             // First evidence - initialize tracking
-            InitializeEvidenceTracking(eventTimestamp);
+            InitializeEvidenceTracking(eventTimestamp, timeBucket, dayType);
             return;
         }
         
@@ -264,6 +323,42 @@ public class ReminderCandidate
         var dayOfWeek = (int)eventTimestamp.DayOfWeek;
         histogram[dayOfWeek] = histogram.GetValueOrDefault(dayOfWeek, 0) + 1;
         ObservedDayOfWeekHistogramJson = System.Text.Json.JsonSerializer.Serialize(histogram);
+        
+        // Update time bucket histogram
+        if (!string.IsNullOrEmpty(timeBucket))
+        {
+            var timeBucketHistogram = GetTimeBucketHistogram();
+            timeBucketHistogram[timeBucket] = timeBucketHistogram.GetValueOrDefault(timeBucket, 0) + 1;
+            ObservedTimeBucketHistogramJson = System.Text.Json.JsonSerializer.Serialize(timeBucketHistogram);
+            
+            // Update most common time bucket
+            var mostCommon = timeBucketHistogram
+                .Where(kvp => kvp.Value > 0)
+                .OrderByDescending(kvp => kvp.Value)
+                .FirstOrDefault();
+            if (!string.IsNullOrEmpty(mostCommon.Key))
+            {
+                MostCommonTimeBucket = mostCommon.Key;
+            }
+        }
+        
+        // Update day type histogram
+        if (!string.IsNullOrEmpty(dayType))
+        {
+            var dayTypeHistogram = GetDayTypeHistogram();
+            dayTypeHistogram[dayType] = dayTypeHistogram.GetValueOrDefault(dayType, 0) + 1;
+            ObservedDayTypeHistogramJson = System.Text.Json.JsonSerializer.Serialize(dayTypeHistogram);
+            
+            // Update most common day type
+            var mostCommon = dayTypeHistogram
+                .Where(kvp => kvp.Value > 0)
+                .OrderByDescending(kvp => kvp.Value)
+                .FirstOrDefault();
+            if (!string.IsNullOrEmpty(mostCommon.Key))
+            {
+                MostCommonDayType = mostCommon.Key;
+            }
+        }
         
         // Update time window center using exponential moving average (EMA) for gradual adaptation
         // Alpha = 0.1 means new observations have 10% weight, existing center has 90%
@@ -336,6 +431,68 @@ public class ReminderCandidate
     }
     
     /// <summary>
+    /// Gets the time bucket histogram (parsed from JSON).
+    /// </summary>
+    public Dictionary<string, int> GetTimeBucketHistogram()
+    {
+        if (string.IsNullOrEmpty(ObservedTimeBucketHistogramJson))
+        {
+            return new Dictionary<string, int>
+            {
+                { "morning", 0 },
+                { "afternoon", 0 },
+                { "evening", 0 },
+                { "night", 0 }
+            };
+        }
+        
+        try
+        {
+            var histogram = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, int>>(ObservedTimeBucketHistogramJson);
+            return histogram ?? new Dictionary<string, int>();
+        }
+        catch
+        {
+            return new Dictionary<string, int>
+            {
+                { "morning", 0 },
+                { "afternoon", 0 },
+                { "evening", 0 },
+                { "night", 0 }
+            };
+        }
+    }
+    
+    /// <summary>
+    /// Gets the day type histogram (parsed from JSON).
+    /// </summary>
+    public Dictionary<string, int> GetDayTypeHistogram()
+    {
+        if (string.IsNullOrEmpty(ObservedDayTypeHistogramJson))
+        {
+            return new Dictionary<string, int>
+            {
+                { "weekday", 0 },
+                { "weekend", 0 }
+            };
+        }
+        
+        try
+        {
+            var histogram = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, int>>(ObservedDayTypeHistogramJson);
+            return histogram ?? new Dictionary<string, int>();
+        }
+        catch
+        {
+            return new Dictionary<string, int>
+            {
+                { "weekday", 0 },
+                { "weekend", 0 }
+            };
+        }
+    }
+    
+    /// <summary>
     /// Updates the inferred pattern status and occurrence string based on accumulated evidence.
     /// This should be called periodically or after significant evidence accumulation.
     /// </summary>
@@ -345,7 +502,36 @@ public class ReminderCandidate
         {
             PatternInferenceStatus = PatternInferenceStatus.Unknown;
             InferredWeekday = null;
-            Occurrence = null;
+            
+            // Show "Still learning" instead of null when we have some evidence but not enough
+            if (EvidenceCount > 0)
+            {
+                var learningParts = new List<string> { "Still learning timing" };
+                
+                if (TimeWindowCenter.HasValue)
+                {
+                    var timeStr = TimeWindowCenter.Value.ToString(@"hh\:mm");
+                    learningParts.Add($"(observed around {timeStr}");
+                    
+                    if (!string.IsNullOrEmpty(MostCommonTimeBucket))
+                    {
+                        learningParts.Add($"in the {MostCommonTimeBucket}");
+                    }
+                    learningParts.Add(")");
+                }
+                
+                if (CustomData != null && CustomData.Count > 0)
+                {
+                    var stateConditions = CustomData.Select(kvp => $"{kvp.Key}={kvp.Value}").ToList();
+                    learningParts.Add($"when {string.Join(", ", stateConditions)}");
+                }
+                
+                Occurrence = string.Join(" ", learningParts);
+            }
+            else
+            {
+                Occurrence = null;
+            }
             return;
         }
         
@@ -381,7 +567,35 @@ public class ReminderCandidate
                     InferredWeekday = maxWeekday;
                     var dayName = new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }[maxWeekday];
                     var timeStr = TimeWindowCenter?.ToString(@"hh\:mm") ?? "00:00";
-                    Occurrence = $"Occurs every {dayName} at {timeStr}";
+                    var occurrenceParts = new List<string> { $"Occurs every {dayName} at {timeStr}" };
+                    
+                    // Add time bucket if available
+                    if (!string.IsNullOrEmpty(MostCommonTimeBucket))
+                    {
+                        occurrenceParts.Add($"in the {MostCommonTimeBucket}");
+                    }
+                    
+                    // Add day type if it's consistent
+                    var dayTypeHistogram = GetDayTypeHistogram();
+                    var weekdayCount = dayTypeHistogram.GetValueOrDefault("weekday", 0);
+                    var weekendCount = dayTypeHistogram.GetValueOrDefault("weekend", 0);
+                    if (weekdayCount > 0 && weekendCount == 0)
+                    {
+                        occurrenceParts.Add("(weekdays only)");
+                    }
+                    else if (weekendCount > 0 && weekdayCount == 0)
+                    {
+                        occurrenceParts.Add("(weekends only)");
+                    }
+                    
+                    // Add state signals if present
+                    if (CustomData != null && CustomData.Count > 0)
+                    {
+                        var stateConditions = CustomData.Select(kvp => $"{kvp.Key}={kvp.Value}").ToList();
+                        occurrenceParts.Add($"when {string.Join(", ", stateConditions)}");
+                    }
+                    
+                    Occurrence = string.Join(" ", occurrenceParts);
                     return;
                 }
             }
@@ -411,7 +625,35 @@ public class ReminderCandidate
             PatternInferenceStatus = PatternInferenceStatus.Daily;
             InferredWeekday = null;
             var timeStr = TimeWindowCenter?.ToString(@"hh\:mm") ?? "00:00";
-            Occurrence = $"Occurs daily at {timeStr}";
+            var occurrenceParts = new List<string> { $"Occurs daily at {timeStr}" };
+            
+            // Add time bucket if available
+            if (!string.IsNullOrEmpty(MostCommonTimeBucket))
+            {
+                occurrenceParts.Add($"in the {MostCommonTimeBucket}");
+            }
+            
+            // Add day type if it's consistent
+            var dayTypeHistogram = GetDayTypeHistogram();
+            var weekdayCount = dayTypeHistogram.GetValueOrDefault("weekday", 0);
+            var weekendCount = dayTypeHistogram.GetValueOrDefault("weekend", 0);
+            if (weekdayCount > 0 && weekendCount == 0)
+            {
+                occurrenceParts.Add("(weekdays only)");
+            }
+            else if (weekendCount > 0 && weekdayCount == 0)
+            {
+                occurrenceParts.Add("(weekends only)");
+            }
+            
+            // Add state signals if present
+            if (CustomData != null && CustomData.Count > 0)
+            {
+                var stateConditions = CustomData.Select(kvp => $"{kvp.Key}={kvp.Value}").ToList();
+                occurrenceParts.Add($"when {string.Join(", ", stateConditions)}");
+            }
+            
+            Occurrence = string.Join(" ", occurrenceParts);
             return;
         }
         
@@ -419,7 +661,48 @@ public class ReminderCandidate
         PatternInferenceStatus = PatternInferenceStatus.Flexible;
         InferredWeekday = null;
         var flexibleTimeStr = TimeWindowCenter?.ToString(@"hh\:mm") ?? "00:00";
-        Occurrence = $"Occurs around {flexibleTimeStr} (flexible timing)";
+        var flexibleParts = new List<string> { $"Occurs around {flexibleTimeStr}" };
+        
+        // Always include time bucket for flexible patterns
+        if (!string.IsNullOrEmpty(MostCommonTimeBucket))
+        {
+            flexibleParts.Add($"in the {MostCommonTimeBucket}");
+        }
+        else
+        {
+            // Infer time bucket from time if not tracked
+            var hour = TimeWindowCenter?.Hours ?? 12;
+            string inferredBucket;
+            if (hour >= 5 && hour < 12) inferredBucket = "morning";
+            else if (hour >= 12 && hour < 17) inferredBucket = "afternoon";
+            else if (hour >= 17 && hour < 22) inferredBucket = "evening";
+            else inferredBucket = "night";
+            flexibleParts.Add($"in the {inferredBucket}");
+        }
+        
+        flexibleParts.Add("(flexible timing)");
+        
+        // Add day type if it's consistent
+        var dayTypeHistogramFlex = GetDayTypeHistogram();
+        var weekdayCountFlex = dayTypeHistogramFlex.GetValueOrDefault("weekday", 0);
+        var weekendCountFlex = dayTypeHistogramFlex.GetValueOrDefault("weekend", 0);
+        if (weekdayCountFlex > 0 && weekendCountFlex == 0)
+        {
+            flexibleParts.Add("(weekdays only)");
+        }
+        else if (weekendCountFlex > 0 && weekdayCountFlex == 0)
+        {
+            flexibleParts.Add("(weekends only)");
+        }
+        
+        // Add state signals if present
+        if (CustomData != null && CustomData.Count > 0)
+        {
+            var stateConditions = CustomData.Select(kvp => $"{kvp.Key}={kvp.Value}").ToList();
+            flexibleParts.Add($"when {string.Join(", ", stateConditions)}");
+        }
+        
+        Occurrence = string.Join(" ", flexibleParts);
     }
 }
 
