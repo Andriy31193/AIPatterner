@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIPatterner.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260103183537_InitialCreate")]
+    [Migration("20260103200045_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -308,10 +308,22 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<int?>("InferredWeekday")
                         .HasColumnType("integer");
 
+                    b.Property<string>("MostCommonDayType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MostCommonTimeBucket")
+                        .HasColumnType("text");
+
                     b.Property<string>("ObservedDayOfWeekHistogramJson")
                         .HasColumnType("text");
 
+                    b.Property<string>("ObservedDayTypeHistogramJson")
+                        .HasColumnType("text");
+
                     b.Property<string>("ObservedDaysJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ObservedTimeBucketHistogramJson")
                         .HasColumnType("text");
 
                     b.Property<string>("Occurrence")

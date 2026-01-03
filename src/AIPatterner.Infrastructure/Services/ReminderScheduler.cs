@@ -73,20 +73,35 @@ public class ReminderScheduler : IReminderScheduler
 
             if (policyDecision?.ShouldSchedule == true)
             {
-                // Check for existing matching reminder
-                var timeOffset = TimeSpan.FromMinutes(timeOffsetMinutes);
+                // Check for existing matching reminder by person+action (to prevent duplicates)
+                // Prefer reminders within time window, but accept any scheduled reminder for same person+action
                 var existingReminder = await _context.ReminderCandidates
                     .Where(c => 
                         c.PersonId == actionEvent.PersonId &&
                         c.SuggestedAction == transition.ToAction &&
-                        c.Status == ReminderCandidateStatus.Scheduled &&
-                        Math.Abs((c.CheckAtUtc - policyDecision.SuggestedCheckAt).TotalMinutes) <= timeOffsetMinutes)
+                        c.Status == ReminderCandidateStatus.Scheduled)
+                    .OrderByDescending(c => 
+                        // Prefer reminders within time window
+                        Math.Abs((c.CheckAtUtc - policyDecision.SuggestedCheckAt).TotalMinutes) <= timeOffsetMinutes ? 1 : 0)
+                    .ThenByDescending(c => c.CreatedAtUtc)
                     .FirstOrDefaultAsync(cancellationToken);
 
                 if (existingReminder != null)
                 {
                     // Increase confidence of existing reminder
                     existingReminder.IncreaseConfidence(confidenceStep);
+                    
+                    // Record evidence with context information
+                    existingReminder.RecordEvidence(
+                        actionEvent.TimestampUtc,
+                        actionEvent.Context.TimeBucket,
+                        actionEvent.Context.DayType);
+                    
+                    // Update pattern inference
+                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                    existingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                    
                     _context.ReminderCandidates.Update(existingReminder);
                     await _context.SaveChangesAsync(cancellationToken);
                     candidates.Add(existingReminder);
@@ -100,9 +115,7 @@ public class ReminderScheduler : IReminderScheduler
                     // CheckAtUtc must be identical to Event TimestampUtc
                     var checkAtUtc = actionEvent.TimestampUtc;
                     
-                    // Auto-generate Occurrence from CheckAtUtc
-                    var occurrence = OccurrenceGenerator.GenerateOccurrence(checkAtUtc);
-                    
+                    // Occurrence will be inferred gradually as evidence accumulates
                     var candidate = new ReminderCandidate(
                         actionEvent.PersonId,
                         transition.ToAction,
@@ -110,9 +123,20 @@ public class ReminderScheduler : IReminderScheduler
                         policyDecision.Style,
                         transition.Id,
                         defaultConfidence,
-                        occurrence, // Auto-generated occurrence
+                        occurrence: null, // Will be inferred from evidence
                         actionEvent.Id, // SourceEventId
                         actionEvent.CustomData); // Copy CustomData
+                    
+                    // Record the first evidence with context information
+                    candidate.RecordEvidence(
+                        actionEvent.TimestampUtc,
+                        actionEvent.Context.TimeBucket,
+                        actionEvent.Context.DayType);
+                    
+                    // Update pattern inference
+                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                    candidate.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
 
                     await _context.ReminderCandidates.AddAsync(candidate, cancellationToken);
                     candidates.Add(candidate);

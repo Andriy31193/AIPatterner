@@ -36,7 +36,7 @@ public abstract class RealDatabaseTestBase : IDisposable
         ApiBaseUrl = "http://localhost:8080/api";
 
         // Get API key from environment or use provided
-        ApiKey = "ak_nzooNBLbO0M4d7BW72QRqFvui7Fatk9FCEYlGO1zRNBzqUy0mXwt766S6rd32cjZ";
+        ApiKey = "ak_JyqivmKSDskny2gO4s2Zafhxlmcw7Kn2FnFg9tEV2vPoajsjKvcJjSmY2oUoag5G";
 
         // Setup database context with real PostgreSQL
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()

@@ -144,7 +144,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     ObservedDaysJson = table.Column<string>(type: "text", nullable: true),
                     ObservedDayOfWeekHistogramJson = table.Column<string>(type: "text", nullable: true),
                     PatternInferenceStatus = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    InferredWeekday = table.Column<int>(type: "integer", nullable: true)
+                    InferredWeekday = table.Column<int>(type: "integer", nullable: true),
+                    ObservedTimeBucketHistogramJson = table.Column<string>(type: "text", nullable: true),
+                    ObservedDayTypeHistogramJson = table.Column<string>(type: "text", nullable: true),
+                    MostCommonTimeBucket = table.Column<string>(type: "text", nullable: true),
+                    MostCommonDayType = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

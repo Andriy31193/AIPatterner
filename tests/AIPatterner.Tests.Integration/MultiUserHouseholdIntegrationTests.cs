@@ -13,7 +13,7 @@ using Xunit;
 
 public class MultiUserHouseholdIntegrationTests : RealDatabaseTestBase
 {
-    private const string AdminApiKey = "ak_nzooNBLbO0M4d7BW72QRqFvui7Fatk9FCEYlGO1zRNBzqUy0mXwt766S6rd32cjZ";
+    private const string AdminApiKey = "ak_JyqivmKSDskny2gO4s2Zafhxlmcw7Kn2FnFg9tEV2vPoajsjKvcJjSmY2oUoag5G";
     private const string PersonA = "household_person_a";
     private const string PersonB = "household_person_b";
     private const string PersonC = "household_person_c";
