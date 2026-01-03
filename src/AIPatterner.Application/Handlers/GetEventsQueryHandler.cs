@@ -46,3 +46,4 @@ public class GetEventsQueryHandler : IRequestHandler<GetEventsQuery, ActionEvent
     }
 }
 
+

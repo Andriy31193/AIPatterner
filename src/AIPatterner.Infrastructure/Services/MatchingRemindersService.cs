@@ -45,6 +45,19 @@ public class MatchingRemindersService : IMatchingRemindersService
             };
         }
 
+        // CRITICAL: StateChange events (intents) must NEVER match general reminders
+        // They only activate routines
+        if (actionEvent.EventType == EventType.StateChange)
+        {
+            return new ReminderCandidateListResponse
+            {
+                Items = new List<ReminderCandidateDto>(),
+                TotalCount = 0,
+                Page = 1,
+                PageSize = 20
+            };
+        }
+
         // Start with all scheduled reminders for this person
         var allReminders = await _context.ReminderCandidates
             .Where(r => r.PersonId == actionEvent.PersonId)
@@ -65,15 +78,43 @@ public class MatchingRemindersService : IMatchingRemindersService
                 if (!matches) continue;
             }
 
-            // 2. STRICT: Match by time offset - reminder's CheckAtUtc must be within offset of event timestamp
-            var timeDiff = Math.Abs((reminder.CheckAtUtc - eventTime).TotalMinutes);
-            matches = matches && timeDiff <= criteria.TimeOffsetMinutes;
-            if (!matches) continue;
+            // 2. NEW BEHAVIOR: Match by time-of-day window, ignoring day/dayOfWeek
+            // This allows the same reminder to match events across different days,
+            // which is how humans form habits (time-of-day first, day-of-week later)
+            if (reminder.TimeWindowCenter.HasValue)
+            {
+                // Use the reminder's time window center and size
+                var eventTimeOfDay = eventTime.TimeOfDay;
+                var reminderTimeCenter = reminder.TimeWindowCenter.Value;
+                var windowSize = reminder.TimeWindowSizeMinutes;
+                
+                // Calculate time difference, handling midnight wraparound
+                var timeDiff = Math.Abs((eventTimeOfDay - reminderTimeCenter).TotalMinutes);
+                if (timeDiff > 12 * 60) // More than 12 hours apart, check wraparound
+                {
+                    timeDiff = 24 * 60 - timeDiff;
+                }
+                
+                matches = matches && timeDiff <= windowSize;
+                if (!matches) continue;
+            }
+            else
+            {
+                // Fallback for old reminders without TimeWindowCenter: use CheckAtUtc matching
+                // This maintains backward compatibility
+                var timeDiff = Math.Abs((reminder.CheckAtUtc - eventTime).TotalMinutes);
+                matches = matches && timeDiff <= criteria.TimeOffsetMinutes;
+                if (!matches) continue;
+            }
 
-            // 3. STRICT: For context-based matching, find the event(s) that created/updated this reminder
-            // and check if any of those events have matching context
-            if (criteria.MatchByDayType || criteria.MatchByPeoplePresent || criteria.MatchByStateSignals || 
-                criteria.MatchByTimeBucket || criteria.MatchByLocation)
+            // 3. Context-based matching
+            // NEW BEHAVIOR: For evidence-based reminders (with TimeWindowCenter), 
+            // we skip strict context matching to allow cross-day matching.
+            // This enables gradual pattern learning where time-of-day dominates initially.
+            // For old-style reminders (without TimeWindowCenter), we still use strict context matching.
+            if (!reminder.TimeWindowCenter.HasValue && 
+                (criteria.MatchByDayType || criteria.MatchByPeoplePresent || criteria.MatchByStateSignals || 
+                 criteria.MatchByTimeBucket || criteria.MatchByLocation))
             {
                 // Find events related to this reminder
                 var relatedEvents = await _context.ActionEvents
@@ -92,7 +133,6 @@ public class MatchingRemindersService : IMatchingRemindersService
 
                 // If still no events found, allow matching based on time and action type alone
                 // This handles the case where a reminder was just created and hasn't been linked to events yet
-                // This fixes the issue where reminders with small time offsets weren't being matched
                 if (!relatedEvents.Any())
                 {
                     // Time and action type already matched, so allow this match
@@ -151,8 +191,9 @@ public class MatchingRemindersService : IMatchingRemindersService
                         continue; // Context doesn't match, skip this reminder
                     }
                 }
-
             }
+            // For evidence-based reminders (with TimeWindowCenter), we skip context matching
+            // to allow gradual pattern learning across different days/contexts
 
             // All criteria matched
             matchingReminders.Add(reminder);

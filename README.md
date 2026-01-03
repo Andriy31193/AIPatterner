@@ -21,6 +21,33 @@ This service follows Clean Architecture principles with clear separation of conc
 - **Optional LLM Integration**: Natural language phrasing (disabled by default)
 - **Mirix Memory Integration**: Pushes human-readable summaries (not raw probabilities)
 
+## Intent-Anchored Learned Routines
+
+The system supports a separate subsystem for **Intent-Anchored Learned Routines** that work alongside general reminders:
+
+### Key Concepts
+
+- **StateChange Events**: Events with `EventType: StateChange` represent explicit user intents (e.g., "ArrivalHome", "GoingToSleep")
+- **Observation Windows**: After an intent occurs, the system opens a configurable observation window (default: 45 minutes) to learn from subsequent actions
+- **Routine Reminders**: Actions observed within the window become routine reminders, separate from general reminders
+- **Probabilistic Learning**: Routine reminders learn gradually, increasing probability when the same intent-action pattern repeats
+- **Isolation**: StateChange events never match general reminders, ensuring complete separation
+
+### Example
+
+1. User arrives home → System receives `ActionType: "ArrivalHome"`, `EventType: "StateChange"`
+2. Within 45 minutes, user performs: "PlayMusic", "TurnOnLights"
+3. System creates RoutineReminders for these actions with default probability (0.5)
+4. Next time user arrives home → System increases probabilities for matching actions
+5. After several repetitions → High-probability reminders are suggested when intent occurs
+
+### Behavioral Principles
+
+- **Predict without assuming**: Routines are learned, not scripted
+- **Learn without forcing**: Probability increases gradually with evidence
+- **Help without annoying**: High confidence triggers suggestions, not auto-execution
+- **Respect explicit intent**: StateChange events are explicit user signals
+
 ## Why Probabilities Are Kept Out of Mirix
 
 The system explicitly avoids sending raw numeric transition matrices or probability tables to Mirix memory. Instead, it generates natural-language summaries like:
@@ -95,6 +122,11 @@ Raw probabilities are available via debug endpoints but are never pushed to Miri
 | `Policy__MinimumProbabilityForExecution` | Min probability for auto-execution (≥70%) | `0.7` |
 | `Policy__ReminderMatchTimeOffsetMinutes` | Time window for matching existing reminders | `30` |
 | `Policy__DefaultOccurrence` | Default occurrence pattern for new reminders | Empty |
+| `Routine__ObservationWindowMinutes` | Minutes after intent event to observe actions for routine learning | `45` |
+| `Routine__DefaultRoutineProbability` | Default probability for new routine reminders | `0.5` |
+| `Routine__ProbabilityIncreaseStep` | Step value for increasing routine reminder probability | `0.1` |
+| `Routine__ProbabilityDecreaseStep` | Step value for decreasing routine reminder probability | `0.1` |
+| `Routine__AutoExecuteThreshold` | Minimum probability threshold for auto-execution (high confidence) | `0.7` |
 | `Scheduler__PollIntervalSeconds` | How often to check for due candidates | `30` |
 | `Scheduler__BatchSize` | Max candidates to process per cycle | `10` |
 | `Cleanup__EventRetentionDays` | Days to keep raw events | `30` |
@@ -200,6 +232,7 @@ Migrations are automatically applied on startup when running in Docker.
 
 ## Example Flow
 
+### General Reminders
 1. **Event Ingestion**: POST event "play_music" for person "alex" at 19:30
 2. **Learning**: System finds previous event "sit_on_couch" at 19:25, creates/updates transition
 3. **Scheduling**: If transition has sufficient confidence and matches context, schedules ReminderCandidate
@@ -207,6 +240,15 @@ Migrations are automatically applied on startup when running in Docker.
 5. **Notification**: If approved, sends webhook to configured endpoint with natural-language phrase
 6. **Memory**: Pushes human-readable summary to Mirix (if enabled)
 7. **Feedback**: User responds "yes"/"no"/"later", system updates transition confidence and cooldowns
+
+### Intent-Anchored Learned Routines
+1. **Intent Event**: POST StateChange event "ArrivalHome" for person "alex" at 19:00
+2. **Observation Window Opens**: System creates/updates Routine and opens 45-minute observation window
+3. **Observed Actions**: Within window, system observes "PlayMusic" and "TurnOnLights" events
+4. **Learning**: System creates/updates RoutineReminders for observed actions with default probability
+5. **Repeated Intent**: When "ArrivalHome" occurs again, system increases probabilities for matching actions
+6. **Evaluation**: On next intent, system evaluates RoutineReminders and asks user if probability is high
+7. **Feedback**: User responds "not today", system decreases probability for that reminder
 
 ## Architecture Decisions
 

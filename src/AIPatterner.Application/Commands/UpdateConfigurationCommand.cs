@@ -12,3 +12,4 @@ public class UpdateConfigurationCommand : IRequest<ConfigurationDto>
     public string? Description { get; set; }
 }
 
+

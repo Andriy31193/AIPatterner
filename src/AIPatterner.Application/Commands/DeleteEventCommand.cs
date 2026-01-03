@@ -8,3 +8,4 @@ public class DeleteEventCommand : IRequest<bool>
     public Guid EventId { get; set; }
 }
 
+

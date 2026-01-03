@@ -23,6 +23,9 @@ import type {
   ExecutionHistoryListResponse,
   UserReminderPreferences,
   ReminderStyle,
+  RoutineListResponse,
+  RoutineDetailDto,
+  RoutineReminderDto,
 } from '@/types';
 
 class ApiService {
@@ -333,6 +336,45 @@ class ApiService {
     enabled?: boolean;
   }): Promise<void> {
     await this.client.put(`/api/v1/user-preferences/${personId}`, preferences);
+  }
+
+  // Routine endpoints
+  async getRoutines(params: {
+    personId?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<RoutineListResponse> {
+    const response = await this.client.get<RoutineListResponse>('/api/v1/routines', { params });
+    return response.data;
+  }
+
+  async getRoutine(id: string): Promise<RoutineDetailDto> {
+    const response = await this.client.get<RoutineDetailDto>(`/api/v1/routines/${id}`);
+    return response.data;
+  }
+
+  async getRoutineReminders(routineId: string): Promise<RoutineReminderDto[]> {
+    const response = await this.client.get<RoutineReminderDto[]>(`/api/v1/routines/${routineId}/reminders`);
+    return response.data;
+  }
+
+  async submitRoutineReminderFeedback(
+    routineId: string,
+    reminderId: string,
+    action: ProbabilityAction,
+    value: number
+  ): Promise<void> {
+    await this.client.post(`/api/v1/routines/${routineId}/reminders/${reminderId}/feedback`, {
+      action,
+      value,
+    });
+  }
+
+  async getActiveRoutines(personId: string): Promise<RoutineListResponse> {
+    const response = await this.client.get<RoutineListResponse>(`/api/v1/routines/active`, {
+      params: { personId }
+    });
+    return response.data;
   }
 }
 

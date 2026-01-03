@@ -113,6 +113,11 @@ builder.Services.AddScoped<AIPatterner.Application.Handlers.IExecutionHistorySer
 builder.Services.AddScoped<AIPatterner.Application.Services.IMatchingRemindersService, MatchingRemindersService>();
 builder.Services.AddScoped<AIPatterner.Application.Services.IMatchingPolicyService, MatchingPolicyService>();
 
+// Routine learning services
+builder.Services.AddScoped<AIPatterner.Application.Handlers.IRoutineRepository, AIPatterner.Infrastructure.Persistence.Repositories.RoutineRepository>();
+builder.Services.AddScoped<AIPatterner.Application.Handlers.IRoutineReminderRepository, AIPatterner.Infrastructure.Persistence.Repositories.RoutineReminderRepository>();
+builder.Services.AddScoped<AIPatterner.Application.Services.IRoutineLearningService, AIPatterner.Infrastructure.Services.RoutineLearningService>();
+
 // Domain services
 builder.Services.AddScoped<AIPatterner.Domain.Services.ITransitionLearner, TransitionLearner>();
 builder.Services.AddScoped<AIPatterner.Domain.Services.IContextBucketKeyBuilder, ContextBucketKeyBuilder>();

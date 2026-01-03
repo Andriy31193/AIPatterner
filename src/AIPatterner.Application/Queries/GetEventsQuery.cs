@@ -14,3 +14,4 @@ public class GetEventsQuery : IRequest<ActionEventListResponse>
     public int PageSize { get; set; } = 20;
 }
 
+

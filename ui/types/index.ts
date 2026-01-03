@@ -24,9 +24,15 @@ export enum ProbabilityAction {
   Decrease = 'Decrease',
 }
 
+export enum EventType {
+  Action = 'Action',
+  StateChange = 'StateChange',
+}
+
 export interface ActionEventDto {
   personId: string;
   actionType: string;
+  eventType?: EventType;
   timestampUtc: string;
   context: ActionContextDto;
   probabilityValue?: number;
@@ -95,6 +101,7 @@ export interface ActionEventListDto {
   id: string;
   personId: string;
   actionType: string;
+  eventType?: EventType;
   timestampUtc: string;
   context: ActionContextDto;
   createdAtUtc: string;
@@ -222,5 +229,37 @@ export interface ExecutionHistoryListResponse {
   totalCount: number;
   page: number;
   pageSize: number;
+}
+
+// Routine types
+export interface RoutineDto {
+  id: string;
+  personId: string;
+  intentType: string;
+  createdAtUtc: string;
+  lastActivatedUtc?: string;
+  observationWindowEndsUtc?: string;
+  observationWindowMinutes: number;
+}
+
+export interface RoutineReminderDto {
+  id: string;
+  routineId: string;
+  suggestedAction: string;
+  confidence: number;
+  createdAtUtc: string;
+  lastObservedAtUtc?: string;
+  customData?: Record<string, string>;
+}
+
+export interface RoutineListResponse {
+  items: RoutineDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface RoutineDetailDto extends RoutineDto {
+  reminders: RoutineReminderDto[];
 }
 

@@ -31,7 +31,8 @@ public class MappingProfile : Profile
                     dto.Context.StateSignals),
                 dto.ProbabilityValue,
                 dto.ProbabilityAction,
-                dto.CustomData))
+                dto.CustomData,
+                dto.EventType))
             .ForMember(dest => dest.Context, opt => opt.Ignore()) // Ignore since we're constructing it manually
             .ForMember(dest => dest.RelatedReminderId, opt => opt.Ignore()); // Set separately
 

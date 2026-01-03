@@ -9,3 +9,4 @@ public class GetApiKeysQuery : IRequest<List<ApiKeyDto>>
     public Guid? UserId { get; set; }
 }
 
+

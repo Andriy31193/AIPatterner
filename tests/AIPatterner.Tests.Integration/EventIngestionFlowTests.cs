@@ -72,6 +72,15 @@ public class EventIngestionFlowTests
         var matchingPolicyService = new MatchingPolicyService(configRepo, config);
         var matchingRemindersService = new MatchingRemindersService(eventRepo, context, mapper);
         
+        var routineRepository = new RoutineRepository(context);
+        var routineReminderRepository = new RoutineReminderRepository(context);
+        var routineLearningService = new RoutineLearningService(
+            routineRepository,
+            routineReminderRepository,
+            eventRepo,
+            config,
+            loggerFactory.CreateLogger<RoutineLearningService>());
+        
         var handler = new IngestEventCommandHandler(
             eventRepo,
             transitionLearner,
@@ -81,7 +90,8 @@ public class EventIngestionFlowTests
             mockExecutionHistoryService,
             config,
             matchingRemindersService,
-            matchingPolicyService);
+            matchingPolicyService,
+            routineLearningService);
 
         var firstEvent = new ActionEventDto
         {

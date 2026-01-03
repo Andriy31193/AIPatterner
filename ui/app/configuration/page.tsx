@@ -11,6 +11,7 @@ import { ReminderStyle } from '@/types';
 
 const CONFIG_TABS = [
   { value: 'policies', label: 'Policies', description: 'Reminder matching policies' },
+  { value: 'routines', label: 'Routines', description: 'Routine learning settings' },
   { value: 'user-preferences', label: 'User Preferences', description: 'User reminder preferences' },
   { value: 'api-keys', label: 'API Keys', description: 'API key management' },
   { value: 'notifications', label: 'Notifications', description: 'Webhook and notification endpoints' },
@@ -200,6 +201,228 @@ function PoliciesTab() {
           />
           <p className="mt-1 text-sm text-gray-500">
             Maximum time difference (in minutes) between event timestamp and reminder check time for matching
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Routines Tab Component
+function RoutinesTab() {
+  const queryClient = useQueryClient();
+  const [settings, setSettings] = useState({
+    observationWindowMinutes: 45,
+    defaultRoutineProbability: 0.5,
+    probabilityIncreaseStep: 0.1,
+    probabilityDecreaseStep: 0.1,
+    autoExecuteThreshold: 0.7,
+  });
+  const [isDirty, setIsDirty] = useState(false);
+  const ROUTINE_CATEGORY = 'Routine';
+
+  const { data: configurations, isLoading } = useQuery({
+    queryKey: ['configurations', ROUTINE_CATEGORY],
+    queryFn: () => apiService.getConfigurations(ROUTINE_CATEGORY),
+  });
+
+  const updateConfigMutation = useMutation({
+    mutationFn: ({ key, value, description }: { key: string; value: string; description?: string }) =>
+      apiService.updateConfiguration(ROUTINE_CATEGORY, key, { value, description }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['configurations'] });
+      setIsDirty(false);
+    },
+  });
+
+  const createConfigMutation = useMutation({
+    mutationFn: ({ key, value, description }: { key: string; value: string; description?: string }) =>
+      apiService.createConfiguration({ key, value, category: ROUTINE_CATEGORY, description }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['configurations'] });
+      setIsDirty(false);
+    },
+  });
+
+  useEffect(() => {
+    if (configurations) {
+      const getConfigValue = (key: string, defaultValue: string): string => {
+        const config = configurations.find((c) => c.key === key);
+        return config?.value || defaultValue;
+      };
+      setSettings({
+        observationWindowMinutes: parseInt(getConfigValue('ObservationWindowMinutes', '45'), 10),
+        defaultRoutineProbability: parseFloat(getConfigValue('DefaultRoutineProbability', '0.5')),
+        probabilityIncreaseStep: parseFloat(getConfigValue('ProbabilityIncreaseStep', '0.1')),
+        probabilityDecreaseStep: parseFloat(getConfigValue('ProbabilityDecreaseStep', '0.1')),
+        autoExecuteThreshold: parseFloat(getConfigValue('AutoExecuteThreshold', '0.7')),
+      });
+      setIsDirty(false);
+    }
+  }, [configurations]);
+
+  const saveConfig = async (key: string, value: string, description?: string) => {
+    const existing = configurations?.find((c) => c.key === key);
+    if (existing) {
+      await updateConfigMutation.mutateAsync({ key, value, description });
+    } else {
+      await createConfigMutation.mutateAsync({ key, value, description });
+    }
+  };
+
+  const handleSave = async () => {
+    await Promise.all([
+      saveConfig('ObservationWindowMinutes', settings.observationWindowMinutes.toString(), 'How long (in minutes) to observe actions after an intent occurs'),
+      saveConfig('DefaultRoutineProbability', settings.defaultRoutineProbability.toString(), 'Default confidence for new routine reminders'),
+      saveConfig('ProbabilityIncreaseStep', settings.probabilityIncreaseStep.toString(), 'How much to increase confidence when action is observed'),
+      saveConfig('ProbabilityDecreaseStep', settings.probabilityDecreaseStep.toString(), 'How much to decrease confidence when action is rejected'),
+      saveConfig('AutoExecuteThreshold', settings.autoExecuteThreshold.toString(), 'Minimum confidence for automatic execution (high confidence)'),
+    ]);
+  };
+
+  if (isLoading) {
+    return <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">Loading...</div>;
+  }
+
+  return (
+    <div className="bg-white shadow rounded-lg p-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">Routine Learning Settings</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Configure how routines learn from your behavior after you express intents
+          </p>
+        </div>
+        <div className="space-x-2">
+          <button
+            onClick={() => {
+              setSettings({
+                observationWindowMinutes: 45,
+                defaultRoutineProbability: 0.5,
+                probabilityIncreaseStep: 0.1,
+                probabilityDecreaseStep: 0.1,
+                autoExecuteThreshold: 0.7,
+              });
+              setIsDirty(true);
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          >
+            🔄 Reset to Defaults
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={!isDirty || updateConfigMutation.isPending || createConfigMutation.isPending}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 inline-flex items-center gap-2"
+          >
+            {updateConfigMutation.isPending || createConfigMutation.isPending ? '⏳ Saving...' : '💾 Save Changes'}
+          </button>
+        </div>
+      </div>
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="observationWindow" className="block text-sm font-medium text-gray-900 mb-2">
+            Observation Window (minutes)
+          </label>
+          <input
+            type="number"
+            id="observationWindow"
+            min="1"
+            max="120"
+            value={settings.observationWindowMinutes}
+            onChange={(e) => {
+              setSettings({ ...settings, observationWindowMinutes: parseInt(e.target.value) || 45 });
+              setIsDirty(true);
+            }}
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            How long after you express an intent should the system observe your actions? Actions during this window are considered part of your routine.
+          </p>
+        </div>
+        <div>
+          <label htmlFor="defaultProbability" className="block text-sm font-medium text-gray-900 mb-2">
+            Default Routine Probability
+          </label>
+          <input
+            type="number"
+            id="defaultProbability"
+            min="0"
+            max="1"
+            step="0.1"
+            value={settings.defaultRoutineProbability}
+            onChange={(e) => {
+              setSettings({ ...settings, defaultRoutineProbability: parseFloat(e.target.value) || 0.5 });
+              setIsDirty(true);
+            }}
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Starting confidence for newly learned routine actions. Higher values mean the system is more confident from the start.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="increaseStep" className="block text-sm font-medium text-gray-900 mb-2">
+              Probability Increase Step
+            </label>
+            <input
+              type="number"
+              id="increaseStep"
+              min="0"
+              max="1"
+              step="0.05"
+              value={settings.probabilityIncreaseStep}
+              onChange={(e) => {
+                setSettings({ ...settings, probabilityIncreaseStep: parseFloat(e.target.value) || 0.1 });
+                setIsDirty(true);
+              }}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              How much confidence increases when an action is observed within the routine window.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="decreaseStep" className="block text-sm font-medium text-gray-900 mb-2">
+              Probability Decrease Step
+            </label>
+            <input
+              type="number"
+              id="decreaseStep"
+              min="0"
+              max="1"
+              step="0.05"
+              value={settings.probabilityDecreaseStep}
+              onChange={(e) => {
+                setSettings({ ...settings, probabilityDecreaseStep: parseFloat(e.target.value) || 0.1 });
+                setIsDirty(true);
+              }}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              How much confidence decreases when you reject or skip a routine action.
+            </p>
+          </div>
+        </div>
+        <div>
+          <label htmlFor="autoExecuteThreshold" className="block text-sm font-medium text-gray-900 mb-2">
+            Auto-Execute Threshold
+          </label>
+          <input
+            type="number"
+            id="autoExecuteThreshold"
+            min="0"
+            max="1"
+            step="0.1"
+            value={settings.autoExecuteThreshold}
+            onChange={(e) => {
+              setSettings({ ...settings, autoExecuteThreshold: parseFloat(e.target.value) || 0.7 });
+              setIsDirty(true);
+            }}
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Minimum confidence required for automatic execution. Actions above this threshold will execute automatically; below it, they will ask first.
           </p>
         </div>
       </div>
@@ -748,13 +971,16 @@ export default function ConfigurationPage() {
         {selectedTab === 'policies' && (
           <PoliciesTab />
         )}
+        {selectedTab === 'routines' && (
+          <RoutinesTab />
+        )}
         {selectedTab === 'user-preferences' && (
           <UserPreferencesTab />
         )}
         {selectedTab === 'api-keys' && isAdmin && (
           <ApiKeysTab />
         )}
-        {selectedTab !== 'policies' && selectedTab !== 'user-preferences' && selectedTab !== 'api-keys' && (
+        {selectedTab !== 'policies' && selectedTab !== 'routines' && selectedTab !== 'user-preferences' && selectedTab !== 'api-keys' && (
           <>
             {/* Create Form */}
             {showCreateForm && isAdmin && (

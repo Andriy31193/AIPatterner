@@ -78,6 +78,15 @@ public class EventReminderMiddlewareTests : IDisposable
         var configRepo = new ConfigurationRepository(_context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, _configuration);
         var matchingRemindersService = new MatchingRemindersService(_eventRepository, _context, mapper);
+        
+        var routineRepository = new RoutineRepository(_context);
+        var routineReminderRepository = new RoutineReminderRepository(_context);
+        var routineLearningService = new RoutineLearningService(
+            routineRepository,
+            routineReminderRepository,
+            _eventRepository,
+            _configuration,
+            loggerFactory.CreateLogger<RoutineLearningService>());
 
         _handler = new IngestEventCommandHandler(
             _eventRepository,
@@ -88,7 +97,8 @@ public class EventReminderMiddlewareTests : IDisposable
             mockExecutionHistoryService,
             _configuration,
             matchingRemindersService,
-            matchingPolicyService);
+            matchingPolicyService,
+            routineLearningService);
 
         // Setup matching policies in configuration
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();

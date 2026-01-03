@@ -12,3 +12,4 @@ public class CreateApiKeyCommand : IRequest<CreateApiKeyResponse>
     public DateTime? ExpiresAtUtc { get; set; }
 }
 
+
