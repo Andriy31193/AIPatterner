@@ -33,11 +33,10 @@ public abstract class RealDatabaseTestBase : IDisposable
         var connectionString = "Host=localhost;Port=5433;Database=aipatterner;Username=postgres;Password=postgres";
 
         // Get API base URL from environment or use default
-        ApiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "http://localhost:8080/api";
+        ApiBaseUrl = "http://localhost:8080/api";
 
         // Get API key from environment or use provided
-        ApiKey = Environment.GetEnvironmentVariable("TEST_API_KEY")
-            ?? "ak_hP2nIKfURZWrA8Qun2iJw0NN2f89kWCwxA844Wk4EbPjXx3t1AGQ1TICsDLvVrxV";
+        ApiKey = "ak_nzooNBLbO0M4d7BW72QRqFvui7Fatk9FCEYlGO1zRNBzqUy0mXwt766S6rd32cjZ";
 
         // Setup database context with real PostgreSQL
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -160,13 +159,63 @@ public abstract class RealDatabaseTestBase : IDisposable
         }
     }
 
-    protected void CleanupTestData()
+    protected virtual void CleanupTestData()
     {
         // Clean up test data with specific prefixes
         var testPersonIds = new[] { "user", "api_user", "api_test_user", "api_related_user", "api_feedback_user", 
             "feedback_user", "daily_user", "weekly_user", "user_a", "user_b", "user_c", "routine_test_user",
             "event_person", "reminder_person", "routine_person", "duplicate_test_person", "matched_user",
-            "user_for_id", "testuser_dual", "testuser1", "testuser2", "adminuser" };
+            "user_for_id", "testuser_dual", "testuser1", "testuser2", "adminuser", "comprehensive_test_user",
+            "household_person_a", "household_person_b", "household_person_c" };
+
+        // Also clean up personIds that start with comprehensive_test_user (for sub-tests)
+        var comprehensiveTestPersonIds = Context.ActionEvents
+            .Where(e => e.PersonId.StartsWith("comprehensive_test_user"))
+            .Select(e => e.PersonId)
+            .Distinct()
+            .ToList();
+
+        foreach (var personId in comprehensiveTestPersonIds)
+        {
+            // Delete reminders
+            var reminders = Context.ReminderCandidates
+                .Where(r => r.PersonId == personId)
+                .ToList();
+            Context.ReminderCandidates.RemoveRange(reminders);
+
+            // Delete events
+            var events = Context.ActionEvents
+                .Where(e => e.PersonId == personId)
+                .ToList();
+            Context.ActionEvents.RemoveRange(events);
+
+            // Delete transitions
+            var transitions = Context.ActionTransitions
+                .Where(t => t.PersonId == personId)
+                .ToList();
+            Context.ActionTransitions.RemoveRange(transitions);
+
+            // Delete cooldowns
+            var cooldowns = Context.ReminderCooldowns
+                .Where(c => c.PersonId == personId)
+                .ToList();
+            Context.ReminderCooldowns.RemoveRange(cooldowns);
+
+            // Delete routines and routine reminders
+            var routines = Context.Routines
+                .Where(r => r.PersonId == personId)
+                .ToList();
+            
+            foreach (var routine in routines)
+            {
+                var routineReminders = Context.RoutineReminders
+                    .Where(rr => rr.RoutineId == routine.Id)
+                    .ToList();
+                Context.RoutineReminders.RemoveRange(routineReminders);
+            }
+            
+            Context.Routines.RemoveRange(routines);
+        }
 
         foreach (var personIdPrefix in testPersonIds)
         {

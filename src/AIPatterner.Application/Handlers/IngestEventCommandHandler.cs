@@ -51,6 +51,20 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
 
     public async Task<IngestEventResponse> Handle(IngestEventCommand request, CancellationToken cancellationToken)
     {
+        // Set default probability values if not provided (default: 0.1, Increase)
+        const double defaultProbabilityValue = 0.1;
+        const ProbabilityAction defaultProbabilityAction = ProbabilityAction.Increase;
+        
+        if (!request.Event.ProbabilityValue.HasValue)
+        {
+            request.Event.ProbabilityValue = defaultProbabilityValue;
+        }
+        
+        if (!request.Event.ProbabilityAction.HasValue)
+        {
+            request.Event.ProbabilityAction = defaultProbabilityAction;
+        }
+        
         var actionEvent = _mapper.Map<ActionEvent>(request.Event);
         await _eventRepository.AddAsync(actionEvent, cancellationToken);
 
@@ -79,8 +93,7 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
             await _routineLearningService.ProcessObservedEventAsync(actionEvent, cancellationToken);
 
             // Find matching reminder using strict policy-based matching (only for Action events)
-            if (request.Event.ProbabilityValue.HasValue && request.Event.ProbabilityAction.HasValue)
-        {
+            // Probability values are now guaranteed to be set (defaults applied above)
             // Get matching policies from configuration
             var matchingCriteria = await _policyService.GetMatchingCriteriaAsync(cancellationToken);
             
@@ -105,9 +118,10 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
             if (matchingReminder != null)
             {
                 // Update existing reminder probability (increase/decrease based on event)
+                // Use the values from request (which now have defaults if not provided)
                 matchingReminder.UpdateConfidence(
-                    request.Event.ProbabilityValue.Value,
-                    request.Event.ProbabilityAction.Value);
+                    request.Event.ProbabilityValue!.Value,
+                    request.Event.ProbabilityAction!.Value);
                 
                 // Record new evidence for this matching event
                 // This accumulates evidence across days without locking into a specific day/weekday
@@ -166,7 +180,6 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                 relatedReminderId = newReminder.Id;
                 actionEvent.SetRelatedReminder(newReminder.Id);
                 await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
-            }
             }
         }
 
