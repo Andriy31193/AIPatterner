@@ -1,7 +1,7 @@
 // Event listing page with pagination, filtering, and search
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
@@ -9,6 +9,7 @@ import { DateTimeDisplay } from '@/components/DateTimeDisplay';
 import { ConfidenceBadge } from '@/components/ConfidenceBadge';
 import { MatchingRemindersModal } from '@/components/MatchingRemindersModal';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
 import type { ActionEventListDto } from '@/types';
 import { ProbabilityAction } from '@/types';
 
@@ -16,6 +17,7 @@ const CONFIDENCE_THRESHOLD = 0.7;
 
 export default function EventsPage() {
   const router = useRouter();
+  const { user, isAdmin } = useAuth();
   const [personId, setPersonId] = useState('');
   const [actionType, setActionType] = useState('');
   const [fromDate, setFromDate] = useState('');
@@ -24,6 +26,20 @@ export default function EventsPage() {
   const pageSize = 20;
   const [selectedEvent, setSelectedEvent] = useState<ActionEventListDto | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // For non-admin users, set personId to their username on mount
+  useEffect(() => {
+    if (!isAdmin && user?.username) {
+      setPersonId(user.username);
+    }
+  }, [isAdmin, user]);
+
+  // Fetch personIds for admin dropdown
+  const { data: personIdsData } = useQuery({
+    queryKey: ['personIds'],
+    queryFn: () => apiService.getPersonIds(),
+    enabled: isAdmin,
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['events', { personId, actionType, fromDate, toDate, page, pageSize }],
@@ -67,13 +83,33 @@ export default function EventsPage() {
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700">
                 Person ID
               </label>
-              <input
-                type="text"
-                id="personId"
-                value={personId}
-                onChange={(e) => setPersonId(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+              {isAdmin ? (
+                <select
+                  id="personId"
+                  value={personId}
+                  onChange={(e) => {
+                    setPersonId(e.target.value);
+                    setPage(1);
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">All Persons</option>
+                  {personIdsData?.map((p) => (
+                    <option key={p.personId} value={p.personId}>
+                      {p.displayName} ({p.personId})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  id="personId"
+                  value={personId}
+                  disabled
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 text-gray-600 sm:text-sm cursor-not-allowed"
+                  title="Your personId is fixed to your username"
+                />
+              )}
             </div>
             <div>
               <label htmlFor="actionType" className="block text-sm font-medium text-gray-700">
@@ -132,68 +168,74 @@ export default function EventsPage() {
           <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">Loading...</div>
         ) : (
           <>
-            {/* Events Table */}
+            {/* Events Timeline */}
             <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
               <div className="px-4 py-5 sm:p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">All Events</h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Event Timeline</h2>
                 {data && data.items.length === 0 ? (
-                  <p className="text-sm text-gray-500">No events found.</p>
+                  <div className="text-center py-8">
+                    <p className="text-sm text-gray-500">No events found.</p>
+                    <p className="text-xs text-gray-400 mt-1">Events will appear here as they occur</p>
+                  </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Person</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Timestamp</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Probability Value</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Probability Action</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Related Reminder</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Context</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {data?.items.map((event: ActionEventListDto) => (
-                          <tr key={event.id}>
-                            <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{event.personId}</td>
-                            <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{event.actionType}</td>
-                            <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                              <DateTimeDisplay date={event.timestampUtc} />
-                            </td>
-                            <td className="px-3 py-2 whitespace-nowrap text-sm">
-                              {event.probabilityValue !== null && event.probabilityValue !== undefined ? (
-                                <ConfidenceBadge confidence={event.probabilityValue} threshold={CONFIDENCE_THRESHOLD} />
-                              ) : (
-                                <span className="text-gray-400">N/A</span>
-                              )}
-                            </td>
-                            <td className="px-3 py-2 whitespace-nowrap text-sm">
-                              <span className={getProbabilityActionColor(event.probabilityAction)}>
-                                {getProbabilityActionLabel(event.probabilityAction)}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2 whitespace-nowrap text-sm">
-                              <button
-                                onClick={() => {
-                                  setSelectedEvent(event);
-                                  setIsModalOpen(true);
-                                }}
-                                className="text-indigo-600 hover:text-indigo-900 text-lg"
-                                title="View"
-                              >
-                                👁️
-                              </button>
-                            </td>
-                            <td className="px-3 py-2 text-sm text-gray-500">
-                              <div className="text-xs">
-                                <div>{event.context.timeBucket} / {event.context.dayType}</div>
-                                {event.context.location && <div>📍 {event.context.location}</div>}
+                  <div className="space-y-4">
+                    {data?.items.map((event: ActionEventListDto) => {
+                      const isStateChange = (event as any).eventType === 'StateChange';
+                      const learningNote = event.probabilityAction 
+                        ? (event.probabilityAction === ProbabilityAction.Increase 
+                            ? 'This increased the confidence of related reminders'
+                            : 'This decreased the confidence of related reminders')
+                        : isStateChange
+                        ? 'This activated a routine and opened an observation window'
+                        : 'This event was recorded for pattern learning';
+                      
+                      return (
+                        <div
+                          key={event.id}
+                          className="flex gap-4 p-4 border-l-4 border-gray-200 hover:border-indigo-400 bg-gray-50 hover:bg-gray-100 rounded-r-lg transition-colors"
+                        >
+                          <div className="flex-shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                              {isStateChange ? '🎯' : '⚡'}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <h3 className="font-medium text-gray-900">{event.actionType}</h3>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {event.personId} • <DateTimeDisplay date={event.timestampUtc} showRelative />
+                                </p>
                               </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                              {event.probabilityValue !== null && event.probabilityValue !== undefined && (
+                                <ConfidenceBadge confidence={event.probabilityValue} threshold={CONFIDENCE_THRESHOLD} />
+                              )}
+                            </div>
+                            <div className="mt-2 text-sm text-gray-600">
+                              <p>{learningNote}</p>
+                            </div>
+                            <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
+                              <span>{event.context.timeBucket}</span>
+                              <span>{event.context.dayType}</span>
+                              {event.context.location && <span>📍 {event.context.location}</span>}
+                            </div>
+                            {event.relatedReminderId && (
+                              <div className="mt-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedEvent(event);
+                                    setIsModalOpen(true);
+                                  }}
+                                  className="text-xs text-indigo-600 hover:text-indigo-900"
+                                >
+                                  View related reminders →
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>

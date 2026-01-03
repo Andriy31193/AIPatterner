@@ -8,3 +8,4 @@ public class DeleteExecutionHistoryCommand : IRequest<bool>
     public Guid HistoryId { get; set; }
 }
 
+

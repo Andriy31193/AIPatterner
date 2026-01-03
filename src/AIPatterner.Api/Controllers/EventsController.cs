@@ -1,6 +1,7 @@
 // API controller for action event ingestion
 namespace AIPatterner.Api.Controllers;
 
+using AIPatterner.Api.Extensions;
 using AIPatterner.Application.Commands;
 using AIPatterner.Application.DTOs;
 using AIPatterner.Application.Queries;
@@ -23,6 +24,7 @@ public class EventsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ActionEventListResponse>> GetEvents(
         [FromQuery] string? personId,
         [FromQuery] string? actionType,
@@ -31,6 +33,27 @@ public class EventsController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
+        // Validate personId access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // For user role: personId is required and must match their own
+        if (!isAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(personId))
+            {
+                // If no personId provided, use the API key's personId
+                personId = apiKeyPersonId;
+            }
+            else if (personId != apiKeyPersonId)
+            {
+                // User trying to access different personId - forbidden
+                return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+            }
+        }
+        // For admin: any personId is allowed, but if not provided, we could return all or require it
+        // For backward compatibility, we'll allow null personId for admin (returns all)
+
         var query = new GetEventsQuery
         {
             PersonId = personId,
@@ -48,8 +71,29 @@ public class EventsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<IngestEventResponse>> IngestEvent([FromBody] ActionEventDto eventDto)
     {
+        // Validate personId access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // For user role: can only create for their own personId
+        if (!isAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(eventDto.PersonId))
+            {
+                // If no personId provided, use the API key's personId
+                eventDto.PersonId = apiKeyPersonId ?? throw new InvalidOperationException("API key does not have a personId");
+            }
+            else if (eventDto.PersonId != apiKeyPersonId)
+            {
+                // User trying to create for different personId - forbidden
+                return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+            }
+        }
+        // For admin: any personId is allowed
+
         var command = new IngestEventCommand { Event = eventDto };
         var response = await _mediator.Send(command);
 

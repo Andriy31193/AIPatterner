@@ -39,6 +39,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<string>("CustomData")
                         .HasColumnType("jsonb");
 
+                    b.Property<int>("EventType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
                     b.Property<string>("PersonId")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -153,6 +158,10 @@ namespace AIPatterner.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("PersonId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -285,12 +294,31 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<string>("CustomData")
                         .HasColumnType("jsonb");
 
+                    b.Property<int>("EvidenceCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
                     b.Property<DateTime?>("ExecutedAtUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("InferredWeekday")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ObservedDayOfWeekHistogramJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ObservedDaysJson")
+                        .HasColumnType("text");
 
                     b.Property<string>("Occurrence")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<int>("PatternInferenceStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("PersonId")
                         .IsRequired()
@@ -310,6 +338,14 @@ namespace AIPatterner.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<long?>("TimeWindowCenter")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TimeWindowSizeMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(45);
 
                     b.Property<Guid?>("TransitionId")
                         .HasColumnType("uuid");
@@ -357,6 +393,88 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.HasIndex("PersonId", "ActionType", "SuppressedUntilUtc");
 
                     b.ToTable("remindercooldowns", (string)null);
+                });
+
+            modelBuilder.Entity("AIPatterner.Domain.Entities.Routine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IntentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("LastIntentOccurredAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ObservationWindowEndsAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PersonId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("PersonId", "IntentType")
+                        .IsUnique();
+
+                    b.ToTable("routines", (string)null);
+                });
+
+            modelBuilder.Entity("AIPatterner.Domain.Entities.RoutineReminder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("Confidence")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomData")
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime?>("LastObservedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ObservationCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PersonId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("RoutineId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SuggestedAction")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("RoutineId");
+
+                    b.HasIndex("RoutineId", "SuggestedAction")
+                        .IsUnique();
+
+                    b.ToTable("routinereminders", (string)null);
                 });
 
             modelBuilder.Entity("AIPatterner.Domain.Entities.User", b =>

@@ -26,3 +26,4 @@ public class CreateConfigurationRequest
     public string? Description { get; set; }
 }
 
+

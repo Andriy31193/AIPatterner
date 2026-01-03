@@ -1,6 +1,7 @@
 // API controller for admin operations
 namespace AIPatterner.Api.Controllers;
 
+using AIPatterner.Api.Extensions;
 using AIPatterner.Application.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -35,12 +36,24 @@ public class AdminController : ControllerBase
     [HttpPost("reminders")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> CreateManualReminder([FromBody] CreateManualReminderRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.PersonId) || string.IsNullOrWhiteSpace(request.SuggestedAction))
         {
             return BadRequest(new { message = "PersonId and SuggestedAction are required" });
         }
+
+        // Validate personId access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // For user role: can only create for their own personId
+        if (!isAdmin && request.PersonId != apiKeyPersonId)
+        {
+            return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+        }
+        // For admin: any personId is allowed
 
         var command = new CreateManualReminderCommand
         {

@@ -9,3 +9,4 @@ public class GetUserPreferencesQuery : IRequest<UserReminderPreferencesDto?>
     public string PersonId { get; set; } = string.Empty;
 }
 
+

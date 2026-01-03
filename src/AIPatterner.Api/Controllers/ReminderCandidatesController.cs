@@ -1,6 +1,7 @@
 // API controller for reminder candidates
 namespace AIPatterner.Api.Controllers;
 
+using AIPatterner.Api.Extensions;
 using AIPatterner.Application.Commands;
 using AIPatterner.Application.Queries;
 using MediatR;
@@ -22,6 +23,7 @@ public class ReminderCandidatesController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> GetReminderCandidates(
         [FromQuery] string? personId,
         [FromQuery] string? status,
@@ -31,6 +33,26 @@ public class ReminderCandidatesController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
+        // Validate personId access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // For user role: personId is required and must match their own
+        if (!isAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(personId))
+            {
+                // If no personId provided, use the API key's personId
+                personId = apiKeyPersonId;
+            }
+            else if (personId != apiKeyPersonId)
+            {
+                // User trying to access different personId - forbidden
+                return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+            }
+        }
+        // For admin: any personId is allowed
+
         var query = new GetReminderCandidatesQuery
         {
             PersonId = personId,

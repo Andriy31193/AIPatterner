@@ -28,7 +28,8 @@ namespace AIPatterner.Infrastructure.Migrations
                     ProbabilityValue = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: true),
                     ProbabilityAction = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     RelatedReminderId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CustomData = table.Column<string>(type: "jsonb", nullable: true)
+                    CustomData = table.Column<string>(type: "jsonb", nullable: true),
+                    EventType = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -66,6 +67,7 @@ namespace AIPatterner.Infrastructure.Migrations
                     KeyPrefix = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     ExpiresAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastUsedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -135,7 +137,14 @@ namespace AIPatterner.Infrastructure.Migrations
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExecutedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     SourceEventId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CustomData = table.Column<string>(type: "jsonb", nullable: true)
+                    CustomData = table.Column<string>(type: "jsonb", nullable: true),
+                    TimeWindowCenter = table.Column<long>(type: "bigint", nullable: true),
+                    TimeWindowSizeMinutes = table.Column<int>(type: "integer", nullable: false, defaultValue: 45),
+                    EvidenceCount = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    ObservedDaysJson = table.Column<string>(type: "text", nullable: true),
+                    ObservedDayOfWeekHistogramJson = table.Column<string>(type: "text", nullable: true),
+                    PatternInferenceStatus = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    InferredWeekday = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -156,6 +165,41 @@ namespace AIPatterner.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_remindercooldowns", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "routinereminders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoutineId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    SuggestedAction = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Confidence = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastObservedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ObservationCount = table.Column<int>(type: "integer", nullable: false),
+                    CustomData = table.Column<string>(type: "jsonb", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_routinereminders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "routines",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    IntentType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastIntentOccurredAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ObservationWindowEndsAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_routines", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -275,6 +319,33 @@ namespace AIPatterner.Infrastructure.Migrations
                 columns: new[] { "PersonId", "ActionType", "SuppressedUntilUtc" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_routinereminders_PersonId",
+                table: "routinereminders",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_routinereminders_RoutineId",
+                table: "routinereminders",
+                column: "RoutineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_routinereminders_RoutineId_SuggestedAction",
+                table: "routinereminders",
+                columns: new[] { "RoutineId", "SuggestedAction" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_routines_PersonId",
+                table: "routines",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_routines_PersonId_IntentType",
+                table: "routines",
+                columns: new[] { "PersonId", "IntentType" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_userreminderpreferences_PersonId",
                 table: "userreminderpreferences",
                 column: "PersonId",
@@ -316,6 +387,12 @@ namespace AIPatterner.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "remindercooldowns");
+
+            migrationBuilder.DropTable(
+                name: "routinereminders");
+
+            migrationBuilder.DropTable(
+                name: "routines");
 
             migrationBuilder.DropTable(
                 name: "userreminderpreferences");

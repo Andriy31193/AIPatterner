@@ -12,6 +12,7 @@ public class ActionEventDto
     public double? ProbabilityValue { get; set; }
     public ProbabilityAction? ProbabilityAction { get; set; }
     public Dictionary<string, string>? CustomData { get; set; }
+    public EventType EventType { get; set; } = EventType.Action; // Default to Action for backward compatibility
 }
 
 public class ActionContextDto

@@ -84,6 +84,15 @@ public class FeedbackTests : IDisposable
         var configRepo = new ConfigurationRepository(_context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, config);
         var matchingRemindersService = new MatchingRemindersService(eventRepo, _context, mapper);
+        
+        var routineRepository = new RoutineRepository(_context);
+        var routineReminderRepository = new RoutineReminderRepository(_context);
+        var routineLearningService = new RoutineLearningService(
+            routineRepository,
+            routineReminderRepository,
+            eventRepo,
+            config,
+            loggerFactory.CreateLogger<RoutineLearningService>());
 
         _eventHandler = new IngestEventCommandHandler(
             eventRepo,
@@ -94,7 +103,8 @@ public class FeedbackTests : IDisposable
             mockExecutionHistoryService,
             config,
             matchingRemindersService,
-            matchingPolicyService);
+            matchingPolicyService,
+            routineLearningService);
 
         // Setup HTTP client for API tests
         _apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "http://localhost:8080/api";

@@ -1,7 +1,7 @@
 // Reminder candidates management page with High/Low probability lists
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
@@ -19,7 +19,7 @@ const CONFIDENCE_THRESHOLD = 0.7; // High probability threshold
 
 export default function RemindersPage() {
   const router = useRouter();
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [personId, setPersonId] = useState('');
   const [actionType, setActionType] = useState('');
   const [status, setStatus] = useState('');
@@ -29,6 +29,20 @@ export default function RemindersPage() {
   const [editingReminder, setEditingReminder] = useState<ReminderCandidateDto | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [executingReminders, setExecutingReminders] = useState<Set<string>>(new Set());
+
+  // For non-admin users, set personId to their username on mount
+  useEffect(() => {
+    if (!isAdmin && user?.username) {
+      setPersonId(user.username);
+    }
+  }, [isAdmin, user]);
+
+  // Fetch personIds for admin dropdown
+  const { data: personIdsData } = useQuery({
+    queryKey: ['personIds'],
+    queryFn: () => apiService.getPersonIds(),
+    enabled: isAdmin,
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['reminderCandidates', { personId, actionType, status, page, pageSize }],
@@ -141,121 +155,93 @@ export default function RemindersPage() {
   const isExecuted = (status: ReminderCandidateStatus | string) => 
     status === 'Executed' || status === ReminderCandidateStatus.Executed;
 
-  const renderReminderTable = (candidates: ReminderCandidateDto[], title: string, isHighProbability: boolean) => {
-    if (candidates.length === 0) {
-      return (
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">{title}</h2>
-          <p className="text-sm text-gray-500">No {isHighProbability ? 'high' : 'low'} probability reminders found.</p>
-        </div>
-      );
-    }
+  const [activeTab, setActiveTab] = useState<'high' | 'low'>('high');
 
+  const renderReminderCard = (candidate: ReminderCandidateDto) => {
+    const isExecuting = executingReminders.has(candidate.id);
+    const isHighProbability = (candidate.confidence || 0) >= CONFIDENCE_THRESHOLD;
+    const cardBgColor = isHighProbability 
+      ? 'bg-green-50 border-green-200 hover:border-green-300' 
+      : 'bg-yellow-50 border-yellow-200 hover:border-yellow-300';
+    
     return (
-      <div className={`shadow rounded-lg overflow-hidden mb-6 ${isHighProbability ? 'bg-green-50 border-2 border-green-200' : 'bg-yellow-50 border-2 border-yellow-200'}`}>
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className={`text-lg font-medium ${isHighProbability ? 'text-green-900' : 'text-yellow-900'}`}>
-              {title}
-            </h2>
-            {!isHighProbability && (
-              <span className="text-xs font-medium text-yellow-800 bg-yellow-200 px-3 py-1 rounded-full">
-                Manual Execution Only
-              </span>
+      <div
+        key={candidate.id}
+        className={`border rounded-lg p-4 transition-all ${cardBgColor} ${isExecuting ? 'ring-2 ring-indigo-500' : ''}`}
+      >
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900 mb-1">{candidate.suggestedAction}</h3>
+            <p className="text-xs text-gray-500">{candidate.personId}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {isExecuting && <LoadingSpinner size="sm" />}
+            <StatusBadge status={candidate.status} />
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-4">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Confidence</p>
+              <ConfidenceBadge confidence={candidate.confidence || 0} threshold={CONFIDENCE_THRESHOLD} />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Time Window</p>
+              <p className="text-sm text-gray-700">
+                <DateTimeDisplay date={candidate.checkAtUtc} />
+              </p>
+            </div>
+            {candidate.occurrence && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Pattern</p>
+                <p className="text-sm text-gray-700">{candidate.occurrence}</p>
+              </div>
             )}
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Person</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Confidence</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Check At</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Occurrence</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Style</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {candidates.map((candidate: ReminderCandidateDto) => {
-                  const isExecuting = executingReminders.has(candidate.id);
-                  const isHighProbability = (candidate.confidence || 0) >= CONFIDENCE_THRESHOLD;
-                  const rowBgColor = isHighProbability 
-                    ? 'bg-green-50 hover:bg-green-100' 
-                    : 'bg-yellow-50 hover:bg-yellow-100';
-                  
-                  return (
-                    <tr 
-                      key={candidate.id} 
-                      className={`transition-colors duration-200 ${isExecuting ? 'bg-indigo-50' : rowBgColor}`}
-                    >
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{candidate.personId}</td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{candidate.suggestedAction}</td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm">
-                        <ConfidenceBadge confidence={candidate.confidence || 0} threshold={CONFIDENCE_THRESHOLD} />
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                        <DateTimeDisplay date={candidate.checkAtUtc} />
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                        {candidate.occurrence || <span className="text-gray-400">N/A</span>}
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">{candidate.style}</td>
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          {isExecuting && <LoadingSpinner size="sm" />}
-                          <StatusBadge status={candidate.status} />
-                          {isExecuting && (
-                            <span className="text-xs text-indigo-600 font-medium animate-pulse">
-                              Executing...
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button
-                          onClick={() => handleForceCheck(candidate.id)}
-                          disabled={isExecuting}
-                          className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-                          title="Check"
-                        >
-                          🔍
-                        </button>
-                        <button
-                          onClick={() => handleExecuteNow(candidate.id)}
-                          disabled={isExecuting}
-                          className="text-green-600 hover:text-green-900 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-                          title="Execute now"
-                        >
-                          ▶️
-                        </button>
-                        <button
-                          onClick={() => handleEdit(candidate)}
-                          disabled={isExecuting}
-                          className="text-blue-600 hover:text-blue-900 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-                          title="Edit"
-                        >
-                          ✏️
-                        </button>
-                        {isAdmin && (
-                          <button
-                            onClick={() => handleDelete(candidate.id, candidate.suggestedAction)}
-                            disabled={isExecuting}
-                            className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-                            title="Delete"
-                          >
-                            🗑️
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        </div>
+
+        {isExecuting && (
+          <div className="mb-3 p-2 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
+            ⏳ Executing...
           </div>
+        )}
+
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
+          <button
+            onClick={() => handleForceCheck(candidate.id)}
+            disabled={isExecuting}
+            className="text-xs px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded disabled:opacity-50"
+            title="Check"
+          >
+            Check
+          </button>
+          <button
+            onClick={() => handleExecuteNow(candidate.id)}
+            disabled={isExecuting}
+            className="text-xs px-3 py-1.5 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"
+            title="Execute now"
+          >
+            Execute
+          </button>
+          <button
+            onClick={() => handleEdit(candidate)}
+            disabled={isExecuting}
+            className="text-xs px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
+            title="Edit"
+          >
+            Edit
+          </button>
+          {isAdmin && (
+            <button
+              onClick={() => handleDelete(candidate.id, candidate.suggestedAction)}
+              disabled={isExecuting}
+              className="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+              title="Delete"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
     );
@@ -281,13 +267,33 @@ export default function RemindersPage() {
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700">
                 Person ID
               </label>
-              <input
-                type="text"
-                id="personId"
-                value={personId}
-                onChange={(e) => setPersonId(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+              {isAdmin ? (
+                <select
+                  id="personId"
+                  value={personId}
+                  onChange={(e) => {
+                    setPersonId(e.target.value);
+                    setPage(1);
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">All Persons</option>
+                  {personIdsData?.map((p) => (
+                    <option key={p.personId} value={p.personId}>
+                      {p.displayName} ({p.personId})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  id="personId"
+                  value={personId}
+                  disabled
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 text-gray-600 sm:text-sm cursor-not-allowed"
+                  title="Your personId is fixed to your username"
+                />
+              )}
             </div>
             <div>
               <label htmlFor="actionType" className="block text-sm font-medium text-gray-700">
@@ -338,34 +344,73 @@ export default function RemindersPage() {
           <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">Loading...</div>
         ) : (
           <>
-            {/* Info banner */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-blue-700">
-                    <strong>High Probability Reminders</strong> (≥{Math.round(CONFIDENCE_THRESHOLD * 100)}%) are automatically executed when due.
-                    {' '}<strong>Low Probability Reminders</strong> (&lt;{Math.round(CONFIDENCE_THRESHOLD * 100)}%) require manual execution via the &quot;Execute now&quot; button.
-                    Reminders automatically move between lists when their probability changes.
-                  </p>
-                </div>
+            {/* Tabs */}
+            <div className="bg-white shadow rounded-lg mb-6">
+              <div className="border-b border-gray-200">
+                <nav className="flex -mb-px">
+                  <button
+                    onClick={() => setActiveTab('high')}
+                    className={`py-4 px-6 text-sm font-medium border-b-2 ${
+                      activeTab === 'high'
+                        ? 'border-green-500 text-green-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    High Probability ({highProbabilityCandidates.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('low')}
+                    className={`py-4 px-6 text-sm font-medium border-b-2 ${
+                      activeTab === 'low'
+                        ? 'border-yellow-500 text-yellow-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    Low Probability ({lowProbabilityCandidates.length})
+                  </button>
+                </nav>
+              </div>
+
+              <div className="p-6">
+                {activeTab === 'high' ? (
+                  <>
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600">
+                        These reminders are likely to be executed automatically when due. They have high confidence based on observed patterns.
+                      </p>
+                    </div>
+                    {highProbabilityCandidates.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 text-sm">No high probability reminders</p>
+                        <p className="text-gray-400 text-xs mt-1">Reminders appear here as the system learns your patterns</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {highProbabilityCandidates.map(renderReminderCard)}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600">
+                        These reminders are still learning. They won&apos;t execute automatically and require manual execution.
+                      </p>
+                    </div>
+                    {lowProbabilityCandidates.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 text-sm">No low probability reminders</p>
+                        <p className="text-gray-400 text-xs mt-1">All reminders have high confidence</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {lowProbabilityCandidates.map(renderReminderCard)}
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             </div>
-
-            {renderReminderTable(
-              highProbabilityCandidates,
-              `High Probability Reminders (≥${Math.round(CONFIDENCE_THRESHOLD * 100)}%) - Auto Execute`,
-              true
-            )}
-            {renderReminderTable(
-              lowProbabilityCandidates,
-              `Low Probability Reminders (<${Math.round(CONFIDENCE_THRESHOLD * 100)}%) - Manual Execution Only`,
-              false
-            )}
 
             {/* Other status reminders (only Skipped and Expired, not Executed) */}
             {data && data.items.filter((c: ReminderCandidateDto) => !isScheduled(c.status) && !isExecuted(c.status)).length > 0 && (

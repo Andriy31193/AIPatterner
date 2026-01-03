@@ -1,22 +1,38 @@
 // Manual reminder creation page
 'use client';
 
-import React, { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/Layout';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
 import type { CreateManualReminderRequest } from '@/types';
 import { ReminderStyle } from '@/types';
 
 export default function CreateReminderPage() {
   const router = useRouter();
+  const { user, isAdmin } = useAuth();
   const [formData, setFormData] = useState<CreateManualReminderRequest>({
     personId: '',
     suggestedAction: '',
     checkAtUtc: new Date().toISOString().slice(0, 16),
     style: ReminderStyle.Suggest,
     occurrence: '',
+  });
+
+  // For non-admin users, set personId to their username on mount
+  useEffect(() => {
+    if (!isAdmin && user?.username) {
+      setFormData(prev => ({ ...prev, personId: user.username }));
+    }
+  }, [isAdmin, user]);
+
+  // Fetch personIds for admin dropdown
+  const { data: personIdsData } = useQuery({
+    queryKey: ['personIds'],
+    queryFn: () => apiService.getPersonIds(),
+    enabled: isAdmin,
   });
 
   const createMutation = useMutation({
@@ -60,15 +76,32 @@ export default function CreateReminderPage() {
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700">
                 Person ID *
               </label>
-              <input
-                type="text"
-                id="personId"
-                value={formData.personId}
-                onChange={(e) => setFormData({ ...formData, personId: e.target.value })}
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="e.g., alex"
-              />
+              {isAdmin ? (
+                <select
+                  id="personId"
+                  value={formData.personId}
+                  onChange={(e) => setFormData({ ...formData, personId: e.target.value })}
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select a person...</option>
+                  {personIdsData?.map((p) => (
+                    <option key={p.personId} value={p.personId}>
+                      {p.displayName} ({p.personId})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  id="personId"
+                  value={formData.personId}
+                  disabled
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 text-gray-600 sm:text-sm cursor-not-allowed"
+                  title="Your personId is fixed to your username"
+                />
+              )}
             </div>
 
             <div>

@@ -4,6 +4,7 @@ namespace AIPatterner.Tests.Integration;
 using AIPatterner.Application.Commands;
 using AIPatterner.Application.DTOs;
 using AIPatterner.Application.Handlers;
+using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using AIPatterner.Infrastructure.Persistence;
 using AIPatterner.Infrastructure.Persistence.Repositories;
@@ -29,8 +30,7 @@ public abstract class RealDatabaseTestBase : IDisposable
     {
         //REVERT
         // Get connection string from environment or use default
-        var connectionString = Environment.GetEnvironmentVariable("TEST_DB_CONNECTION_STRING")
-            ?? "Host=localhost;Port=5433;Database=aipatterner_test;Username=postgres;Password=postgres";
+        var connectionString = "Host=localhost;Port=5433;Database=aipatterner;Username=postgres;Password=postgres";
 
         // Get API base URL from environment or use default
         ApiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "http://localhost:8080/api";
@@ -104,6 +104,15 @@ public abstract class RealDatabaseTestBase : IDisposable
         var configRepo = new ConfigurationRepository(Context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, Configuration);
         var matchingRemindersService = new MatchingRemindersService(EventRepository, Context, mapper);
+        
+        var routineRepository = new RoutineRepository(Context);
+        var routineReminderRepository = new RoutineReminderRepository(Context);
+        var routineLearningService = new RoutineLearningService(
+            routineRepository,
+            routineReminderRepository,
+            EventRepository,
+            Configuration,
+            loggerFactory.CreateLogger<RoutineLearningService>());
 
         EventHandler = new IngestEventCommandHandler(
             EventRepository,
@@ -114,7 +123,8 @@ public abstract class RealDatabaseTestBase : IDisposable
             mockExecutionHistoryService,
             Configuration,
             matchingRemindersService,
-            matchingPolicyService);
+            matchingPolicyService,
+            routineLearningService);
 
         // Setup matching policies
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();
@@ -154,7 +164,9 @@ public abstract class RealDatabaseTestBase : IDisposable
     {
         // Clean up test data with specific prefixes
         var testPersonIds = new[] { "user", "api_user", "api_test_user", "api_related_user", "api_feedback_user", 
-            "feedback_user", "daily_user", "weekly_user", "user_a", "user_b", "user_c" };
+            "feedback_user", "daily_user", "weekly_user", "user_a", "user_b", "user_c", "routine_test_user",
+            "event_person", "reminder_person", "routine_person", "duplicate_test_person", "matched_user",
+            "user_for_id", "testuser_dual", "testuser1", "testuser2", "adminuser" };
 
         foreach (var personIdPrefix in testPersonIds)
         {
@@ -183,12 +195,43 @@ public abstract class RealDatabaseTestBase : IDisposable
             Context.ReminderCooldowns.RemoveRange(cooldowns);
         }
 
+        // Clean up routines and routine reminders
+        var routineTestPersonIds = Context.Routines
+            .Where(r => r.PersonId.StartsWith("routine_test_user") || r.PersonId.StartsWith("routine_person"))
+            .Select(r => r.PersonId)
+            .Distinct()
+            .ToList();
+
+        foreach (var personId in routineTestPersonIds)
+        {
+            var routines = Context.Routines
+                .Where(r => r.PersonId == personId)
+                .ToList();
+            
+            foreach (var routine in routines)
+            {
+                var routineReminders = Context.RoutineReminders
+                    .Where(rr => rr.RoutineId == routine.Id)
+                    .ToList();
+                Context.RoutineReminders.RemoveRange(routineReminders);
+            }
+            
+            Context.Routines.RemoveRange(routines);
+        }
+
+        // Clean up test users
+        var testUsernames = new[] { "testuser1", "testuser2", "adminuser", "matched_user", "user_for_id", "testuser_dual" };
+        var testUsers = Context.Users
+            .Where(u => testUsernames.Contains(u.Username))
+            .ToList();
+        Context.Users.RemoveRange(testUsers);
+
         Context.SaveChanges();
     }
 
     public virtual void Dispose()
     {
-        CleanupTestData();
+        //CleanupTestData();
         Context?.Dispose();
         HttpClient?.Dispose();
     }

@@ -12,3 +12,4 @@ public class CreateConfigurationCommand : IRequest<ConfigurationDto>
     public string? Description { get; set; }
 }
 
+

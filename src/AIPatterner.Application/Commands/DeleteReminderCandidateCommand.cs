@@ -8,3 +8,4 @@ public class DeleteReminderCandidateCommand : IRequest<bool>
     public Guid ReminderCandidateId { get; set; }
 }
 
+

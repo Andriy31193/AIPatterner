@@ -9,3 +9,4 @@ public class GetConfigurationsQuery : IRequest<List<ConfigurationDto>>
     public string? Category { get; set; }
 }
 
+

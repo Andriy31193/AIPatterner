@@ -9,3 +9,4 @@ public class UpdateReminderOccurrenceCommand : IRequest<bool>
     public string? Occurrence { get; set; }
 }
 
+

@@ -20,6 +20,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ApiKey> ApiKeys { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
     public DbSet<ExecutionHistory> ExecutionHistories { get; set; }
+    public DbSet<Routine> Routines { get; set; }
+    public DbSet<RoutineReminder> RoutineReminders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +35,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ActionType).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ProbabilityValue).HasPrecision(18, 4);
             entity.Property(e => e.ProbabilityAction).HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.EventType)
+                .HasConversion<int>()
+                .HasDefaultValue(EventType.Action);
             entity.Property(e => e.CustomData)
                 .HasConversion(
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
@@ -85,6 +90,22 @@ public class ApplicationDbContext : DbContext
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                     v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
                 .HasColumnType("jsonb");
+            
+            // Evidence tracking fields for gradual pattern learning
+            entity.Property(e => e.TimeWindowCenter)
+                .HasConversion(
+                    v => v.HasValue ? v.Value.Ticks : (long?)null,
+                    v => v.HasValue ? TimeSpan.FromTicks(v.Value) : (TimeSpan?)null)
+                .IsRequired(false);
+            entity.Property(e => e.TimeWindowSizeMinutes).HasDefaultValue(45);
+            entity.Property(e => e.EvidenceCount).HasDefaultValue(0);
+            entity.Property(e => e.ObservedDaysJson).HasColumnType("text");
+            entity.Property(e => e.ObservedDayOfWeekHistogramJson).HasColumnType("text");
+            entity.Property(e => e.PatternInferenceStatus)
+                .HasConversion<int>()
+                .HasDefaultValue(PatternInferenceStatus.Unknown);
+            entity.Property(e => e.InferredWeekday).IsRequired(false);
+            
             entity.HasIndex(e => e.CheckAtUtc);
             entity.HasIndex(e => e.SourceEventId);
             entity.HasIndex(e => new { e.PersonId, e.Status });
@@ -137,6 +158,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.KeyHash).IsRequired().HasMaxLength(500);
             entity.Property(e => e.KeyPrefix).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Role).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.PersonId).HasMaxLength(100);
             entity.HasIndex(e => e.KeyHash);
             entity.HasIndex(e => e.UserId);
         });
@@ -166,6 +188,34 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => new { e.PersonId, e.ExecutedAtUtc });
             entity.HasIndex(e => e.ReminderCandidateId);
             entity.HasIndex(e => e.EventId);
+        });
+
+        modelBuilder.Entity<Routine>(entity =>
+        {
+            entity.ToTable("routines");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.IntentType).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => new { e.PersonId, e.IntentType }).IsUnique();
+            entity.HasIndex(e => e.PersonId);
+        });
+
+        modelBuilder.Entity<RoutineReminder>(entity =>
+        {
+            entity.ToTable("routinereminders");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.RoutineId).IsRequired();
+            entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Confidence).HasPrecision(18, 4);
+            entity.Property(e => e.CustomData)
+                .HasConversion(
+                    v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+                    v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
+                .HasColumnType("jsonb");
+            entity.HasIndex(e => new { e.RoutineId, e.SuggestedAction }).IsUnique();
+            entity.HasIndex(e => e.RoutineId);
+            entity.HasIndex(e => e.PersonId);
         });
     }
 }

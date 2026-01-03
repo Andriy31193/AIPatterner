@@ -36,6 +36,12 @@ public class ReminderScheduler : IReminderScheduler
         ActionEvent actionEvent,
         CancellationToken cancellationToken)
     {
+        // CRITICAL: StateChange events must NOT trigger reminder scheduling
+        if (actionEvent.EventType == EventType.StateChange)
+        {
+            return new List<ReminderCandidate>();
+        }
+
         var candidates = new List<ReminderCandidate>();
 
         var recentTransitions = await _transitionRepository.GetRecentTransitionsForPersonAsync(

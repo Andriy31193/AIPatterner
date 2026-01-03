@@ -14,3 +14,4 @@ public class GetExecutionHistoryQuery : IRequest<ExecutionHistoryListResponse>
     public int PageSize { get; set; } = 20;
 }
 
+

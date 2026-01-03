@@ -10,3 +10,4 @@ public class GetRemindersByEventIdQuery : IRequest<ReminderCandidateListResponse
     public Guid EventId { get; set; }
 }
 
+

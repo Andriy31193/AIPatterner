@@ -65,6 +65,12 @@ export function Layout({ children, requireAuth = true, requireAdmin = false }: L
                   Reminders
                 </Link>
                 <Link
+                  href="/routines"
+                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
+                >
+                  Routines
+                </Link>
+                <Link
                   href="/events"
                   className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700"
                 >
