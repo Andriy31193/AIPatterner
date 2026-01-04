@@ -1,0 +1,1615 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AIPatterner.Domain -> E:\Projects\AIPatterner-P\AIPatterner\src\AIPatterner.Domain\bin\Debug\net8.0\AIPatterner.Domain.dll
+  AIPatterner.Application -> E:\Projects\AIPatterner-P\AIPatterner\src\AIPatterner.Application\bin\Debug\net8.0\AIPatterner.Application.dll
+  AIPatterner.Infrastructure -> E:\Projects\AIPatterner-P\AIPatterner\src\AIPatterner.Infrastructure\bin\Debug\net8.0\AIPatterner.Infrastructure.dll
+  AIPatterner.Api -> E:\Projects\AIPatterner-P\AIPatterner\src\AIPatterner.Api\bin\Debug\net8.0\AIPatterner.Api.dll
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(166,36): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(192,45): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\EventMatchingPatternTests.cs(320,24): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(237,36): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(261,45): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\EventMatchingPatternTests.cs(355,24): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(323,36): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(347,45): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\CombinedRemindersAndRoutinesTest.cs(305,24): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\CombinedRemindersAndRoutinesTest.cs(318,24): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(389,23): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(443,42): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(469,51): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\PersonIdsControllerTests.cs(352,29): warning CS8604: Possible null reference argument for parameter 'source' in 'PersonIdDto Enumerable.First<PersonIdDto>(IEnumerable<PersonIdDto> source, Func<PersonIdDto, bool> predicate)'. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\CombinedRemindersAndRoutinesTest.cs(362,24): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(637,47): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(674,24): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(732,23): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(788,43): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\RoutineLearningComprehensiveTests.cs(483,9): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(945,43): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(995,43): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(1044,43): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\GradualPatternLearningTests.cs(574,31): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(1094,23): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(1147,23): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(1187,36): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(1210,21): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\SignalStatesComprehensiveTests.cs(1265,21): warning CS8602: Dereference of a possibly null reference. [E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\AIPatterner.Tests.Integration.csproj]
+  AIPatterner.Tests.Integration -> E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\bin\Debug\net8.0\AIPatterner.Tests.Integration.dll
+Test run for E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\bin\Debug\net8.0\AIPatterner.Tests.Integration.dll (.NETCoreApp,Version=v8.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.9.0 (x64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\bin\Debug\net8.0\AIPatterner.Tests.Integration.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.3.1+6b60a9e56a (64-bit .NET 8.0.2)
+[xUnit.net 00:00:00.76]   Discovering: AIPatterner.Tests.Integration
+[xUnit.net 00:00:00.80]   Discovered:  AIPatterner.Tests.Integration
+[xUnit.net 00:00:00.80]   Starting:    AIPatterner.Tests.Integration
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 3143239b-b570-4179-afa2-dec3218626ad for person life_sim_piotr with intent I'm home
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 975a4811-88a7-4bd5-9068-94264464c45d for person life_sim_victoria with intent WakeUp
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: WakeUp -> kitchen_lights_on in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: kitchen_lights_on -> coffee_machine_on in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: WakeUp -> kitchen_lights_on in context weekend*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: kitchen_lights_on -> coffee_machine_on in context weekend*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 0.7
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 0.8999999999999999
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49811456-81a1-4f74-9841-6d321bdadbad for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Scheduled reminder candidate 60b961e0-16bb-41b8-bac6-c4aebebc7aae for life_sim_victoria, action: coffee_machine_on, check at: 12/09/2025 03:29:02, confidence: 0.5
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3143239b-b570-4179-afa2-dec3218626ad (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 9e4312e9-7c66-424e-9529-6f6a05b4e638 for routine 3143239b-b570-4179-afa2-dec3218626ad (action: play_music, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 975a4811-88a7-4bd5-9068-94264464c45d (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 696b78f4-3c2f-49c0-8412-78520de37e1d for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 60b961e0-16bb-41b8-bac6-c4aebebc7aae for life_sim_victoria, action: coffee_machine_on, new confidence: 0.7
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 820ec036-a352-49e6-8d0b-de733f0a460f for routine 975a4811-88a7-4bd5-9068-94264464c45d (action: coffee_machine_on, confidence: 1)
+  Passed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.Andrii_RandomActions_ShouldNotPolluteOthersRoutines [12 s]
+  Standard Output Messages:
+ === Scenario 4: Andrii chaos resistance ===
+ Piotr routines: 1
+ Victoria routines: 1
+ Andrii routines: 0
+ Piotr's routine is clean: 1 reminders, none from Andrii
+ Signal similarity protects user separation
+
+
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 for person life_sim_piotr with intent I'm home
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44 for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (action: play_music, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 9c47cdbd-1f7e-4051-9cf7-71d57eca178b ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 4eb0fbc2-f768-448a-8192-32ffe35bed20 ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 32e1bc6f-42fe-402b-a4e2-fb4841edd19d ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 318e52d6-d5fd-4a3b-bd94-4d2a69a885af ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 47e2a97c-6a9e-4e99-9d47-0b9f3905808b ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 403f0116-8c63-47b4-a679-aea030e7b72e ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event b17318e7-b713-44e4-8fa7-3dd17383e1ac ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 06af9140-5a64-4eb3-a92c-5a0f8115d0b9 ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 8499e27c-41a1-4d43-8b60-db2419e03ec0 ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 697f9454-a410-4313-9bdc-ff97d4dce70e ignored for routine reminder 51f5f8fb-8d67-4e2c-9c7b-b045d3fdcf44: state signal music_volume=57 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 3aaa0a39-ac32-449c-a49b-13276e4d3036 (person life_sim_piotr, intent I'm home)
+[xUnit.net 00:00:15.30]     AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SameAction_Within15Minutes_ShouldMatch_ButNotAfter2Hours [FAIL]
+[xUnit.net 00:00:15.30]       Expected playMusicReminder.ObservationCount to be greater than 10 because Within-tolerance occurrence should reinforce the reminder, but found 1 (difference of -9).
+[xUnit.net 00:00:15.30]       Stack Trace:
+[xUnit.net 00:00:15.30]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+[xUnit.net 00:00:15.30]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+[xUnit.net 00:00:15.30]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+[xUnit.net 00:00:15.30]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+[xUnit.net 00:00:15.30]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+[xUnit.net 00:00:15.30]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+[xUnit.net 00:00:15.30]            at FluentAssertions.Numeric.NumericAssertions`2.BeGreaterThan(T expected, String because, Object[] becauseArgs)
+[xUnit.net 00:00:15.30]         E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\LifeSimulationComprehensiveTests.cs(491,0): at AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SameAction_Within15Minutes_ShouldMatch_ButNotAfter2Hours()
+[xUnit.net 00:00:15.30]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:15.30]       Output:
+[xUnit.net 00:00:15.30]         === Scenario 5: Time offset tolerance ===
+[xUnit.net 00:00:15.30]         Play music reminder: Confidence=0.50, Observations=1
+  Failed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SameAction_Within15Minutes_ShouldMatch_ButNotAfter2Hours [2 s]
+  Error Message:
+   Expected playMusicReminder.ObservationCount to be greater than 10 because Within-tolerance occurrence should reinforce the reminder, but found 1 (difference of -9).
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.BeGreaterThan(T expected, String because, Object[] becauseArgs)
+   at AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SameAction_Within15Minutes_ShouldMatch_ButNotAfter2Hours() in E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\LifeSimulationComprehensiveTests.cs:line 491
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ === Scenario 5: Time offset tolerance ===
+ Play music reminder: Confidence=0.50, Observations=1
+
+
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 230512bc-18cb-4825-b13a-c3a417d939d8 for person life_sim_piotr with intent I'm home
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> boil_kettle in context weekend*evening*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> play_music in context weekday*evening*living_room
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: play_music, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: play_music -> boil_kettle in context weekday*evening*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 0.6
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> boil_kettle in context weekday*evening*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> play_music in context weekend*night*living_room
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 52fa244a-5cf2-49bb-a85b-fadb0b6005fa ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> play_music in context weekend*evening*living_room
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event c31e822e-d3e2-4e01-9480-01eb396f1f4a ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 0.8999999999999999
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event bf77d318-1df6-42bd-a2cf-3c0dcb66bd58 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 8a2f948d-dc43-4efd-a1d2-d678357958a1 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: play_music -> boil_kettle in context weekend*evening*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: I'm home -> play_music in context weekend*evening*living_room
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event ef26e8a9-ff08-4750-b094-d4d78ad82cb6 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event bf16f8a8-62f8-459d-a418-4d450b5590dc ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event eddb2b42-a3a1-436e-bcd1-2c2c81b76608 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event af9b376d-f0ce-48cd-b423-253dbbe35114 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event a7236813-c703-449d-bcdf-8b50d8c3038d ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 6536e04d-b1e8-42f8-8fd4-378136bdf2f4 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: play_music -> boil_kettle in context weekend*night*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event a8dbf11d-956e-4052-9f85-f9f4cdb3ca08 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 03d7d64d-430f-4d78-b1d0-ef6b02920c5f ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 9386238c-7d89-44ae-9ec3-090156b4b676 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 8d19c0b1-b464-459b-be90-38963d7be4f7 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 1da8fd2c-a934-404f-8d4e-fff32f0410d3 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 4bacb6cc-61ef-49b3-bfc7-a4ecbdb61e15 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 1f795971-921f-43ad-b7ce-bd71b34927ef ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Closed observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home) due to new StateChange
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder d738142d-0ade-42fd-9c9c-653475674019 for routine 230512bc-18cb-4825-b13a-c3a417d939d8 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder e82b31f1-e818-4fcc-ae84-c3ded907323b for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 79ff34fb-cc31-4fa2-b0e6-7fb4a23bac67 ignored for routine reminder 12c6c9ab-fba6-4c05-a7ce-f2d896c81d7b: state signal music_volume=50 not matched
+  Passed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.Piotr_ComesHome_OverMultipleWeeks_LearnsRoutine [2 s]
+  Standard Output Messages:
+ === Scenario 1: Piotr learns 'I'm home' routine ===
+ Starting simulation at 2025-10-04 20:09:15
+ Week 1, Arrival #1: 2025-10-04 18:31:00
+ Week 1, Arrival #2: 2025-10-07 18:15:15
+ Week 1, Arrival #3: 2025-10-06 19:09:00
+ Week 2, Arrival #4: 2025-10-11 21:41:15
+ Week 2, Arrival #5: 2025-10-11 20:48:00
+ Week 2, Arrival #6: 2025-10-14 18:14:15
+ Week 3, Arrival #7: 2025-10-18 19:42:00
+ Week 3, Arrival #8: 2025-10-18 19:00:15
+ Week 3, Arrival #9: 2025-10-18 18:03:00
+ Week 4, Arrival #10: 2025-10-26 20:02:15
+ Week 4, Arrival #11: 2025-10-29 20:44:00
+ Week 5, Arrival #12: 2025-11-01 19:19:15
+ Week 5, Arrival #13: 2025-11-04 20:42:00
+ Week 6, Arrival #14: 2025-11-09 21:01:15
+ Week 6, Arrival #15: 2025-11-12 18:06:00
+ Week 7, Arrival #16: 2025-11-15 21:53:15
+ Week 7, Arrival #17: 2025-11-18 20:11:00
+ Week 8, Arrival #18: 2025-11-22 21:11:15
+ Week 8, Arrival #19: 2025-11-26 19:20:00
+ Week 8, Arrival #20: 2025-11-22 18:56:15
+ Week 9, Arrival #21: 2025-12-03 18:20:00
+ Week 9, Arrival #22: 2025-12-02 19:20:15
+ Week 9, Arrival #23: 2025-11-30 21:38:00
+ Week 10, Arrival #24: 2025-12-10 21:27:15
+ Week 10, Arrival #25: 2025-12-08 20:06:00
+ Week 10, Arrival #26: 2025-12-08 18:56:15
+ Week 11, Arrival #27: 2025-12-15 19:27:00
+ Week 11, Arrival #28: 2025-12-14 18:56:15
+ Week 11, Arrival #29: 2025-12-14 21:52:00
+ Week 12, Arrival #30: 2025-12-23 20:59:15
+ Week 12, Arrival #31: 2025-12-23 18:41:00
+ Total home arrivals simulated: 31
+ Routine found: 230512bc-18cb-4825-b13a-c3a417d939d8, Intent: I'm home
+ Routine has 2 reminders
+   - sit_on_couch: Confidence=1.00, Observations=26
+   - play_music: Confidence=0.50, Observations=1
+ Piotr has 3 general reminders
+
+
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: cook_on_stove -> cook_on_stove in context weekday*afternoon*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 0.9999999999999999
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: laptop_active -> phone_screen_on in context weekday*evening*home
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: open_fridge -> open_fridge in context weekend*afternoon*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 0.7999999999999999
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_andrii: andrii_random_action_3 -> andrii_random_action_2 in context weekday*morning*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: open_fridge -> tv_on in context weekday*morning*living_room
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: phone_screen_on -> turn_on_lights in context weekday*afternoon*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: open_fridge -> phone_screen_on in context weekday*morning*home
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: use_microwave -> use_microwave in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: open_fridge -> phone_screen_on in context weekday*afternoon*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: use_microwave -> open_fridge in context weekend*night*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: turn_on_lights -> use_microwave in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: phone_screen_on -> turn_on_lights in context weekday*morning*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: open_fridge -> turn_on_lights in context weekday*evening*home
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_andrii: andrii_random_action_1 -> andrii_random_action_3 in context weekday*afternoon*home
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: open_fridge -> open_fridge in context weekend*morning*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49ea19a3-1a0c-4b2f-a918-862117156c1e for life_sim_victoria, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: use_microwave -> laptop_active in context weekend*afternoon*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_andrii: andrii_random_action_1 -> tv_on in context weekend*morning*living_room
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: turn_on_lights -> tv_on in context weekday*morning*living_room
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49ea19a3-1a0c-4b2f-a918-862117156c1e for life_sim_victoria, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: turn_on_lights -> cook_on_stove in context weekend*afternoon*kitchen
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: open_fridge -> open_fridge in context weekday*afternoon*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: tv_on -> use_microwave in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49ea19a3-1a0c-4b2f-a918-862117156c1e for life_sim_victoria, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: tv_on -> use_microwave in context weekend*night*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: tv_on -> laptop_active in context weekday*morning*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: turn_on_lights -> tv_on in context weekday*night*living_room
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: tv_on -> open_fridge in context weekend*afternoon*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: tv_on -> phone_screen_on in context weekday*morning*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: cook_on_stove -> use_microwave in context weekday*night*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: laptop_active -> phone_screen_on in context weekday*afternoon*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder eafbf2b3-3e0e-4f7c-9c01-3e099ed31447 for life_sim_andrii, action: andrii_random_action_3, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_andrii: andrii_random_action_1 -> open_fridge in context weekday*afternoon*kitchen
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49ea19a3-1a0c-4b2f-a918-862117156c1e for life_sim_victoria, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 49ea19a3-1a0c-4b2f-a918-862117156c1e for life_sim_victoria, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: phone_screen_on -> laptop_active in context weekday*night*home
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: laptop_active -> turn_on_lights in context weekday*night*home
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f52977b6-393b-47c7-b8b9-1e9b8c186abe for life_sim_victoria, action: use_microwave, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 4c523464-dbf1-4efe-8f35-492257ac1803 for life_sim_piotr, action: open_fridge, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 6983faa2-1637-49a4-bec7-8667a5d924cd for life_sim_victoria, action: cook_on_stove, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 1d8078dd-398d-4323-951c-708b2b066750 for life_sim_andrii, action: andrii_random_action_2, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder f3e48521-2b46-4d6a-977c-a8b10f512fe0 for life_sim_piotr, action: turn_on_lights, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 790c925e-decc-4f73-8d01-fcd37a6d7208 for life_sim_piotr, action: phone_screen_on, new confidence: 1
+  Passed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.LongTermStress_ThousandsOfEvents_ShouldRemainStable [22 s]
+  Standard Output Messages:
+ === Scenario 7: Long-term stress test ===
+ Day 0: 8 events simulated so far
+ Day 30: 275 events simulated so far
+ Day 60: 546 events simulated so far
+ Day 90: 802 events simulated so far
+ Total events simulated: 1055
+ Total reminders: 17
+ Total routines: 0
+ Query performance: 6ms for 100 reminders
+ System remains stable under heavy data volume
+
+
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 for person life_sim_piotr with intent I'm home
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> play_music in context weekend*afternoon*living_room
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: play_music, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 0.6
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 1d6cc391-dff6-4730-a6bc-660d5850df60 ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_piotr: sit_on_couch -> play_music in context weekday*afternoon*living_room
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 71d69243-5683-4ead-a3e7-42a6a17a0fd7 ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 0.8999999999999999
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 021b9ece-d980-4f44-ab2b-37c774296c0c ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event 0d0f3bd7-a8d6-45fa-a00f-cd7b31927920 ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event a51833a6-487f-4c2d-b93f-fbcdaa52a81e ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event ad641f59-5b3b-4778-82b5-8a2adf2357be ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event d2601e3b-ea06-4ea7-bdc0-2fb0913953e0 ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event e41c5eb5-22ba-4d6f-85db-05eab54ff837 ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+warn: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Event f8ab0daf-5820-4cc3-803b-913c3005ff04 ignored for routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf: state signal music_volume=68 not matched
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: play_music, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: play_music, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: play_music, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 6b42d795-b0c2-4386-8d59-277b739308b2 for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: sit_on_couch, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 2b283caa-7479-45e7-94df-7d47136bc8cf for life_sim_piotr, action: play_music, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder 1b3da53c-5ab0-4114-8f73-442e5495bfcf for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (action: play_music, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 0eaf5ba5-357e-4ae4-95ac-ddc6f6805c47 (person life_sim_piotr, intent I'm home)
+  Passed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.Piotr_ComesHome_WhenCouchOccupied_ShouldNotSuggestMusic [5 s]
+  Standard Output Messages:
+ === Scenario 2: Context mismatch prevents annoyance ===
+ Play music reminder exists with confidence 0.90
+ Signal similarity should prevent matching when couch is occupied
+ Reminders created after arrival: 0
+
+
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 for person life_sim_piotr with intent I'm home
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 7f65a57d-fa43-4ee3-a41e-5653e95eae11 (person life_sim_piotr, intent I'm home)
+[xUnit.net 00:00:51.92]     AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SeasonalBehavior_WinterVsSummer_ShouldAdaptGradually [FAIL]
+[xUnit.net 00:00:51.92]       Expected reminders not to be empty because Routine should adapt to seasonal changes without resetting.
+[xUnit.net 00:00:51.92]       Stack Trace:
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+[xUnit.net 00:00:51.92]            at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+[xUnit.net 00:00:51.92]         E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\LifeSimulationComprehensiveTests.cs(552,0): at AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SeasonalBehavior_WinterVsSummer_ShouldAdaptGradually()
+[xUnit.net 00:00:51.92]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:51.92]       Output:
+[xUnit.net 00:00:51.92]         === Scenario 6: Seasonal behavior drift ===
+[xUnit.net 00:00:51.92]         Simulating winter phase (earlier darkness, more lights)
+[xUnit.net 00:00:51.92]         Simulating summer phase (later darkness, less lighting)
+[xUnit.net 00:00:51.92]         Routine has 0 reminders after seasonal adaptation
+  Failed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SeasonalBehavior_WinterVsSummer_ShouldAdaptGradually [5 s]
+  Error Message:
+   Expected reminders not to be empty because Routine should adapt to seasonal changes without resetting.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+   at AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.SeasonalBehavior_WinterVsSummer_ShouldAdaptGradually() in E:\Projects\AIPatterner-P\AIPatterner\tests\AIPatterner.Tests.Integration\LifeSimulationComprehensiveTests.cs:line 552
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ === Scenario 6: Seasonal behavior drift ===
+ Simulating winter phase (earlier darkness, more lights)
+ Simulating summer phase (later darkness, less lighting)
+ Routine has 0 reminders after seasonal adaptation
+
+
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine 45595981-ab08-4d2f-a766-63c9372d106e for person life_sim_victoria with intent WakeUp
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: WakeUp -> kitchen_lights_on in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: kitchen_lights_on -> coffee_machine_on in context weekday*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Created new routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 0.5)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 0.6
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 0.6)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: WakeUp -> kitchen_lights_on in context weekend*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.TransitionLearner[0]
+      Created new transition for life_sim_victoria: kitchen_lights_on -> coffee_machine_on in context weekend*morning*kitchen
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 0.7)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 0.8999999999999999
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 0.7999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 0.8999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 0.9999999999999999)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Opened observation window for routine 45595981-ab08-4d2f-a766-63c9372d106e (person life_sim_victoria, intent WakeUp)
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder a0ab60bb-674a-4e4c-a3d0-fd49fcfb8f2e for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: kitchen_lights_on, confidence: 1)
+info: AIPatterner.Infrastructure.Services.ReminderScheduler[0]
+      Increased confidence of existing reminder 697cd540-8556-4088-939a-c20907db5bc1 for life_sim_victoria, action: coffee_machine_on, new confidence: 1
+info: AIPatterner.Infrastructure.Services.RoutineLearningService[0]
+      Updated routine reminder ef0f4a95-70a7-4b0e-bfc3-bcb7edba03a8 for routine 45595981-ab08-4d2f-a766-63c9372d106e (action: coffee_machine_on, confidence: 1)
+[xUnit.net 00:01:02.52]   Finished:    AIPatterner.Tests.Integration
+  Passed AIPatterner.Tests.Integration.LifeSimulationComprehensiveTests.Victoria_MorningRoutine_ShouldBeStableAndHighConfidence [10 s]
+  Standard Output Messages:
+ === Scenario 3: Victoria morning routine stability ===
+ Victoria's wake-up routine found: 45595981-ab08-4d2f-a766-63c9372d106e
+ Routine has 2 reminders
+   - coffee_machine_on: Confidence=1.00, Observations=43
+   - kitchen_lights_on: Confidence=1.00, Observations=43
+ Weekend reminders: 2
+
+
+
+Test Run Failed.
+Total tests: 7
+     Passed: 5
+     Failed: 2
+ Total time: 1.0681 Minutes

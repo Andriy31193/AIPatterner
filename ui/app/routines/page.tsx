@@ -10,8 +10,9 @@ import { LearningBadge } from '@/components/LearningBadge';
 import { DateTimeDisplay } from '@/components/DateTimeDisplay';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
-import type { RoutineDto, RoutineDetailDto, RoutineReminderDto } from '@/types';
-import { ProbabilityAction } from '@/types';
+import type { RoutineDto, RoutineDetailDto, RoutineReminderDto, ReminderCandidateDto } from '@/types';
+import { ProbabilityAction, ReminderStyle, ReminderCandidateStatus } from '@/types';
+import { ReminderDetailModal } from '@/components/ReminderDetailModal';
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -20,6 +21,10 @@ export default function RoutinesPage() {
   const [personId, setPersonId] = useState('');
   const [page, setPage] = useState(1);
   const pageSize = 20;
+  const [detailReminder, setDetailReminder] = useState<ReminderCandidateDto | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditingWindow, setIsEditingWindow] = useState(false);
+  const [editingWindowMinutes, setEditingWindowMinutes] = useState<number>(60);
 
   // For non-admin users, set personId to their username on mount
   useEffect(() => {
@@ -61,6 +66,16 @@ export default function RoutinesPage() {
     },
   });
 
+  const updateRoutineMutation = useMutation({
+    mutationFn: (observationWindowMinutes: number) =>
+      apiService.updateRoutine(selectedRoutineId!, { observationWindowMinutes }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['routine', selectedRoutineId] });
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+      setIsEditingWindow(false);
+    },
+  });
+
   const handleFeedback = (reminderId: string, action: 'accept' | 'reject') => {
     const actionType = action === 'accept' ? ProbabilityAction.Increase : ProbabilityAction.Decrease;
     const value = 0.1; // Default step value
@@ -87,6 +102,27 @@ export default function RoutinesPage() {
   const isWindowOpen = (routine: RoutineDto): boolean => {
     if (!routine.observationWindowEndsUtc) return false;
     return new Date(routine.observationWindowEndsUtc) > new Date();
+  };
+
+  // Helper function to convert RoutineReminderDto to ReminderCandidateDto-like object for modal
+  const routineReminderToReminderCandidate = (
+    reminder: RoutineReminderDto, 
+    routineDetail: RoutineDetailDto
+  ): ReminderCandidateDto => {
+    return {
+      id: reminder.id,
+      personId: routineDetail.personId,
+      suggestedAction: reminder.suggestedAction,
+      checkAtUtc: reminder.lastObservedAtUtc || reminder.createdAtUtc,
+      style: ReminderStyle.Suggest,
+      status: ReminderCandidateStatus.Scheduled,
+      confidence: reminder.confidence,
+      occurrence: undefined,
+      customData: reminder.customData,
+      signalProfile: reminder.signalProfile,
+      signalProfileUpdatedAtUtc: reminder.signalProfileUpdatedAtUtc,
+      signalProfileSamplesCount: reminder.signalProfileSamplesCount,
+    };
   };
 
   if (selectedRoutineId && routineDetail) {
@@ -137,6 +173,66 @@ export default function RoutinesPage() {
               </div>
             </div>
 
+            {/* Observation Window Settings */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">
+                    Learning Window
+                    <span className="ml-1 text-gray-400" title="How long the routine observes actions after activation">ℹ️</span>
+                  </h3>
+                  {!isEditingWindow ? (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-gray-600">
+                        {routineDetail.observationWindowMinutes} minutes
+                      </p>
+                      <button
+                        onClick={() => {
+                          setEditingWindowMinutes(routineDetail.observationWindowMinutes);
+                          setIsEditingWindow(true);
+                        }}
+                        className="text-xs text-indigo-600 hover:text-indigo-900 font-medium"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        type="number"
+                        min="1"
+                        max="1440"
+                        value={editingWindowMinutes}
+                        onChange={(e) => setEditingWindowMinutes(parseInt(e.target.value) || 1)}
+                        className="w-24 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                      <span className="text-sm text-gray-600">minutes</span>
+                      <button
+                        onClick={() => updateRoutineMutation.mutate(editingWindowMinutes)}
+                        disabled={updateRoutineMutation.isPending}
+                        className="px-3 py-1 text-xs bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+                      >
+                        {updateRoutineMutation.isPending ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsEditingWindow(false);
+                          setEditingWindowMinutes(routineDetail.observationWindowMinutes);
+                        }}
+                        disabled={updateRoutineMutation.isPending}
+                        className="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    Actions observed within this window after activation will be associated with this routine
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Actions Section */}
             <div className="mt-8">
               <h2 className="text-lg font-medium text-gray-900 mb-4">
@@ -151,22 +247,47 @@ export default function RoutinesPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {routineDetail.reminders.map((reminder: RoutineReminderDto) => (
-                    <div
-                      key={reminder.id}
-                      className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 mb-1">{reminder.suggestedAction}</h3>
-                          {reminder.lastObservedAtUtc && (
-                            <p className="text-xs text-gray-500">
-                              Last seen: <DateTimeDisplay date={reminder.lastObservedAtUtc} showRelative />
-                            </p>
-                          )}
-                        </div>
-                        <ConfidenceIndicator confidence={reminder.confidence} size="sm" showLabel={false} />
+                  {routineDetail.reminders.map((reminder: RoutineReminderDto) => {
+                    const convertedReminder = routineReminderToReminderCandidate(reminder, routineDetail);
+                    return (
+                      <div
+                        key={reminder.id}
+                        className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDetailReminder(convertedReminder);
+                          setIsDetailModalOpen(true);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setDetailReminder(convertedReminder);
+                            setIsDetailModalOpen(true);
+                          }
+                        }}
+                        title={`Click to view details for: ${reminder.suggestedAction}`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900 mb-1" title={`Action: ${reminder.suggestedAction}`}>
+                          {reminder.suggestedAction}
+                        </h3>
+                        {reminder.lastObservedAtUtc && (
+                          <p className="text-xs text-gray-500" title={`Last observed: ${new Date(reminder.lastObservedAtUtc).toLocaleString()}`}>
+                            Last seen: <DateTimeDisplay date={reminder.lastObservedAtUtc} showRelative />
+                          </p>
+                        )}
                       </div>
+                      <div title={`Confidence: ${(reminder.confidence * 100).toFixed(0)}%`}>
+                        <ConfidenceIndicator 
+                          confidence={reminder.confidence} 
+                          size="sm" 
+                          showLabel={false}
+                        />
+                      </div>
+                        </div>
                       <div className="mt-3 pt-3 border-t border-gray-200">
                         <div className="flex items-center justify-between text-xs mb-2">
                           <span className="text-gray-600">
@@ -205,11 +326,23 @@ export default function RoutinesPage() {
                         )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
           </div>
+
+          {/* Reminder Detail Modal */}
+          <ReminderDetailModal
+            reminder={detailReminder}
+            isOpen={isDetailModalOpen}
+            onClose={() => {
+              setIsDetailModalOpen(false);
+              setDetailReminder(null);
+            }}
+            confidenceThreshold={0.7}
+          />
         </div>
       </Layout>
     );
@@ -233,6 +366,7 @@ export default function RoutinesPage() {
             <div className="flex-1">
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700 mb-1">
                 Person ID
+                <span className="ml-1 text-gray-400" title="Filter routines by person">ℹ️</span>
               </label>
               {isAdmin ? (
                 <select
@@ -274,11 +408,12 @@ export default function RoutinesPage() {
               {routinesData.items.map((routine: RoutineDto) => {
                 const avgConfidence = 0; // Would need to fetch reminders to calculate
                 return (
-                  <div
-                    key={routine.id}
-                    onClick={() => setSelectedRoutineId(routine.id)}
-                    className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all cursor-pointer"
-                  >
+                    <div
+                      key={routine.id}
+                      onClick={() => setSelectedRoutineId(routine.id)}
+                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all cursor-pointer"
+                      title={`Click to view details for ${getIntentDisplayName(routine.intentType)} routine`}
+                    >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <span className="text-3xl">{getIntentIcon(routine.intentType)}</span>

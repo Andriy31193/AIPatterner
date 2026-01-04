@@ -112,6 +112,7 @@ builder.Services.AddScoped<AIPatterner.Application.Handlers.IApiKeyService, ApiK
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IExecutionHistoryService, ExecutionHistoryService>();
 builder.Services.AddScoped<AIPatterner.Application.Services.IMatchingRemindersService, MatchingRemindersService>();
 builder.Services.AddScoped<AIPatterner.Application.Services.IMatchingPolicyService, MatchingPolicyService>();
+builder.Services.AddScoped<AIPatterner.Application.Services.IExecutionActionEvaluator, ExecutionActionEvaluator>();
 
 // Routine learning services
 builder.Services.AddScoped<AIPatterner.Application.Handlers.IRoutineRepository, AIPatterner.Infrastructure.Persistence.Repositories.RoutineRepository>();
@@ -120,8 +121,12 @@ builder.Services.AddScoped<AIPatterner.Application.Services.IRoutineLearningServ
 
 // Domain services
 builder.Services.AddScoped<AIPatterner.Domain.Services.ITransitionLearner, TransitionLearner>();
+builder.Services.AddScoped<AIPatterner.Domain.Services.ISignalSelector, AIPatterner.Infrastructure.Services.SignalSelector>();
+builder.Services.AddScoped<AIPatterner.Domain.Services.ISignalSimilarityEvaluator, AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator>();
+builder.Services.AddScoped<AIPatterner.Application.Services.ISignalPolicyService, AIPatterner.Infrastructure.Services.SignalPolicyService>();
 builder.Services.AddScoped<AIPatterner.Domain.Services.IContextBucketKeyBuilder, ContextBucketKeyBuilder>();
 builder.Services.AddScoped<AIPatterner.Domain.Services.IReminderPolicyEvaluator, ReminderPolicyEvaluator>();
+builder.Services.AddScoped<AIPatterner.Application.Services.IOccurrencePatternParser, AIPatterner.Application.Services.OccurrencePatternParser>();
 builder.Services.AddScoped<IContextService, ContextService>();
 builder.Services.AddScoped<ILLMClient, LLMClient>();
 

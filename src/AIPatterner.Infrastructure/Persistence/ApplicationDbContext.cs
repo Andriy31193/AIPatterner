@@ -105,6 +105,11 @@ public class ApplicationDbContext : DbContext
                 .HasConversion<int>()
                 .HasDefaultValue(PatternInferenceStatus.Unknown);
             entity.Property(e => e.InferredWeekday).IsRequired(false);
+            entity.Property(e => e.UserPromptsListJson).HasColumnType("jsonb");
+            entity.Property(e => e.IsSafeToAutoExecute).HasDefaultValue(false);
+            entity.Property(e => e.SignalProfileJson).HasColumnType("jsonb");
+            entity.Property(e => e.SignalProfileUpdatedAtUtc).IsRequired(false);
+            entity.Property(e => e.SignalProfileSamplesCount).HasDefaultValue(0);
             
             entity.HasIndex(e => e.CheckAtUtc);
             entity.HasIndex(e => e.SourceEventId);
@@ -135,6 +140,7 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("userreminderpreferences");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.AllowAutoExecute).HasDefaultValue(false);
             entity.HasIndex(e => e.PersonId).IsUnique();
         });
 
@@ -196,6 +202,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.IntentType).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.ObservationWindowMinutes).HasDefaultValue(60);
             entity.HasIndex(e => new { e.PersonId, e.IntentType }).IsUnique();
             entity.HasIndex(e => e.PersonId);
         });
@@ -213,6 +220,11 @@ public class ApplicationDbContext : DbContext
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                     v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
                 .HasColumnType("jsonb");
+            entity.Property(e => e.UserPromptsListJson).HasColumnType("jsonb");
+            entity.Property(e => e.IsSafeToAutoExecute).HasDefaultValue(false);
+            entity.Property(e => e.SignalProfileJson).HasColumnType("jsonb");
+            entity.Property(e => e.SignalProfileUpdatedAtUtc).IsRequired(false);
+            entity.Property(e => e.SignalProfileSamplesCount).HasDefaultValue(0);
             entity.HasIndex(e => new { e.RoutineId, e.SuggestedAction }).IsUnique();
             entity.HasIndex(e => e.RoutineId);
             entity.HasIndex(e => e.PersonId);

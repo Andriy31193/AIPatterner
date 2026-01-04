@@ -9,6 +9,7 @@ public class UserReminderPreferences
     public int DailyLimit { get; private set; }
     public TimeSpan MinimumInterval { get; private set; }
     public bool Enabled { get; private set; }
+    public bool AllowAutoExecute { get; private set; } = false; // Default false - user must opt-in
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime UpdatedAtUtc { get; private set; }
 
@@ -39,7 +40,8 @@ public class UserReminderPreferences
         ReminderStyle? defaultStyle = null,
         int? dailyLimit = null,
         TimeSpan? minimumInterval = null,
-        bool? enabled = null)
+        bool? enabled = null,
+        bool? allowAutoExecute = null)
     {
         if (dailyLimit.HasValue && dailyLimit.Value < 0)
             throw new ArgumentException("DailyLimit cannot be negative", nameof(dailyLimit));
@@ -52,6 +54,8 @@ public class UserReminderPreferences
             MinimumInterval = minimumInterval.Value;
         if (enabled.HasValue)
             Enabled = enabled.Value;
+        if (allowAutoExecute.HasValue)
+            AllowAutoExecute = allowAutoExecute.Value;
 
         UpdatedAtUtc = DateTime.UtcNow;
     }

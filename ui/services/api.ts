@@ -26,6 +26,8 @@ import type {
   RoutineListResponse,
   RoutineDetailDto,
   RoutineReminderDto,
+  UpdateRoutineRequest,
+  RoutineDto,
 } from '@/types';
 import { ProbabilityAction } from '@/types';
 
@@ -375,6 +377,11 @@ class ApiService {
     const response = await this.client.get<RoutineListResponse>(`/api/v1/routines/active`, {
       params: { personId }
     });
+    return response.data;
+  }
+
+  async updateRoutine(id: string, request: UpdateRoutineRequest): Promise<RoutineDto> {
+    const response = await this.client.put<RoutineDto>(`/api/v1/routines/${id}`, request);
     return response.data;
   }
 

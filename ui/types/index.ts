@@ -29,6 +29,21 @@ export enum EventType {
   StateChange = 'StateChange',
 }
 
+export interface SignalStateDto {
+  sensorId: string;
+  value: string | number | boolean;
+  rawImportance?: number;
+}
+
+export interface SignalProfileEntryDto {
+  weight: number;
+  normalizedValue: number;
+}
+
+export interface SignalProfileDto {
+  signals: Record<string, SignalProfileEntryDto>;
+}
+
 export interface ActionEventDto {
   personId: string;
   actionType: string;
@@ -38,6 +53,8 @@ export interface ActionEventDto {
   probabilityValue?: number;
   probabilityAction?: ProbabilityAction;
   customData?: Record<string, string>;
+  userPrompt?: string;
+  signalStates?: SignalStateDto[];
 }
 
 export interface ActionContextDto {
@@ -60,6 +77,9 @@ export interface ReminderCandidateDto {
   occurrence?: string;
   sourceEventId?: string;
   customData?: Record<string, string>;
+  signalProfile?: SignalProfileDto;
+  signalProfileUpdatedAtUtc?: string;
+  signalProfileSamplesCount?: number;
 }
 
 export interface ReminderCandidateListResponse {
@@ -250,6 +270,9 @@ export interface RoutineReminderDto {
   createdAtUtc: string;
   lastObservedAtUtc?: string;
   customData?: Record<string, string>;
+  signalProfile?: SignalProfileDto;
+  signalProfileUpdatedAtUtc?: string;
+  signalProfileSamplesCount?: number;
 }
 
 export interface RoutineListResponse {
@@ -261,5 +284,9 @@ export interface RoutineListResponse {
 
 export interface RoutineDetailDto extends RoutineDto {
   reminders: RoutineReminderDto[];
+}
+
+export interface UpdateRoutineRequest {
+  observationWindowMinutes?: number;
 }
 

@@ -4,19 +4,15 @@ namespace AIPatterner.Application.Handlers;
 using AIPatterner.Application.DTOs;
 using AIPatterner.Application.Queries;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 
 public class GetRoutinesQueryHandler : IRequestHandler<GetRoutinesQuery, RoutineListResponse>
 {
     private readonly IRoutineRepository _routineRepository;
-    private readonly IConfiguration _configuration;
 
     public GetRoutinesQueryHandler(
-        IRoutineRepository routineRepository,
-        IConfiguration configuration)
+        IRoutineRepository routineRepository)
     {
         _routineRepository = routineRepository;
-        _configuration = configuration;
     }
 
     public async Task<RoutineListResponse> Handle(GetRoutinesQuery request, CancellationToken cancellationToken)
@@ -31,9 +27,6 @@ public class GetRoutinesQueryHandler : IRequestHandler<GetRoutinesQuery, Routine
             request.PersonId,
             cancellationToken);
 
-        // Get observation window minutes from configuration or use default
-        var observationWindowMinutes = _configuration.GetValue<int>("Routine:ObservationWindowMinutes", 45);
-
         var items = routines.Select(r => new RoutineDto
         {
             Id = r.Id,
@@ -42,7 +35,7 @@ public class GetRoutinesQueryHandler : IRequestHandler<GetRoutinesQuery, Routine
             CreatedAtUtc = r.CreatedAtUtc,
             LastActivatedUtc = r.LastIntentOccurredAtUtc,
             ObservationWindowEndsUtc = r.ObservationWindowEndsAtUtc,
-            ObservationWindowMinutes = observationWindowMinutes,
+            ObservationWindowMinutes = r.ObservationWindowMinutes,
         }).ToList();
 
         return new RoutineListResponse

@@ -16,6 +16,9 @@ public class ReminderCandidateDto
     public string? Occurrence { get; set; }
     public Guid? SourceEventId { get; set; }
     public Dictionary<string, string>? CustomData { get; set; }
+    public SignalProfileDto? SignalProfile { get; set; }
+    public DateTime? SignalProfileUpdatedAtUtc { get; set; }
+    public int SignalProfileSamplesCount { get; set; }
 }
 
 public class ReminderCandidateListResponse

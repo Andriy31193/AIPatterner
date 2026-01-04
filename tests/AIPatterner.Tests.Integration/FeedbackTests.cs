@@ -83,7 +83,10 @@ public class FeedbackTests : IDisposable
         var mockExecutionHistoryService = new MockExecutionHistoryService();
         var configRepo = new ConfigurationRepository(_context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, config);
-        var matchingRemindersService = new MatchingRemindersService(eventRepo, _context, mapper);
+        var signalSelector = new AIPatterner.Infrastructure.Services.SignalSelector(config, loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSelector>());
+        var similarityEvaluator = new AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator(loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator>());
+        var signalPolicyService = new AIPatterner.Infrastructure.Services.SignalPolicyService(configRepo, config);
+        var matchingRemindersService = new MatchingRemindersService(eventRepo, _context, mapper, signalSelector, similarityEvaluator, signalPolicyService, loggerFactory.CreateLogger<MatchingRemindersService>());
         
         var routineRepository = new RoutineRepository(_context);
         var routineReminderRepository = new RoutineReminderRepository(_context);
@@ -92,7 +95,10 @@ public class FeedbackTests : IDisposable
             routineReminderRepository,
             eventRepo,
             config,
-            loggerFactory.CreateLogger<RoutineLearningService>());
+            loggerFactory.CreateLogger<RoutineLearningService>(),
+            signalSelector,
+            similarityEvaluator,
+            signalPolicyService);
 
         _eventHandler = new IngestEventCommandHandler(
             eventRepo,
@@ -104,7 +110,9 @@ public class FeedbackTests : IDisposable
             config,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService);
+            routineLearningService,
+            signalSelector,
+            signalPolicyService);
 
         // Setup HTTP client for API tests
         _apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "http://localhost:8080/api";

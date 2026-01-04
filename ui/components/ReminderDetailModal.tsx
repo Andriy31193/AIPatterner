@@ -313,6 +313,51 @@ export function ReminderDetailModal({
                       </pre>
                     </div>
                   )}
+                  
+                  {/* Signal Profile */}
+                  {reminder.signalProfile && reminder.signalProfile.signals && Object.keys(reminder.signalProfile.signals).length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium text-gray-600">Signal Profile (Baseline)</span>
+                      <div className="mt-2 space-y-2">
+                        <div className="text-xs text-gray-500 mb-2">
+                          Learned sensor context for this reminder. Events with similar signals will match.
+                        </div>
+                        {Object.entries(reminder.signalProfile.signals)
+                          .sort((a, b) => b[1].weight - a[1].weight) // Sort by weight descending
+                          .slice(0, 5) // Show top 5
+                          .map(([sensorId, entry]) => (
+                            <div key={sensorId} className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-900">{sensorId}</span>
+                                <div className="flex items-center gap-3 text-xs">
+                                  <span className="text-gray-600">
+                                    Value: <span className="font-mono">{entry.normalizedValue.toFixed(3)}</span>
+                                  </span>
+                                  <span className="text-gray-600">
+                                    Weight: <span className="font-mono">{(entry.weight * 100).toFixed(1)}%</span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        {Object.keys(reminder.signalProfile.signals).length > 5 && (
+                          <div className="text-xs text-gray-500 text-center">
+                            + {Object.keys(reminder.signalProfile.signals).length - 5} more sensors
+                          </div>
+                        )}
+                        {reminder.signalProfileUpdatedAtUtc && (
+                          <div className="text-xs text-gray-500 mt-2">
+                            Last updated: {new Date(reminder.signalProfileUpdatedAtUtc).toLocaleString()}
+                          </div>
+                        )}
+                        {reminder.signalProfileSamplesCount !== undefined && (
+                          <div className="text-xs text-gray-500">
+                            Samples: {reminder.signalProfileSamplesCount}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

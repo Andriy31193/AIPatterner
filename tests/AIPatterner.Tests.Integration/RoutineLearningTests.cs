@@ -29,7 +29,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "Routine:ObservationWindowMinutes", "45" },
+                { "Policies:RoutineObservationWindowMinutes", "45" },
                 { "Routine:DefaultRoutineProbability", "0.5" },
                 { "Routine:ProbabilityIncreaseStep", "0.1" },
                 { "Routine:ProbabilityDecreaseStep", "0.1" },
@@ -37,12 +37,19 @@ public class RoutineLearningTests : RealDatabaseTestBase
             })
             .Build();
 
+        var signalSelector = new AIPatterner.Infrastructure.Services.SignalSelector(config, loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSelector>());
+        var similarityEvaluator = new AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator(loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator>());
+        var configRepo = new ConfigurationRepository(Context);
+        var signalPolicyService = new AIPatterner.Infrastructure.Services.SignalPolicyService(configRepo, config);
         _routineLearningService = new RoutineLearningService(
             _routineRepository,
             _routineReminderRepository,
             EventRepository,
             config,
-            loggerFactory.CreateLogger<RoutineLearningService>());
+            loggerFactory.CreateLogger<RoutineLearningService>(),
+            signalSelector,
+            similarityEvaluator,
+            signalPolicyService);
     }
 
     [Fact]

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIPatterner.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260103200045_InitialCreate")]
+    [Migration("20260104213158_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -308,6 +308,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<int?>("InferredWeekday")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsSafeToAutoExecute")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("MostCommonDayType")
                         .HasColumnType("text");
 
@@ -340,6 +345,17 @@ namespace AIPatterner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("SignalProfileJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("SignalProfileSamplesCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("SignalProfileUpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("SourceEventId")
                         .HasColumnType("uuid");
 
@@ -364,6 +380,9 @@ namespace AIPatterner.Infrastructure.Migrations
 
                     b.Property<Guid?>("TransitionId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("UserPromptsListJson")
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
 
@@ -430,6 +449,14 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime?>("ObservationWindowEndsAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("ObservationWindowMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(60);
+
+                    b.Property<DateTime?>("ObservationWindowStartUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("PersonId")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -461,6 +488,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<string>("CustomData")
                         .HasColumnType("jsonb");
 
+                    b.Property<bool>("IsSafeToAutoExecute")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime?>("LastObservedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -475,10 +507,24 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<Guid>("RoutineId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SignalProfileJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("SignalProfileSamplesCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("SignalProfileUpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SuggestedAction")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("UserPromptsListJson")
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
 
@@ -540,6 +586,11 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("AllowAutoExecute")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");

@@ -36,7 +36,20 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Context, opt => opt.Ignore()) // Ignore since we're constructing it manually
             .ForMember(dest => dest.RelatedReminderId, opt => opt.Ignore()); // Set separately
 
-        CreateMap<ReminderCandidate, ReminderCandidateDto>();
+        CreateMap<ReminderCandidate, ReminderCandidateDto>()
+            .ForMember(dest => dest.SignalProfile, opt => opt.MapFrom(src => 
+                src.GetSignalProfile() != null ? new SignalProfileDto
+                {
+                    Signals = src.GetSignalProfile()!.Signals.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new SignalProfileEntryDto
+                        {
+                            Weight = kvp.Value.Weight,
+                            NormalizedValue = kvp.Value.NormalizedValue
+                        })
+                } : null))
+            .ForMember(dest => dest.SignalProfileUpdatedAtUtc, opt => opt.MapFrom(src => src.SignalProfileUpdatedAtUtc))
+            .ForMember(dest => dest.SignalProfileSamplesCount, opt => opt.MapFrom(src => src.SignalProfileSamplesCount));
 
         CreateMap<ActionEvent, ActionEventListDto>()
             .ForMember(dest => dest.Context, opt => opt.MapFrom(src => new ActionContextDto
@@ -57,6 +70,21 @@ public class MappingProfile : Profile
         CreateMap<ActionTransition, TransitionDto>()
             .ForMember(dest => dest.ConfidenceLabel, opt => opt.MapFrom(src => GetConfidenceLabel(src.Confidence)))
             .ForMember(dest => dest.ConfidencePercent, opt => opt.MapFrom(src => src.Confidence * 100));
+
+        CreateMap<RoutineReminder, RoutineReminderDto>()
+            .ForMember(dest => dest.SignalProfile, opt => opt.MapFrom(src => 
+                src.GetSignalProfile() != null ? new SignalProfileDto
+                {
+                    Signals = src.GetSignalProfile()!.Signals.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new SignalProfileEntryDto
+                        {
+                            Weight = kvp.Value.Weight,
+                            NormalizedValue = kvp.Value.NormalizedValue
+                        })
+                } : null))
+            .ForMember(dest => dest.SignalProfileUpdatedAtUtc, opt => opt.MapFrom(src => src.SignalProfileUpdatedAtUtc))
+            .ForMember(dest => dest.SignalProfileSamplesCount, opt => opt.MapFrom(src => src.SignalProfileSamplesCount));
     }
 
     private static string GetConfidenceLabel(double confidence)
