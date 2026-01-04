@@ -18,7 +18,7 @@ public class MatchingCriteria
     public bool MatchByStateSignals { get; set; } = true;
     public bool MatchByTimeBucket { get; set; } = false;
     public bool MatchByLocation { get; set; } = false;
-    public int TimeOffsetMinutes { get; set; } = 30;
+    public int TimeOffsetMinutes { get; set; } = 45;
 }
 
 

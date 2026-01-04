@@ -37,7 +37,7 @@ public class MatchingPolicyService : IMatchingPolicyService
             MatchByStateSignals = getValue("MatchByStateSignals", "true") == "true",
             MatchByTimeBucket = getValue("MatchByTimeBucket", "false") == "true",
             MatchByLocation = getValue("MatchByLocation", "false") == "true",
-            TimeOffsetMinutes = int.TryParse(getValue("TimeOffsetMinutes", "30"), out var offset) ? offset : 30
+            TimeOffsetMinutes = int.TryParse(getValue("TimeOffsetMinutes", "45"), out var offset) ? offset : 45
         };
     }
 }

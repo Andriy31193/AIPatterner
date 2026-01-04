@@ -6,7 +6,7 @@ using AIPatterner.Domain.Entities;
 public interface IRoutineLearningService
 {
     Task<Routine> HandleIntentAsync(ActionEvent intentEvent, CancellationToken cancellationToken);
-    Task ProcessObservedEventAsync(ActionEvent observedEvent, CancellationToken cancellationToken);
+    Task ProcessObservedEventAsync(ActionEvent observedEvent, string? userPrompt, List<AIPatterner.Domain.ValueObjects.SignalState>? signalStates, CancellationToken cancellationToken);
     Task HandleFeedbackAsync(Guid routineReminderId, ProbabilityAction action, double value, CancellationToken cancellationToken);
     Task<List<RoutineReminder>> GetRemindersForIntentAsync(string personId, string intentType, CancellationToken cancellationToken);
 }

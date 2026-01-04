@@ -2,6 +2,7 @@
 namespace AIPatterner.Api.Controllers;
 
 using AIPatterner.Api.Extensions;
+using AIPatterner.Application.Commands;
 using AIPatterner.Application.Queries;
 using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
@@ -137,11 +138,51 @@ public class RoutinesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult> UpdateRoutine(Guid id, [FromBody] UpdateRoutineRequest request)
+    {
+        // Validate access
+        var apiKeyPersonId = HttpContext.GetApiKeyPersonId();
+        var isAdmin = HttpContext.IsAdmin();
+
+        // First get the routine to check personId
+        var getRoutineQuery = new GetRoutineQuery { RoutineId = id };
+        var routineResult = await _mediator.Send(getRoutineQuery);
+
+        if (routineResult == null)
+        {
+            return NotFound(new { message = $"Routine with ID {id} not found" });
+        }
+
+        // Check access permissions
+        if (!isAdmin && routineResult.PersonId != apiKeyPersonId)
+        {
+            return StatusCode(403, new { message = "Access denied: personId does not match your API key" });
+        }
+
+        var command = new UpdateRoutineCommand
+        {
+            RoutineId = id,
+            ObservationWindowMinutes = request.ObservationWindowMinutes,
+        };
+
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
 }
 
 public class RoutineReminderFeedbackRequest
 {
     public ProbabilityAction Action { get; set; }
     public double Value { get; set; }
+}
+
+public class UpdateRoutineRequest
+{
+    public int? ObservationWindowMinutes { get; set; }
 }
 

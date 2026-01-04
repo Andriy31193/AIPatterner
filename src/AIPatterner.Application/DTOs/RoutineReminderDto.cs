@@ -10,5 +10,8 @@ public class RoutineReminderDto
     public DateTime CreatedAtUtc { get; set; }
     public DateTime? LastObservedAtUtc { get; set; }
     public Dictionary<string, string>? CustomData { get; set; }
+    public SignalProfileDto? SignalProfile { get; set; }
+    public DateTime? SignalProfileUpdatedAtUtc { get; set; }
+    public int SignalProfileSamplesCount { get; set; }
 }
 

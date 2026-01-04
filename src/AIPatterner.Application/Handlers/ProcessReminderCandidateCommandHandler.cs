@@ -2,6 +2,7 @@
 namespace AIPatterner.Application.Handlers;
 
 using AIPatterner.Application.Commands;
+using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,7 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
     private readonly IMemoryGateway _memoryGateway;
     private readonly IExecutionHistoryService _executionHistoryService;
     private readonly IConfiguration _configuration;
+    private readonly IOccurrencePatternParser _patternParser;
 
     public ProcessReminderCandidateCommandHandler(
         IReminderCandidateRepository candidateRepository,
@@ -21,7 +23,8 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
         INotificationService notificationService,
         IMemoryGateway memoryGateway,
         IExecutionHistoryService executionHistoryService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IOccurrencePatternParser patternParser)
     {
         _candidateRepository = candidateRepository;
         _evaluationService = evaluationService;
@@ -29,6 +32,7 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
         _memoryGateway = memoryGateway;
         _executionHistoryService = executionHistoryService;
         _configuration = configuration;
+        _patternParser = patternParser;
     }
 
     public async Task<ProcessReminderCandidateResponse> Handle(ProcessReminderCandidateCommand request, CancellationToken cancellationToken)
@@ -72,7 +76,34 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
 
         if (shouldExecute)
         {
-            candidate.MarkAsExecuted(decision);
+            var executionTime = DateTime.UtcNow;
+            
+            // For recurring reminders with patterns, mark as executed then reschedule
+            var isRecurring = !string.IsNullOrWhiteSpace(candidate.Occurrence);
+            if (isRecurring)
+            {
+                // Mark as executed first (records ExecutedAtUtc and Decision, sets status to Executed)
+                candidate.MarkAsExecuted(decision);
+                
+                // Calculate next execution time based on pattern
+                var nextExecutionTime = _patternParser.CalculateNextExecutionTime(
+                    candidate.Occurrence, 
+                    executionTime, 
+                    candidate.ExecutedAtUtc ?? executionTime);
+                
+                if (nextExecutionTime.HasValue)
+                {
+                    // Recurring reminder: reschedule for next occurrence (changes status back to Scheduled)
+                    candidate.RescheduleForNextOccurrence(nextExecutionTime.Value);
+                }
+                // If pattern couldn't be parsed, leave as Executed (one-time)
+            }
+            else
+            {
+                // One-time reminder: mark as executed
+                candidate.MarkAsExecuted(decision);
+            }
+            
             await _candidateRepository.UpdateAsync(candidate, cancellationToken);
 
             // Record execution history with CustomData

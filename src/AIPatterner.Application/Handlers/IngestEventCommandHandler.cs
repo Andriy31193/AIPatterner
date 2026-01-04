@@ -24,6 +24,8 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
     private readonly IMatchingRemindersService _matchingService;
     private readonly IMatchingPolicyService _policyService;
     private readonly IRoutineLearningService _routineLearningService;
+    private readonly AIPatterner.Domain.Services.ISignalSelector _signalSelector;
+    private readonly AIPatterner.Application.Services.ISignalPolicyService _signalPolicyService;
 
     public IngestEventCommandHandler(
         IEventRepository eventRepository,
@@ -35,7 +37,9 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         IConfiguration configuration,
         IMatchingRemindersService matchingService,
         IMatchingPolicyService policyService,
-        IRoutineLearningService routineLearningService)
+        IRoutineLearningService routineLearningService,
+        AIPatterner.Domain.Services.ISignalSelector signalSelector,
+        AIPatterner.Application.Services.ISignalPolicyService signalPolicyService)
     {
         _eventRepository = eventRepository;
         _transitionLearner = transitionLearner;
@@ -47,6 +51,8 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         _matchingService = matchingService;
         _policyService = policyService;
         _routineLearningService = routineLearningService;
+        _signalSelector = signalSelector;
+        _signalPolicyService = signalPolicyService;
     }
 
     public async Task<IngestEventResponse> Handle(IngestEventCommand request, CancellationToken cancellationToken)
@@ -90,7 +96,50 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
         else
         {
             // Regular Action event - check if it falls within any open observation windows
-            await _routineLearningService.ProcessObservedEventAsync(actionEvent, cancellationToken);
+            // Convert SignalStateDto to SignalState first
+            List<AIPatterner.Domain.ValueObjects.SignalState>? signalStates = null;
+            if (request.Event.SignalStates != null && request.Event.SignalStates.Count > 0)
+            {
+                signalStates = new List<AIPatterner.Domain.ValueObjects.SignalState>();
+                foreach (var dto in request.Event.SignalStates)
+                {
+                    // Convert JsonElement value to object
+                    object? value = null;
+                    if (dto.Value.ValueKind == System.Text.Json.JsonValueKind.String)
+                    {
+                        value = dto.Value.GetString();
+                    }
+                    else if (dto.Value.ValueKind == System.Text.Json.JsonValueKind.Number)
+                    {
+                        if (dto.Value.TryGetDouble(out var doubleVal))
+                        {
+                            value = doubleVal;
+                        }
+                        else if (dto.Value.TryGetInt32(out var intVal))
+                        {
+                            value = intVal;
+                        }
+                    }
+                    else if (dto.Value.ValueKind == System.Text.Json.JsonValueKind.True)
+                    {
+                        value = true;
+                    }
+                    else if (dto.Value.ValueKind == System.Text.Json.JsonValueKind.False)
+                    {
+                        value = false;
+                    }
+                    
+                    signalStates.Add(new AIPatterner.Domain.ValueObjects.SignalState
+                    {
+                        SensorId = dto.SensorId,
+                        Value = value ?? string.Empty,
+                        RawImportance = dto.RawImportance
+                    });
+                }
+            }
+            
+            // Regular Action event - check if it falls within any open observation windows
+            await _routineLearningService.ProcessObservedEventAsync(actionEvent, request.Event.UserPrompt, signalStates, cancellationToken);
 
             // Find matching reminder using strict policy-based matching (only for Action events)
             // Probability values are now guaranteed to be set (defaults applied above)
@@ -101,6 +150,7 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
             var matchingResult = await _matchingService.FindMatchingRemindersAsync(
                 actionEvent.Id,
                 matchingCriteria,
+                signalStates,
                 cancellationToken);
 
             ReminderCandidate? matchingReminder = null;
@@ -146,6 +196,22 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                     matchingReminder.UpdateCustomData(actionEvent.CustomData);
                 }
                 
+                // Append userPrompt if provided
+                if (!string.IsNullOrWhiteSpace(request.Event.UserPrompt))
+                {
+                    matchingReminder.AppendUserPrompt(request.Event.UserPrompt, actionEvent.TimestampUtc);
+                }
+                
+                // Update signal profile baseline if signal selection is enabled and event has signals
+                var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
+                if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+                {
+                    var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                    var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                    var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                    matchingReminder.UpdateSignalProfile(eventProfile, alpha);
+                }
+                
                 await _reminderRepository.UpdateAsync(matchingReminder, cancellationToken);
                 relatedReminderId = matchingReminder.Id;
                 actionEvent.SetRelatedReminder(matchingReminder.Id);
@@ -172,7 +238,7 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                         .Where(r => r.Status == ReminderCandidateStatus.Scheduled && r.TimeWindowCenter.HasValue)
                         .Where(r =>
                         {
-                            var reminderTime = r.TimeWindowCenter.Value;
+                            var reminderTime = r.TimeWindowCenter!.Value;
                             var timeDiff = Math.Abs((eventTimeOfDay - reminderTime).TotalMinutes);
                             if (timeDiff > 12 * 60) timeDiff = 24 * 60 - timeDiff;
                             return timeDiff <= timeWindowSize;
@@ -211,10 +277,26 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                         existingReminder.UpdateCustomData(actionEvent.CustomData);
                     }
                     
+                    // Append userPrompt if provided
+                    if (!string.IsNullOrWhiteSpace(request.Event.UserPrompt))
+                    {
+                        existingReminder.AppendUserPrompt(request.Event.UserPrompt, actionEvent.TimestampUtc);
+                    }
+                    
                     // Re-evaluate pattern inference
                     var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
                     var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
                     existingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                    
+                    // Update signal profile baseline if signal selection is enabled and event has signals
+                    var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
+                    if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+                    {
+                        var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                        var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                        var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                        existingReminder.UpdateSignalProfile(eventProfile, alpha);
+                    }
                     
                     await _reminderRepository.UpdateAsync(existingReminder, cancellationToken);
                     relatedReminderId = existingReminder.Id;
@@ -253,6 +335,16 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                     var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
                     var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
                     newReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                    
+                    // Initialize signal profile baseline if signal selection is enabled and event has signals
+                    var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
+                    if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+                    {
+                        var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                        var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                        var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                        newReminder.UpdateSignalProfile(eventProfile, alpha);
+                    }
 
                     await _reminderRepository.AddAsync(newReminder, cancellationToken);
                     relatedReminderId = newReminder.Id;

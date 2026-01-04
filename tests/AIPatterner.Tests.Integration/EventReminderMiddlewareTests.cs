@@ -77,7 +77,10 @@ public class EventReminderMiddlewareTests : IDisposable
         var mockExecutionHistoryService = new MockExecutionHistoryService();
         var configRepo = new ConfigurationRepository(_context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, _configuration);
-        var matchingRemindersService = new MatchingRemindersService(_eventRepository, _context, mapper);
+        var signalSelector = new AIPatterner.Infrastructure.Services.SignalSelector(_configuration, loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSelector>());
+        var similarityEvaluator = new AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator(loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator>());
+        var signalPolicyService = new AIPatterner.Infrastructure.Services.SignalPolicyService(configRepo, _configuration);
+        var matchingRemindersService = new MatchingRemindersService(_eventRepository, _context, mapper, signalSelector, similarityEvaluator, signalPolicyService, loggerFactory.CreateLogger<MatchingRemindersService>());
         
         var routineRepository = new RoutineRepository(_context);
         var routineReminderRepository = new RoutineReminderRepository(_context);
@@ -86,7 +89,10 @@ public class EventReminderMiddlewareTests : IDisposable
             routineReminderRepository,
             _eventRepository,
             _configuration,
-            loggerFactory.CreateLogger<RoutineLearningService>());
+            loggerFactory.CreateLogger<RoutineLearningService>(),
+            signalSelector,
+            similarityEvaluator,
+            signalPolicyService);
 
         _handler = new IngestEventCommandHandler(
             _eventRepository,
@@ -98,7 +104,9 @@ public class EventReminderMiddlewareTests : IDisposable
             _configuration,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService);
+            routineLearningService,
+            signalSelector,
+            signalPolicyService);
 
         // Setup matching policies in configuration
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();

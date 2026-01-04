@@ -13,6 +13,8 @@ public class ActionEventDto
     public ProbabilityAction? ProbabilityAction { get; set; }
     public Dictionary<string, string>? CustomData { get; set; }
     public EventType EventType { get; set; } = EventType.Action; // Default to Action for backward compatibility
+    public string? UserPrompt { get; set; } // Optional user prompt text to append to matched reminders
+    public List<SignalStateDto>? SignalStates { get; set; } // Optional sensor signal states snapshot
 }
 
 public class ActionContextDto

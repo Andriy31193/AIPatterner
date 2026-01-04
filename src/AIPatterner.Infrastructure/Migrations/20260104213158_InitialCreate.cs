@@ -148,7 +148,12 @@ namespace AIPatterner.Infrastructure.Migrations
                     ObservedTimeBucketHistogramJson = table.Column<string>(type: "text", nullable: true),
                     ObservedDayTypeHistogramJson = table.Column<string>(type: "text", nullable: true),
                     MostCommonTimeBucket = table.Column<string>(type: "text", nullable: true),
-                    MostCommonDayType = table.Column<string>(type: "text", nullable: true)
+                    MostCommonDayType = table.Column<string>(type: "text", nullable: true),
+                    UserPromptsListJson = table.Column<string>(type: "jsonb", nullable: true),
+                    IsSafeToAutoExecute = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    SignalProfileJson = table.Column<string>(type: "jsonb", nullable: true),
+                    SignalProfileUpdatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SignalProfileSamplesCount = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -183,7 +188,12 @@ namespace AIPatterner.Infrastructure.Migrations
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastObservedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ObservationCount = table.Column<int>(type: "integer", nullable: false),
-                    CustomData = table.Column<string>(type: "jsonb", nullable: true)
+                    CustomData = table.Column<string>(type: "jsonb", nullable: true),
+                    UserPromptsListJson = table.Column<string>(type: "jsonb", nullable: true),
+                    IsSafeToAutoExecute = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    SignalProfileJson = table.Column<string>(type: "jsonb", nullable: true),
+                    SignalProfileUpdatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SignalProfileSamplesCount = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -199,7 +209,9 @@ namespace AIPatterner.Infrastructure.Migrations
                     IntentType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastIntentOccurredAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ObservationWindowEndsAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ObservationWindowStartUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ObservationWindowEndsAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ObservationWindowMinutes = table.Column<int>(type: "integer", nullable: false, defaultValue: 60)
                 },
                 constraints: table =>
                 {
@@ -216,6 +228,7 @@ namespace AIPatterner.Infrastructure.Migrations
                     DailyLimit = table.Column<int>(type: "integer", nullable: false),
                     MinimumInterval = table.Column<TimeSpan>(type: "interval", nullable: false),
                     Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AllowAutoExecute = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

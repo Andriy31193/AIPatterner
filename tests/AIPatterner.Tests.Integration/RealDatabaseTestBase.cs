@@ -72,7 +72,11 @@ public abstract class RealDatabaseTestBase : IDisposable
                 { "ContextBucket:Format", "{dayType}*{timeBucket}*{location}" },
                 { "Policy:MinimumOccurrences", "1" },
                 { "Policy:MinimumConfidence", "0.05" },
-                { "Policy:DefaultReminderConfidence", "0.5" }
+                { "Policy:DefaultReminderConfidence", "0.5" },
+                { "Policies:RoutineObservationWindowMinutes", "45" }, // Set to 45 for tests to match expectations
+                { "Policies:TimeOffsetMinutes", "45" }, // Set to 45 for tests
+                { "Policies:MatchByStateSignals", "true" },
+                { "Policies:ExecuteAutoThreshold", "0.95" }
             })
             .Build();
 
@@ -102,7 +106,10 @@ public abstract class RealDatabaseTestBase : IDisposable
         var mockExecutionHistoryService = new MockExecutionHistoryService();
         var configRepo = new ConfigurationRepository(Context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, Configuration);
-        var matchingRemindersService = new MatchingRemindersService(EventRepository, Context, mapper);
+        var signalSelector = new AIPatterner.Infrastructure.Services.SignalSelector(Configuration, loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSelector>());
+        var similarityEvaluator = new AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator(loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator>());
+        var signalPolicyService = new AIPatterner.Infrastructure.Services.SignalPolicyService(configRepo, Configuration);
+        var matchingRemindersService = new MatchingRemindersService(EventRepository, Context, mapper, signalSelector, similarityEvaluator, signalPolicyService, loggerFactory.CreateLogger<MatchingRemindersService>());
         
         var routineRepository = new RoutineRepository(Context);
         var routineReminderRepository = new RoutineReminderRepository(Context);
@@ -111,7 +118,10 @@ public abstract class RealDatabaseTestBase : IDisposable
             routineReminderRepository,
             EventRepository,
             Configuration,
-            loggerFactory.CreateLogger<RoutineLearningService>());
+            loggerFactory.CreateLogger<RoutineLearningService>(),
+            signalSelector,
+            similarityEvaluator,
+            signalPolicyService);
 
         EventHandler = new IngestEventCommandHandler(
             EventRepository,
@@ -123,7 +133,9 @@ public abstract class RealDatabaseTestBase : IDisposable
             Configuration,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService);
+            routineLearningService,
+            signalSelector,
+            signalPolicyService);
 
         // Setup matching policies
         SetupMatchingPoliciesAsync().GetAwaiter().GetResult();
@@ -145,7 +157,7 @@ public abstract class RealDatabaseTestBase : IDisposable
             ("MatchByStateSignals", "true", "Match by state signals"),
             ("MatchByTimeBucket", "false", "Match by time bucket"),
             ("MatchByLocation", "false", "Match by location"),
-            ("TimeOffsetMinutes", "30", "Time offset in minutes")
+            ("TimeOffsetMinutes", "45", "Time offset in minutes")
         };
 
         foreach (var (key, value, description) in policies)
@@ -166,7 +178,8 @@ public abstract class RealDatabaseTestBase : IDisposable
             "feedback_user", "daily_user", "weekly_user", "user_a", "user_b", "user_c", "routine_test_user",
             "event_person", "reminder_person", "routine_person", "duplicate_test_person", "matched_user",
             "user_for_id", "testuser_dual", "testuser1", "testuser2", "adminuser", "comprehensive_test_user",
-            "household_person_a", "household_person_b", "household_person_c" };
+            "household_person_a", "household_person_b", "household_person_c", 
+            "life_sim_piotr", "life_sim_victoria", "life_sim_andrii" };
 
         // Also clean up personIds that start with comprehensive_test_user (for sub-tests)
         var comprehensiveTestPersonIds = Context.ActionEvents

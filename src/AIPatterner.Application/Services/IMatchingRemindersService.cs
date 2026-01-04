@@ -9,6 +9,7 @@ public interface IMatchingRemindersService
     Task<ReminderCandidateListResponse> FindMatchingRemindersAsync(
         Guid eventId,
         MatchingCriteria criteria,
+        List<AIPatterner.Domain.ValueObjects.SignalState>? signalStates,
         CancellationToken cancellationToken);
 }
 

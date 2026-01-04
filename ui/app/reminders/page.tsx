@@ -13,10 +13,64 @@ import { ReminderDetailModal } from '@/components/ReminderDetailModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
-import type { ReminderCandidateDto } from '@/types';
-import { ReminderCandidateStatus } from '@/types';
+import type { ReminderCandidateDto, RoutineDto, RoutineDetailDto, RoutineReminderDto } from '@/types';
+import { ReminderCandidateStatus, ReminderStyle } from '@/types';
+import { differenceInMinutes, differenceInDays, differenceInHours, format, isPast, isToday, isTomorrow } from 'date-fns';
 
 const CONFIDENCE_THRESHOLD = 0.7; // High probability threshold
+
+// Helper function to format time until execution (for reminder items)
+function formatTimeUntilExecutionShort(date: string | Date): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
+  
+  if (isPast(dateObj)) {
+    return 'Overdue';
+  }
+  
+  const minutes = differenceInMinutes(dateObj, now);
+  const hours = differenceInHours(dateObj, now);
+  const days = differenceInDays(dateObj, now);
+  
+  if (days > 0) {
+    const remainingHours = hours % 24;
+    if (remainingHours === 0) {
+      return `${days}d`;
+    }
+    return `${days}d ${remainingHours}h`;
+  }
+  
+  if (hours > 0) {
+    const remainingMinutes = minutes % 60;
+    if (remainingMinutes === 0) {
+      return `${hours}h`;
+    }
+    return `${hours}h ${remainingMinutes}m`;
+  }
+  
+  return `${minutes}m`;
+}
+
+// Helper function to convert RoutineReminderDto to ReminderCandidateDto-like object for modal
+function routineReminderToReminderCandidate(
+  reminder: RoutineReminderDto, 
+  routineDetail: RoutineDetailDto
+): ReminderCandidateDto {
+  return {
+    id: reminder.id,
+    personId: routineDetail.personId,
+    suggestedAction: reminder.suggestedAction,
+    checkAtUtc: reminder.lastObservedAtUtc || reminder.createdAtUtc,
+    style: ReminderStyle.Suggest,
+    status: ReminderCandidateStatus.Scheduled,
+    confidence: reminder.confidence,
+    occurrence: undefined,
+    customData: reminder.customData,
+    signalProfile: reminder.signalProfile,
+    signalProfileUpdatedAtUtc: reminder.signalProfileUpdatedAtUtc,
+    signalProfileSamplesCount: reminder.signalProfileSamplesCount,
+  };
+}
 
 export default function RemindersPage() {
   const router = useRouter();
@@ -32,6 +86,8 @@ export default function RemindersPage() {
   const [detailReminder, setDetailReminder] = useState<ReminderCandidateDto | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [executingReminders, setExecutingReminders] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<'high' | 'low' | 'routines'>('high');
+  const [expandedRoutines, setExpandedRoutines] = useState<Set<string>>(new Set());
 
   // For non-admin users, set personId to their username on mount
   useEffect(() => {
@@ -57,7 +113,50 @@ export default function RemindersPage() {
       pageSize 
     }),
     refetchInterval: 3000, // Refetch every 3 seconds for real-time updates
+    enabled: activeTab !== 'routines', // Only fetch when not on routines tab
   });
+
+  // Fetch routines for the Routines tab (always fetch to get count for tab label)
+  const { data: routinesData, isLoading: routinesLoading } = useQuery({
+    queryKey: ['routines', { personId: personId || undefined, page: 1, pageSize: 100 }],
+    queryFn: () => apiService.getRoutines({ 
+      personId: personId || undefined,
+      page: 1, 
+      pageSize: 100 
+    }),
+    staleTime: 5000, // Consider data fresh for 5 seconds
+  });
+
+  // Fetch routine details for all routines (with reminders) - only when on routines tab
+  const { data: routineDetails, isLoading: routineDetailsLoading } = useQuery({
+    queryKey: ['routineDetails', routinesData?.items.map((r: RoutineDto) => r.id) || []],
+    queryFn: async () => {
+      if (!routinesData?.items || routinesData.items.length === 0) return [];
+      const details = await Promise.all(
+        routinesData.items.map((routine: RoutineDto) => apiService.getRoutine(routine.id))
+      );
+      return details;
+    },
+    enabled: activeTab === 'routines' && !!routinesData?.items && routinesData.items.length > 0,
+    staleTime: 5000, // Consider data fresh for 5 seconds
+  });
+
+  // Calculate total reminder count - fetch routine details if needed for count
+  const { data: routineDetailsForCount } = useQuery({
+    queryKey: ['routineDetailsForCount', routinesData?.items.map((r: RoutineDto) => r.id) || []],
+    queryFn: async () => {
+      if (!routinesData?.items || routinesData.items.length === 0) return [];
+      const details = await Promise.all(
+        routinesData.items.map((routine: RoutineDto) => apiService.getRoutine(routine.id))
+      );
+      return details;
+    },
+    enabled: !!routinesData?.items && routinesData.items.length > 0 && activeTab !== 'routines',
+    staleTime: 10000, // Consider data fresh for 10 seconds (only used for count)
+  });
+
+  // Calculate total reminder count from routineDetails for the tab label
+  const routinesReminderCount = (activeTab === 'routines' ? routineDetails : routineDetailsForCount)?.reduce((sum, r) => sum + (r.reminders?.length || 0), 0) || 0;
 
   const forceCheckMutation = useMutation({
     mutationFn: (candidateId: string) => apiService.processReminderCandidate(candidateId),
@@ -202,7 +301,36 @@ export default function RemindersPage() {
   const isExecuted = (status: ReminderCandidateStatus | string) => 
     status === 'Executed' || status === ReminderCandidateStatus.Executed;
 
-  const [activeTab, setActiveTab] = useState<'high' | 'low'>('high');
+  // Helper function to format intent type for display
+  const getIntentDisplayName = (intentType: string): string => {
+    return intentType
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
+  // Helper function to get intent icon
+  const getIntentIcon = (intentType: string): string => {
+    const lower = intentType.toLowerCase();
+    if (lower.includes('arrival') || lower.includes('home')) return '🏠';
+    if (lower.includes('sleep') || lower.includes('bed')) return '😴';
+    if (lower.includes('work') || lower.includes('office')) return '💼';
+    if (lower.includes('leave') || lower.includes('depart')) return '🚪';
+    return '🎯';
+  };
+
+  // Toggle routine expansion
+  const toggleRoutine = (routineId: string) => {
+    setExpandedRoutines(prev => {
+      const next = new Set(prev);
+      if (next.has(routineId)) {
+        next.delete(routineId);
+      } else {
+        next.add(routineId);
+      }
+      return next;
+    });
+  };
 
   const renderReminderCard = (candidate: ReminderCandidateDto) => {
     const isExecuting = executingReminders.has(candidate.id);
@@ -246,11 +374,18 @@ export default function RemindersPage() {
         
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-4">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Confidence</p>
+            <div title={`Confidence level: ${((candidate.confidence || 0) * 100).toFixed(0)}%. ${isHighProbability ? 'High confidence - will execute automatically' : 'Low confidence - requires manual execution'}`}>
+              <p className="text-xs text-gray-500 mb-1">
+                Confidence
+                {!isHighProbability && (
+                  <span className="ml-1 text-yellow-600" title="This reminder needs more learning before it can execute automatically">
+                    ⚠️
+                  </span>
+                )}
+              </p>
               <ConfidenceBadge confidence={candidate.confidence || 0} threshold={CONFIDENCE_THRESHOLD} />
             </div>
-            <div>
+            <div title={`Scheduled check time: ${new Date(candidate.checkAtUtc).toLocaleString()}`}>
               <p className="text-xs text-gray-500 mb-1">Time Window</p>
               <p className="text-sm text-gray-700">
                 <DateTimeDisplay date={candidate.checkAtUtc} />
@@ -269,7 +404,7 @@ export default function RemindersPage() {
         {(candidate.occurrence || stateSignals.length > 0) && (
           <div className="mb-3 space-y-2">
             {candidate.occurrence && (
-              <div>
+              <div title={`Occurrence pattern: ${candidate.occurrence}. This defines when the reminder should be checked.`}>
                 <p className="text-xs text-gray-500 mb-1">Pattern</p>
                 <p className="text-sm text-gray-700">{candidate.occurrence}</p>
               </div>
@@ -302,53 +437,63 @@ export default function RemindersPage() {
           </div>
         )}
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleForceCheck(candidate.id);
-            }}
-            disabled={isExecuting}
-            className="text-xs px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded disabled:opacity-50"
-            title="Check"
-          >
-            Check
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleExecuteNow(candidate.id);
-            }}
-            disabled={isExecuting}
-            className="text-xs px-3 py-1.5 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"
-            title="Execute now"
-          >
-            Execute
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(candidate);
-            }}
-            disabled={isExecuting}
-            className="text-xs px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
-            title="Edit"
-          >
-            Edit
-          </button>
-          {isAdmin && (
+        <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+          {/* Time until execution - bottom left (only for high probability reminders) */}
+          {isHighProbability && (
+            <div className="text-xs text-gray-600 font-medium" title={`Time until execution: ${formatTimeUntilExecutionShort(candidate.checkAtUtc)}`}>
+              {formatTimeUntilExecutionShort(candidate.checkAtUtc)}
+            </div>
+          )}
+          {!isHighProbability && <div></div>}
+          {/* Action buttons - bottom right */}
+          <div className="flex items-center gap-2">
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete(candidate.id, candidate.suggestedAction);
+                handleForceCheck(candidate.id);
               }}
               disabled={isExecuting}
-              className="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
-              title="Delete"
+              className="text-xs px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded disabled:opacity-50"
+              title="Check this reminder now (force evaluation)"
             >
-              Delete
+              Check
             </button>
-          )}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleExecuteNow(candidate.id);
+              }}
+              disabled={isExecuting}
+              className="text-xs px-3 py-1.5 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"
+              title="Execute this reminder immediately (bypass time check)"
+            >
+              Execute
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit(candidate);
+              }}
+              disabled={isExecuting}
+              className="text-xs px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
+              title="Edit the occurrence pattern for this reminder"
+            >
+              Edit
+            </button>
+            {isAdmin && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(candidate.id, candidate.suggestedAction);
+                }}
+                disabled={isExecuting}
+                className="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                title="Delete"
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -358,10 +503,16 @@ export default function RemindersPage() {
     <Layout>
       <div className="px-4 py-6 sm:px-0">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Reminders</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Reminders</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Manage reminders organized by confidence and routines
+            </p>
+          </div>
           <button
             onClick={() => router.push('/reminders/create')}
             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 inline-flex items-center gap-2"
+            title="Create a new manual reminder"
           >
             ➕ Create Reminder
           </button>
@@ -373,6 +524,7 @@ export default function RemindersPage() {
             <div>
               <label htmlFor="personId" className="block text-sm font-medium text-gray-700">
                 Person ID
+                <span className="ml-1 text-gray-400" title="Filter reminders by person">ℹ️</span>
               </label>
               {isAdmin ? (
                 <select
@@ -405,6 +557,7 @@ export default function RemindersPage() {
             <div>
               <label htmlFor="actionType" className="block text-sm font-medium text-gray-700">
                 Action Type
+                <span className="ml-1 text-gray-400" title="Filter by action type (e.g., play_music, turn_on_lights)">ℹ️</span>
               </label>
               <input
                 type="text"
@@ -417,6 +570,7 @@ export default function RemindersPage() {
             <div>
               <label htmlFor="status" className="block text-sm font-medium text-gray-700">
                 Status
+                <span className="ml-1 text-gray-400" title="Filter by reminder status (Scheduled, Executed, Skipped, Expired)">ℹ️</span>
               </label>
               <select
                 id="status"
@@ -447,7 +601,7 @@ export default function RemindersPage() {
           </div>
         </div>
 
-        {isLoading ? (
+        {(isLoading && activeTab !== 'routines') || (routinesLoading && activeTab === 'routines') || (routineDetailsLoading && activeTab === 'routines') ? (
           <div className="bg-white shadow rounded-lg p-6 text-center text-gray-500">Loading...</div>
         ) : (
           <>
@@ -462,6 +616,7 @@ export default function RemindersPage() {
                         ? 'border-green-500 text-green-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
+                    title="Reminders with high confidence that will execute automatically"
                   >
                     High Probability ({highProbabilityCandidates.length})
                   </button>
@@ -472,8 +627,20 @@ export default function RemindersPage() {
                         ? 'border-yellow-500 text-yellow-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
+                    title="Reminders that are still learning and require manual execution"
                   >
                     Low Probability ({lowProbabilityCandidates.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('routines')}
+                    className={`py-4 px-6 text-sm font-medium border-b-2 ${
+                      activeTab === 'routines'
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                    title="Reminders organized by routines (intent-triggered patterns)"
+                  >
+                    Routines ({routinesReminderCount})
                   </button>
                 </nav>
               </div>
@@ -497,7 +664,7 @@ export default function RemindersPage() {
                       </div>
                     )}
                   </>
-                ) : (
+                ) : activeTab === 'low' ? (
                   <>
                     <div className="mb-4">
                       <p className="text-sm text-gray-600">
@@ -515,12 +682,134 @@ export default function RemindersPage() {
                       </div>
                     )}
                   </>
+                ) : (
+                  <>
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600">
+                        Reminders organized by routines. Routines are patterns triggered by specific intents (like arriving home). Click on a routine to see its reminders.
+                      </p>
+                    </div>
+                    {!routineDetails || routineDetails.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 text-sm">No routines found</p>
+                        <p className="text-gray-400 text-xs mt-1">Routines are created automatically when you express intents</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {routineDetails.map((routineDetail: RoutineDetailDto) => {
+                          const isExpanded = expandedRoutines.has(routineDetail.id);
+                          const reminderCount = routineDetail.reminders?.length || 0;
+                          
+                          return (
+                            <div key={routineDetail.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                              {/* Routine Header (Folder-like) */}
+                              <button
+                                onClick={() => toggleRoutine(routineDetail.id)}
+                                className="w-full px-4 py-3 bg-blue-50 hover:bg-blue-100 transition-colors flex items-center justify-between text-left"
+                              >
+                                <div className="flex items-center gap-3 flex-1">
+                                  <svg
+                                    className={`w-5 h-5 text-gray-600 transition-transform ${isExpanded ? 'transform rotate-90' : ''}`}
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                  <span className="text-2xl">{getIntentIcon(routineDetail.intentType)}</span>
+                                  <div className="flex-1">
+                                    <h3 className="font-semibold text-gray-900">
+                                      {getIntentDisplayName(routineDetail.intentType)}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 mt-0.5">
+                                      {reminderCount} reminder{reminderCount !== 1 ? 's' : ''} • Routine
+                                    </p>
+                                  </div>
+                                </div>
+                                <ConfidenceBadge 
+                                  confidence={reminderCount > 0 
+                                    ? routineDetail.reminders.reduce((sum, r) => sum + r.confidence, 0) / reminderCount
+                                    : 0
+                                  } 
+                                  threshold={CONFIDENCE_THRESHOLD} 
+                                />
+                              </button>
+
+                              {/* Routine Reminders (Collapsible Content) */}
+                              {isExpanded && (
+                                <div className="p-4 bg-white border-t border-gray-200">
+                                  {reminderCount === 0 ? (
+                                    <div className="text-center py-6 text-gray-500 text-sm">
+                                      <p>No reminders learned for this routine yet</p>
+                                      <p className="text-xs text-gray-400 mt-1">
+                                        Reminders will appear here as the system learns your actions after this intent
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                      {routineDetail.reminders.map((reminder: RoutineReminderDto) => {
+                                        const convertedReminder = routineReminderToReminderCandidate(reminder, routineDetail);
+                                        return (
+                                          <div
+                                            key={reminder.id}
+                                            className="border border-gray-200 rounded-lg p-3 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                                            title={`Reminder: ${reminder.suggestedAction} (part of ${getIntentDisplayName(routineDetail.intentType)} routine). Click to view details.`}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setDetailReminder(convertedReminder);
+                                              setIsDetailModalOpen(true);
+                                            }}
+                                            role="button"
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                              if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                setDetailReminder(convertedReminder);
+                                                setIsDetailModalOpen(true);
+                                              }
+                                            }}
+                                          >
+                                            <div className="flex items-start justify-between mb-2">
+                                              <div className="flex-1 min-w-0">
+                                                <h4 className="font-medium text-gray-900 text-sm truncate" title={reminder.suggestedAction}>
+                                                  {reminder.suggestedAction}
+                                                </h4>
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                  Part of: <span className="font-medium">{getIntentDisplayName(routineDetail.intentType)}</span>
+                                                  <span className="ml-1 text-blue-500" title="This reminder belongs to this routine">🔗</span>
+                                                </p>
+                                              </div>
+                                              <div title={`Confidence: ${(reminder.confidence * 100).toFixed(0)}%`}>
+                                                <ConfidenceBadge 
+                                                  confidence={reminder.confidence} 
+                                                  threshold={CONFIDENCE_THRESHOLD}
+                                                />
+                                              </div>
+                                            </div>
+                                            {reminder.lastObservedAtUtc && (
+                                              <p className="text-xs text-gray-500 mt-2" title={`Last observed: ${new Date(reminder.lastObservedAtUtc).toLocaleString()}`}>
+                                                Last seen: <DateTimeDisplay date={reminder.lastObservedAtUtc} showRelative />
+                                              </p>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
 
-            {/* Other status reminders (only Skipped and Expired, not Executed) */}
-            {data && data.items.filter((c: ReminderCandidateDto) => !isScheduled(c.status) && !isExecuted(c.status)).length > 0 && (
+            {/* Other status reminders (only Skipped and Expired, not Executed) - Only show when not on routines tab */}
+            {activeTab !== 'routines' && data && data.items.filter((c: ReminderCandidateDto) => !isScheduled(c.status) && !isExecuted(c.status)).length > 0 && (
               <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
                 <div className="px-4 py-5 sm:p-6">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Other Reminders</h2>

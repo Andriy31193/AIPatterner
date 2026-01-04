@@ -9,7 +9,7 @@ import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
 import { LearningBadge } from '@/components/LearningBadge';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
-import type { ActionEventDto, ReminderCandidateDto, RoutineDto } from '@/types';
+import type { ActionEventDto, ReminderCandidateDto, RoutineDto, SignalStateDto } from '@/types';
 import { ProbabilityAction, EventType } from '@/types';
 
 // Known intent types
@@ -41,6 +41,8 @@ export default function CreateEventPage() {
   const [customTool, setCustomTool] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [ignoreForLearning, setIgnoreForLearning] = useState(false);
+  const [signalStates, setSignalStates] = useState<SignalStateDto[]>([]);
+  const [showSignalStates, setShowSignalStates] = useState(false);
 
   const [formData, setFormData] = useState<ActionEventDto>({
     personId: '',
@@ -185,6 +187,7 @@ export default function CreateEventPage() {
       eventType: eventType,
       probabilityValue: ignoreForLearning ? undefined : formData.probabilityValue,
       probabilityAction: ignoreForLearning ? undefined : formData.probabilityAction,
+      signalStates: signalStates.length > 0 ? signalStates : undefined,
     };
     
     createMutation.mutate(event);
@@ -518,6 +521,122 @@ export default function CreateEventPage() {
                         <p className="mt-1 text-xs text-gray-500">
                           Whether to increase or decrease confidence (leave as auto-detect for most cases)
                         </p>
+                      </div>
+                      
+                      {/* Signal States Section */}
+                      <div className="mt-4 pt-4 border-t border-gray-300">
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Signal States (Sensor Context)
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setShowSignalStates(!showSignalStates)}
+                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                          >
+                            {showSignalStates ? 'Hide' : 'Show'}
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-500 mb-3">
+                          Optional sensor signal states for context-aware matching. Used to determine if reminder should be suggested based on sensor similarity.
+                        </p>
+                        
+                        {showSignalStates && (
+                          <div className="space-y-3">
+                            {signalStates.map((signal, index) => (
+                              <div key={index} className="flex gap-2 items-start p-3 bg-white border border-gray-200 rounded-lg">
+                                <div className="flex-1 grid grid-cols-3 gap-2">
+                                  <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">Sensor ID</label>
+                                    <input
+                                      type="text"
+                                      value={signal.sensorId}
+                                      onChange={(e) => {
+                                        const newStates = [...signalStates];
+                                        newStates[index].sensorId = e.target.value;
+                                        setSignalStates(newStates);
+                                      }}
+                                      placeholder="e.g., presence, light, temp"
+                                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">Value</label>
+                                    <input
+                                      type="text"
+                                      value={typeof signal.value === 'string' ? signal.value : String(signal.value)}
+                                      onChange={(e) => {
+                                        const newStates = [...signalStates];
+                                        // Try to parse as number or boolean, otherwise keep as string
+                                        let parsedValue: string | number | boolean = e.target.value;
+                                        if (e.target.value === 'true') parsedValue = true;
+                                        else if (e.target.value === 'false') parsedValue = false;
+                                        else if (!isNaN(Number(e.target.value)) && e.target.value.trim() !== '') {
+                                          parsedValue = Number(e.target.value);
+                                        }
+                                        newStates[index].value = parsedValue;
+                                        setSignalStates(newStates);
+                                      }}
+                                      placeholder="home, 0.5, true, etc."
+                                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">Importance (0-1)</label>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      max="1"
+                                      step="0.1"
+                                      value={signal.rawImportance ?? ''}
+                                      onChange={(e) => {
+                                        const newStates = [...signalStates];
+                                        newStates[index].rawImportance = e.target.value ? parseFloat(e.target.value) : undefined;
+                                        setSignalStates(newStates);
+                                      }}
+                                      placeholder="0.0 - 1.0"
+                                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs"
+                                    />
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newStates = signalStates.filter((_, i) => i !== index);
+                                    setSignalStates(newStates);
+                                  }}
+                                  className="mt-5 px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                            
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSignalStates([...signalStates, { sensorId: '', value: '', rawImportance: undefined }]);
+                              }}
+                              className="w-full px-3 py-2 text-sm text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50"
+                            >
+                              + Add Signal State
+                            </button>
+                            
+                            {signalStates.length > 0 && (
+                              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div className="text-xs text-blue-800">
+                                  <div className="font-medium mb-1">💡 Tips:</div>
+                                    <ul className="list-disc list-inside space-y-1">
+                                      <li>Common sensors: presence, light, temp, music, door, window</li>
+                                      <li>Values can be strings (e.g., &quot;home&quot;, &quot;away&quot;), numbers (0-100), or booleans (true/false)</li>
+                                      <li>Importance is optional - system will use defaults if not provided</li>
+                                      <li>Only top-K most important signals are used for matching</li>
+                                    </ul>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

@@ -70,7 +70,10 @@ public class EventIngestionFlowTests
         // Create matching services
         var configRepo = new ConfigurationRepository(context);
         var matchingPolicyService = new MatchingPolicyService(configRepo, config);
-        var matchingRemindersService = new MatchingRemindersService(eventRepo, context, mapper);
+        var signalSelector = new AIPatterner.Infrastructure.Services.SignalSelector(config, loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSelector>());
+        var similarityEvaluator = new AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator(loggerFactory.CreateLogger<AIPatterner.Infrastructure.Services.SignalSimilarityEvaluator>());
+        var signalPolicyService = new AIPatterner.Infrastructure.Services.SignalPolicyService(configRepo, config);
+        var matchingRemindersService = new MatchingRemindersService(eventRepo, context, mapper, signalSelector, similarityEvaluator, signalPolicyService, loggerFactory.CreateLogger<MatchingRemindersService>());
         
         var routineRepository = new RoutineRepository(context);
         var routineReminderRepository = new RoutineReminderRepository(context);
@@ -79,7 +82,10 @@ public class EventIngestionFlowTests
             routineReminderRepository,
             eventRepo,
             config,
-            loggerFactory.CreateLogger<RoutineLearningService>());
+            loggerFactory.CreateLogger<RoutineLearningService>(),
+            signalSelector,
+            similarityEvaluator,
+            signalPolicyService);
         
         var handler = new IngestEventCommandHandler(
             eventRepo,
@@ -91,7 +97,9 @@ public class EventIngestionFlowTests
             config,
             matchingRemindersService,
             matchingPolicyService,
-            routineLearningService);
+            routineLearningService,
+            signalSelector,
+            signalPolicyService);
 
         var firstEvent = new ActionEventDto
         {

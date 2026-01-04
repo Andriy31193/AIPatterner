@@ -17,19 +17,28 @@ public class RoutineLearningService : IRoutineLearningService
     private readonly IEventRepository _eventRepository;
     private readonly IConfiguration _configuration;
     private readonly ILogger<RoutineLearningService> _logger;
+    private readonly AIPatterner.Domain.Services.ISignalSelector _signalSelector;
+    private readonly AIPatterner.Domain.Services.ISignalSimilarityEvaluator _similarityEvaluator;
+    private readonly AIPatterner.Application.Services.ISignalPolicyService _signalPolicyService;
 
     public RoutineLearningService(
         IRoutineRepository routineRepository,
         IRoutineReminderRepository routineReminderRepository,
         IEventRepository eventRepository,
         IConfiguration configuration,
-        ILogger<RoutineLearningService> logger)
+        ILogger<RoutineLearningService> logger,
+        AIPatterner.Domain.Services.ISignalSelector signalSelector,
+        AIPatterner.Domain.Services.ISignalSimilarityEvaluator similarityEvaluator,
+        AIPatterner.Application.Services.ISignalPolicyService signalPolicyService)
     {
         _routineRepository = routineRepository;
         _routineReminderRepository = routineReminderRepository;
         _eventRepository = eventRepository;
         _configuration = configuration;
         _logger = logger;
+        _signalSelector = signalSelector;
+        _similarityEvaluator = similarityEvaluator;
+        _signalPolicyService = signalPolicyService;
     }
 
     /// <summary>
@@ -67,13 +76,14 @@ public class RoutineLearningService : IRoutineLearningService
             intentEvent.ActionType,
             cancellationToken);
 
-        var observationWindowMinutes = _configuration.GetValue<int>("Routine:ObservationWindowMinutes", 45);
+        // Get observation window from Policies configuration (default 60 minutes) for new routines
+        var defaultObservationWindowMinutes = _configuration.GetValue<int>("Policies:RoutineObservationWindowMinutes", 60);
 
         if (routine == null)
         {
-            // Create new routine
-            routine = new Routine(intentEvent.PersonId, intentEvent.ActionType, intentEvent.TimestampUtc);
-            routine.OpenObservationWindow(intentEvent.TimestampUtc, observationWindowMinutes);
+            // Create new routine with default observation window
+            routine = new Routine(intentEvent.PersonId, intentEvent.ActionType, intentEvent.TimestampUtc, defaultObservationWindowMinutes);
+            routine.OpenObservationWindow(intentEvent.TimestampUtc, routine.ObservationWindowMinutes);
             await _routineRepository.AddAsync(routine, cancellationToken);
             _logger.LogInformation(
                 "Created new routine {RoutineId} for person {PersonId} with intent {IntentType}",
@@ -81,8 +91,8 @@ public class RoutineLearningService : IRoutineLearningService
         }
         else
         {
-            // Update existing routine - open new observation window
-            routine.OpenObservationWindow(intentEvent.TimestampUtc, observationWindowMinutes);
+            // Update existing routine - open new observation window using routine's configured minutes
+            routine.OpenObservationWindow(intentEvent.TimestampUtc, routine.ObservationWindowMinutes);
             await _routineRepository.UpdateAsync(routine, cancellationToken);
             _logger.LogInformation(
                 "Opened observation window for routine {RoutineId} (person {PersonId}, intent {IntentType})",
@@ -95,8 +105,9 @@ public class RoutineLearningService : IRoutineLearningService
     /// <summary>
     /// Processes an observed event within an open observation window.
     /// Creates or updates routine reminders based on observed actions.
+    /// Only updates routine reminders if the event is within the observation window and matches time offset and state signal policies.
     /// </summary>
-    public async Task ProcessObservedEventAsync(ActionEvent observedEvent, CancellationToken cancellationToken)
+    public async Task ProcessObservedEventAsync(ActionEvent observedEvent, string? userPrompt, List<AIPatterner.Domain.ValueObjects.SignalState>? signalStates, CancellationToken cancellationToken)
     {
         // Find all routines for this person with open observation windows
         var routines = await _routineRepository.GetByPersonAsync(observedEvent.PersonId, cancellationToken);
@@ -122,20 +133,118 @@ public class RoutineLearningService : IRoutineLearningService
                 continue;
             }
 
-            await LearnFromObservedActionAsync(routine, observedEvent, cancellationToken);
+            await LearnFromObservedActionAsync(routine, observedEvent, userPrompt, signalStates, cancellationToken);
         }
     }
 
     /// <summary>
     /// Learns from an observed action within a routine's observation window.
+    /// Enforces time offset tolerance and state signal matching policies.
     /// </summary>
     private async Task LearnFromObservedActionAsync(
         Routine routine,
         ActionEvent observedEvent,
+        string? userPrompt,
+        List<AIPatterner.Domain.ValueObjects.SignalState>? signalStates,
         CancellationToken cancellationToken)
     {
+        // Get matching policies
+        var timeOffsetMinutes = _configuration.GetValue<int>("Policies:TimeOffsetMinutes", 45);
+        var matchByStateSignals = _configuration.GetValue<bool>("Policies:MatchByStateSignals", true);
+
+        // STRICT: Check time offset tolerance
+        // For routine reminders, we check against the routine's observation window start time
+        // Events must be within the observation window AND within time offset tolerance
+        if (routine.ObservationWindowStartUtc.HasValue)
+        {
+            var timeSinceWindowStart = (observedEvent.TimestampUtc - routine.ObservationWindowStartUtc.Value).TotalMinutes;
+            if (timeSinceWindowStart > timeOffsetMinutes)
+            {
+                _logger.LogWarning(
+                    "Event {EventId} ignored for routine {RoutineId}: time offset {TimeOffset} minutes exceeds tolerance {Tolerance} minutes",
+                    observedEvent.Id, routine.Id, timeSinceWindowStart, timeOffsetMinutes);
+                return; // Event outside time offset tolerance
+            }
+        }
+
+        // STRICT: Check state signal matching if enabled
+        if (matchByStateSignals)
+        {
+            // Check if reminder has state signal requirements (stored in CustomData)
+            // For new reminders, we'll check the event's state signals
+            // For existing reminders, check if event matches the reminder's required state signals
+            var existingReminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
+                routine.Id,
+                observedEvent.ActionType,
+                cancellationToken);
+
+            if (existingReminder != null && existingReminder.CustomData != null && existingReminder.CustomData.Count > 0)
+            {
+                // Existing reminder has state signal requirements - check if event matches
+                if (observedEvent.Context.StateSignals == null || observedEvent.Context.StateSignals.Count == 0)
+                {
+                    _logger.LogWarning(
+                        "Event {EventId} ignored for routine reminder {ReminderId}: state signals required but event has none",
+                        observedEvent.Id, existingReminder.Id);
+                    return; // Event lacks required state signals
+                }
+
+                // All state signals in reminder must be present in event with matching values
+                foreach (var reminderSignal in existingReminder.CustomData)
+                {
+                    if (!observedEvent.Context.StateSignals.ContainsKey(reminderSignal.Key) ||
+                        observedEvent.Context.StateSignals[reminderSignal.Key] != reminderSignal.Value)
+                    {
+                        _logger.LogWarning(
+                            "Event {EventId} ignored for routine reminder {ReminderId}: state signal {Key}={Value} not matched",
+                            observedEvent.Id, existingReminder.Id, reminderSignal.Key, reminderSignal.Value);
+                        return; // State signal mismatch
+                    }
+                }
+            }
+            // For new reminders, we'll accept the event and store its state signals in CustomData
+        }
+
+        // Check signal similarity if signal selection is enabled
+        var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
+        if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+        {
+            var existingReminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
+                routine.Id,
+                observedEvent.ActionType,
+                cancellationToken);
+            
+            if (existingReminder != null)
+            {
+                var reminderBaseline = existingReminder.GetSignalProfile();
+                
+                if (reminderBaseline != null && reminderBaseline.Signals != null && reminderBaseline.Signals.Count > 0)
+                {
+                    // Reminder has a baseline - check similarity
+                    var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                    var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                    var similarity = _similarityEvaluator.CalculateSimilarity(reminderBaseline, eventProfile);
+                    var threshold = await _signalPolicyService.GetSignalSimilarityThresholdAsync(cancellationToken);
+                    
+                    if (similarity < threshold)
+                    {
+                        // Signal mismatch - skip this reminder update
+                        _logger.LogInformation(
+                            "Routine reminder {ReminderId} skipped due to signal mismatch: similarity {Similarity} < threshold {Threshold}",
+                            existingReminder.Id, similarity, threshold);
+                        return; // Do not update baseline or userPromptsList
+                    }
+                    
+                    _logger.LogDebug(
+                        "Routine reminder {ReminderId} passed signal similarity check: similarity {Similarity} >= threshold {Threshold}",
+                        existingReminder.Id, similarity, threshold);
+                }
+                // If reminder has no baseline yet, allow normal behavior (will be created on first match)
+            }
+        }
+
         // Try to find existing routine reminder for this action
-        var existingReminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
+        var reminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
             routine.Id,
             observedEvent.ActionType,
             cancellationToken);
@@ -143,33 +252,77 @@ public class RoutineLearningService : IRoutineLearningService
         var defaultProbability = _configuration.GetValue<double>("Routine:DefaultRoutineProbability", 0.5);
         var increaseStep = _configuration.GetValue<double>("Routine:ProbabilityIncreaseStep", 0.1);
 
-        if (existingReminder != null)
+        if (reminder != null)
         {
             // Update existing reminder - increase probability
-            existingReminder.IncreaseConfidence(increaseStep);
-            existingReminder.RecordObservation(observedEvent.TimestampUtc);
+            reminder.IncreaseConfidence(increaseStep);
+            reminder.RecordObservation(observedEvent.TimestampUtc);
             
             if (observedEvent.CustomData != null)
             {
-                existingReminder.UpdateCustomData(observedEvent.CustomData);
+                reminder.UpdateCustomData(observedEvent.CustomData);
             }
 
-            await _routineReminderRepository.UpdateAsync(existingReminder, cancellationToken);
+            // Append userPrompt if provided
+            if (!string.IsNullOrWhiteSpace(userPrompt))
+            {
+                reminder.AppendUserPrompt(userPrompt, observedEvent.TimestampUtc);
+            }
+            
+            // Update signal profile baseline if signal selection is enabled and event has signals
+            // CRITICAL: Only update if event is within observation window (already checked above)
+            if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+            {
+                var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                reminder.UpdateSignalProfile(eventProfile, alpha);
+            }
+
+            await _routineReminderRepository.UpdateAsync(reminder, cancellationToken);
             _logger.LogInformation(
                 "Updated routine reminder {ReminderId} for routine {RoutineId} (action: {ActionType}, confidence: {Confidence})",
-                existingReminder.Id, routine.Id, observedEvent.ActionType, existingReminder.Confidence);
+                reminder.Id, routine.Id, observedEvent.ActionType, reminder.Confidence);
         }
         else
         {
             // Create new routine reminder
+            // Store state signals in CustomData if present
+            var customData = observedEvent.CustomData ?? new Dictionary<string, string>();
+            if (matchByStateSignals && observedEvent.Context.StateSignals != null && observedEvent.Context.StateSignals.Count > 0)
+            {
+                // Merge state signals into CustomData
+                foreach (var signal in observedEvent.Context.StateSignals)
+                {
+                    customData[signal.Key] = signal.Value;
+                }
+            }
+
             var newReminder = new RoutineReminder(
                 routine.Id,
                 routine.PersonId,
                 observedEvent.ActionType,
                 defaultProbability,
-                observedEvent.CustomData);
+                customData.Count > 0 ? customData : null);
             
             newReminder.RecordObservation(observedEvent.TimestampUtc);
+            
+            // Append userPrompt if provided
+            if (!string.IsNullOrWhiteSpace(userPrompt))
+            {
+                newReminder.AppendUserPrompt(userPrompt, observedEvent.TimestampUtc);
+            }
+            
+            // Initialize signal profile baseline if signal selection is enabled and event has signals
+            // CRITICAL: Only initialize if event is within observation window (already checked above)
+            if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+            {
+                var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                newReminder.UpdateSignalProfile(eventProfile, alpha);
+            }
+            
             await _routineReminderRepository.AddAsync(newReminder, cancellationToken);
             _logger.LogInformation(
                 "Created new routine reminder {ReminderId} for routine {RoutineId} (action: {ActionType}, confidence: {Confidence})",
