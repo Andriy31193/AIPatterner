@@ -3,6 +3,7 @@ namespace AIPatterner.Infrastructure.Services;
 
 using AIPatterner.Application.Handlers;
 using AIPatterner.Application.Helpers;
+using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using AIPatterner.Domain.Services;
 using AIPatterner.Infrastructure.Persistence;
@@ -17,19 +18,22 @@ public class ReminderScheduler : IReminderScheduler
     private readonly IReminderPolicyEvaluator _policyEvaluator;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ReminderScheduler> _logger;
+    private readonly IRoutineLearningService _routineLearningService;
 
     public ReminderScheduler(
         ApplicationDbContext context,
         AIPatterner.Application.Handlers.ITransitionRepository transitionRepository,
         IReminderPolicyEvaluator policyEvaluator,
         IConfiguration configuration,
-        ILogger<ReminderScheduler> logger)
+        ILogger<ReminderScheduler> logger,
+        IRoutineLearningService routineLearningService)
     {
         _context = context;
         _transitionRepository = transitionRepository;
         _policyEvaluator = policyEvaluator;
         _configuration = configuration;
         _logger = logger;
+        _routineLearningService = routineLearningService;
     }
 
     public async Task<List<ReminderCandidate>> ScheduleCandidatesForEventAsync(
@@ -39,6 +43,21 @@ public class ReminderScheduler : IReminderScheduler
         // CRITICAL: StateChange events must NOT trigger reminder scheduling
         if (actionEvent.EventType == EventType.StateChange)
         {
+            return new List<ReminderCandidate>();
+        }
+
+        // CRITICAL: Events within routine learning windows must NOT create general reminders
+        // This provides defense in depth - even if called, we check here too
+        var isWithinRoutineLearningWindow = await _routineLearningService.IsEventWithinRoutineLearningWindowAsync(
+            actionEvent.PersonId,
+            actionEvent.TimestampUtc,
+            cancellationToken);
+        
+        if (isWithinRoutineLearningWindow)
+        {
+            _logger.LogInformation(
+                "Skipping reminder scheduling for event {EventId} (Person: {PersonId}, Action: {Action}) - event is within routine learning window",
+                actionEvent.Id, actionEvent.PersonId, actionEvent.ActionType);
             return new List<ReminderCandidate>();
         }
 

@@ -29,6 +29,10 @@ public class GetRoutineQueryHandler : IRequestHandler<GetRoutineQuery, RoutineDe
 
         var reminders = await _routineReminderRepository.GetByRoutineAsync(request.RoutineId, cancellationToken);
 
+        var evidenceCounts = reminders.ToDictionary(
+            rr => rr.Id,
+            rr => rr.GetDelayEvidence().Count);
+
         return new RoutineDetailDto
         {
             Id = routine.Id,
@@ -36,8 +40,10 @@ public class GetRoutineQueryHandler : IRequestHandler<GetRoutineQuery, RoutineDe
             IntentType = routine.IntentType,
             CreatedAtUtc = routine.CreatedAtUtc,
             LastActivatedUtc = routine.LastIntentOccurredAtUtc,
+            ObservationWindowStartUtc = routine.ObservationWindowStartUtc,
             ObservationWindowEndsUtc = routine.ObservationWindowEndsAtUtc,
             ObservationWindowMinutes = routine.ObservationWindowMinutes,
+            ActiveTimeContextBucket = routine.ActiveTimeContextBucket,
             Reminders = reminders
                 .OrderByDescending(rr => rr.Confidence)
                 .ThenByDescending(rr => rr.LastObservedAtUtc)
@@ -49,9 +55,11 @@ public class GetRoutineQueryHandler : IRequestHandler<GetRoutineQuery, RoutineDe
                         Id = rr.Id,
                         RoutineId = rr.RoutineId,
                         SuggestedAction = rr.SuggestedAction,
+                        TimeContextBucket = rr.TimeContextBucket,
                         Confidence = rr.Confidence,
                         CreatedAtUtc = rr.CreatedAtUtc,
                         LastObservedAtUtc = rr.LastObservedAtUtc,
+                        ObservationCount = rr.ObservationCount,
                         CustomData = rr.CustomData,
                         SignalProfile = profile != null ? new SignalProfileDto
                         {
@@ -65,6 +73,14 @@ public class GetRoutineQueryHandler : IRequestHandler<GetRoutineQuery, RoutineDe
                         } : null,
                         SignalProfileUpdatedAtUtc = rr.SignalProfileUpdatedAtUtc,
                         SignalProfileSamplesCount = rr.SignalProfileSamplesCount,
+                        DelaySampleCount = rr.DelaySampleCount,
+                        EmaDelaySeconds = rr.EmaDelaySeconds,
+                        EmaVarianceSeconds = rr.EmaVarianceSeconds,
+                        MedianDelayApproxSeconds = rr.MedianDelayApproxSeconds,
+                        P90DelayApproxSeconds = rr.P90DelayApproxSeconds,
+                        DelayStatsLastUpdatedUtc = rr.DelayStatsLastUpdatedUtc,
+                        DelayStatsLastDecayUtc = rr.DelayStatsLastDecayUtc,
+                        DelayEvidenceCount = evidenceCounts.GetValueOrDefault(rr.Id, 0),
                     };
                 }).ToList()
         };

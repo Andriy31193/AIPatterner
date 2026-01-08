@@ -8,6 +8,9 @@ import { Layout } from '@/components/Layout';
 import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
 import { LearningBadge } from '@/components/LearningBadge';
 import { DateTimeDisplay } from '@/components/DateTimeDisplay';
+import { LearningWindowCountdown } from '@/components/LearningWindowCountdown';
+import { TimeContextBucketBadge } from '@/components/TimeContextBucketBadge';
+import { DelayStatsDisplay } from '@/components/DelayStatsDisplay';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import type { RoutineDto, RoutineDetailDto, RoutineReminderDto, ReminderCandidateDto } from '@/types';
@@ -152,7 +155,7 @@ export default function RoutinesPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 mt-4">
+                <div className="flex items-center gap-4 mt-4 flex-wrap">
                   <ConfidenceIndicator 
                     confidence={routineDetail.reminders.length > 0 
                       ? routineDetail.reminders.reduce((sum, r) => sum + r.confidence, 0) / routineDetail.reminders.length
@@ -164,6 +167,13 @@ export default function RoutinesPage() {
                   {isWindowOpen(routineDetail) && (
                     <LearningBadge status="active" />
                   )}
+                  <LearningWindowCountdown 
+                    windowEndsUtc={routineDetail.observationWindowEndsUtc}
+                    windowStartUtc={routineDetail.observationWindowStartUtc}
+                  />
+                  {routineDetail.activeTimeContextBucket && (
+                    <TimeContextBucketBadge bucket={routineDetail.activeTimeContextBucket} />
+                  )}
                   {routineDetail.lastActivatedUtc && (
                     <div className="text-sm text-gray-500">
                       Last activated: <DateTimeDisplay date={routineDetail.lastActivatedUtc} showRelative />
@@ -173,14 +183,53 @@ export default function RoutinesPage() {
               </div>
             </div>
 
+            {/* Routine Statistics Summary */}
+            {routineDetail.reminders.length > 0 && (
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <div className="text-sm font-medium text-blue-700 mb-1">Total Actions</div>
+                  <div className="text-2xl font-bold text-blue-900">{routineDetail.reminders.length}</div>
+                  <div className="text-xs text-blue-600 mt-1">
+                    {routineDetail.reminders.reduce((sum, r) => sum + r.observationCount, 0)} total observations
+                  </div>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                  <div className="text-sm font-medium text-purple-700 mb-1">Avg Confidence</div>
+                  <div className="text-2xl font-bold text-purple-900">
+                    {Math.round((routineDetail.reminders.reduce((sum, r) => sum + r.confidence, 0) / routineDetail.reminders.length) * 100)}%
+                  </div>
+                  <div className="text-xs text-purple-600 mt-1">
+                    Across all learned actions
+                  </div>
+                </div>
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="text-sm font-medium text-green-700 mb-1">Delay Samples</div>
+                  <div className="text-2xl font-bold text-green-900">
+                    {Math.round(routineDetail.reminders.reduce((sum, r) => sum + r.delaySampleCount, 0))}
+                  </div>
+                  <div className="text-xs text-green-600 mt-1">
+                    {routineDetail.reminders.filter(r => r.delaySampleCount > 0).length} actions with timing data
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Observation Window Settings */}
             <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900 mb-1">
-                    Learning Window
-                    <span className="ml-1 text-gray-400" title="How long the routine observes actions after activation">ℹ️</span>
-                  </h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-sm font-medium text-gray-900">
+                      Learning Window
+                      <span className="ml-1 text-gray-400" title="How long the routine observes actions after activation">ℹ️</span>
+                    </h3>
+                    {isWindowOpen(routineDetail) && (
+                      <LearningWindowCountdown 
+                        windowEndsUtc={routineDetail.observationWindowEndsUtc}
+                        windowStartUtc={routineDetail.observationWindowStartUtc}
+                      />
+                    )}
+                  </div>
                   {!isEditingWindow ? (
                     <div className="flex items-center gap-2">
                       <p className="text-sm text-gray-600">
@@ -229,6 +278,11 @@ export default function RoutinesPage() {
                   <p className="text-xs text-gray-500 mt-1">
                     Actions observed within this window after activation will be associated with this routine
                   </p>
+                  {routineDetail.observationWindowStartUtc && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Window started: <DateTimeDisplay date={routineDetail.observationWindowStartUtc} showRelative />
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -274,11 +328,18 @@ export default function RoutinesPage() {
                         <h3 className="font-medium text-gray-900 mb-1" title={`Action: ${reminder.suggestedAction}`}>
                           {reminder.suggestedAction}
                         </h3>
-                        {reminder.lastObservedAtUtc && (
-                          <p className="text-xs text-gray-500" title={`Last observed: ${new Date(reminder.lastObservedAtUtc).toLocaleString()}`}>
-                            Last seen: <DateTimeDisplay date={reminder.lastObservedAtUtc} showRelative />
-                          </p>
-                        )}
+                        <div className="space-y-1">
+                          {reminder.lastObservedAtUtc && (
+                            <p className="text-xs text-gray-500" title={`Last observed: ${new Date(reminder.lastObservedAtUtc).toLocaleString()}`}>
+                              Last seen: <DateTimeDisplay date={reminder.lastObservedAtUtc} showRelative />
+                            </p>
+                          )}
+                          {reminder.observationCount > 0 && (
+                            <p className="text-xs text-gray-500">
+                              Observed {reminder.observationCount} time{reminder.observationCount !== 1 ? 's' : ''}
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <div title={`Confidence: ${(reminder.confidence * 100).toFixed(0)}%`}>
                         <ConfidenceIndicator 
@@ -288,7 +349,25 @@ export default function RoutinesPage() {
                         />
                       </div>
                         </div>
-                      <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="mt-3 pt-3 border-t border-gray-200 space-y-3">
+                        {/* Time Context Bucket */}
+                        {reminder.timeContextBucket && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-600">Time Context:</span>
+                            <TimeContextBucketBadge bucket={reminder.timeContextBucket} />
+                          </div>
+                        )}
+                        
+                        {/* Delay Statistics */}
+                        <DelayStatsDisplay
+                          medianDelaySeconds={reminder.medianDelayApproxSeconds}
+                          p90DelaySeconds={reminder.p90DelayApproxSeconds}
+                          sampleCount={reminder.delaySampleCount}
+                          evidenceCount={reminder.delayEvidenceCount}
+                          emaDelaySeconds={reminder.emaDelaySeconds}
+                          lastUpdatedUtc={reminder.delayStatsLastUpdatedUtc || undefined}
+                        />
+                        
                         <div className="flex items-center justify-between text-xs mb-2">
                           <span className="text-gray-600">
                             {reminder.confidence >= 0.7 ? 'Auto' : reminder.confidence >= 0.4 ? 'Ask' : 'Suggest'}
@@ -433,11 +512,25 @@ export default function RoutinesPage() {
                         <LearningBadge status="active" />
                       )}
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600">Learning status</span>
                         <LearningBadge status={routine.lastActivatedUtc ? 'ready' : 'learning'} />
                       </div>
+                      {routine.observationWindowEndsUtc && (
+                        <div className="flex items-center justify-between">
+                          <LearningWindowCountdown 
+                            windowEndsUtc={routine.observationWindowEndsUtc}
+                            windowStartUtc={routine.observationWindowStartUtc}
+                          />
+                        </div>
+                      )}
+                      {routine.activeTimeContextBucket && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-600">Active context:</span>
+                          <TimeContextBucketBadge bucket={routine.activeTimeContextBucket} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

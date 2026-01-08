@@ -4,6 +4,7 @@ namespace AIPatterner.Application.Handlers;
 using AIPatterner.Application.DTOs;
 using AIPatterner.Application.Mappings;
 using AIPatterner.Application.Queries;
+using AIPatterner.Application.Services;
 using AIPatterner.Domain.Entities;
 using AutoMapper;
 using MediatR;
@@ -13,11 +14,19 @@ public class GetReminderCandidatesQueryHandler : IRequestHandler<GetReminderCand
 {
     private readonly IReminderCandidateRepository _repository;
     private readonly IMapper _mapper;
+    private readonly IRoutineLearningService _routineLearningService;
+    private readonly IEventRepository _eventRepository;
 
-    public GetReminderCandidatesQueryHandler(IReminderCandidateRepository repository, IMapper mapper)
+    public GetReminderCandidatesQueryHandler(
+        IReminderCandidateRepository repository, 
+        IMapper mapper,
+        IRoutineLearningService routineLearningService,
+        IEventRepository eventRepository)
     {
         _repository = repository;
         _mapper = mapper;
+        _routineLearningService = routineLearningService;
+        _eventRepository = eventRepository;
     }
 
     public async Task<ReminderCandidateListResponse> Handle(GetReminderCandidatesQuery request, CancellationToken cancellationToken)
@@ -37,6 +46,55 @@ public class GetReminderCandidatesQueryHandler : IRequestHandler<GetReminderCand
         {
             filteredCandidates = candidates.Where(c => c.SuggestedAction.Contains(request.ActionType!, StringComparison.OrdinalIgnoreCase)).ToList();
         }
+
+        // CRITICAL: Filter out routine reminders - they should NEVER appear in general reminder lists
+        // Routine reminders are identified by CustomData["source"] == "routine"
+        // They should ONLY be visible in routine detail views, not in general reminder lists
+        var filteredList = new List<ReminderCandidate>();
+        foreach (var candidate in filteredCandidates)
+        {
+            bool shouldExclude = false;
+
+            // FIRST: Check if this is a routine reminder (marked with source="routine" in CustomData)
+            if (candidate.CustomData != null && 
+                candidate.CustomData.TryGetValue("source", out var source) && 
+                string.Equals(source, "routine", StringComparison.OrdinalIgnoreCase))
+            {
+                // This is a routine reminder - exclude it from general reminder lists
+                shouldExclude = true;
+            }
+            else if (!string.IsNullOrWhiteSpace(request.PersonId))
+            {
+                // SECOND: Check if reminder was created during a routine learning window
+                // This catches general reminders that were incorrectly created during learning windows
+                if (candidate.SourceEventId.HasValue)
+                {
+                    var sourceEvent = await _eventRepository.GetByIdAsync(candidate.SourceEventId.Value, cancellationToken);
+                    if (sourceEvent != null)
+                    {
+                        // Check if the source event was within a routine learning window at that time
+                        shouldExclude = await _routineLearningService.IsEventWithinRoutineLearningWindowAsync(
+                            request.PersonId,
+                            sourceEvent.TimestampUtc,
+                            cancellationToken);
+                    }
+                }
+                else
+                {
+                    // If no SourceEventId, check if reminder was created during a learning window
+                    shouldExclude = await _routineLearningService.IsEventWithinRoutineLearningWindowAsync(
+                        request.PersonId,
+                        candidate.CreatedAtUtc,
+                        cancellationToken);
+                }
+            }
+
+            if (!shouldExclude)
+            {
+                filteredList.Add(candidate);
+            }
+        }
+        filteredCandidates = filteredList;
 
         var totalCount = await _repository.GetCountAsync(
             request.PersonId,

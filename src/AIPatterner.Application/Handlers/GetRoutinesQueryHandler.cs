@@ -34,8 +34,10 @@ public class GetRoutinesQueryHandler : IRequestHandler<GetRoutinesQuery, Routine
             IntentType = r.IntentType,
             CreatedAtUtc = r.CreatedAtUtc,
             LastActivatedUtc = r.LastIntentOccurredAtUtc,
+            ObservationWindowStartUtc = r.ObservationWindowStartUtc,
             ObservationWindowEndsUtc = r.ObservationWindowEndsAtUtc,
             ObservationWindowMinutes = r.ObservationWindowMinutes,
+            ActiveTimeContextBucket = r.ActiveTimeContextBucket,
         }).ToList();
 
         return new RoutineListResponse

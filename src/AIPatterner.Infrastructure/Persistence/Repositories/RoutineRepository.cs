@@ -76,9 +76,14 @@ public class RoutineRepository : IRoutineRepository
 
     public async Task<List<Routine>> GetActiveRoutinesAsync(string personId, DateTime currentTime, CancellationToken cancellationToken)
     {
+        // Return routines that have an open observation window at the given time
+        // A window is active if it has both start and end times, and currentTime is within that range
         return await _context.Routines
             .Where(r => r.PersonId == personId)
-            .Where(r => r.ObservationWindowEndsAtUtc.HasValue && r.ObservationWindowEndsAtUtc.Value > currentTime)
+            .Where(r => r.ObservationWindowStartUtc.HasValue && 
+                        r.ObservationWindowEndsAtUtc.HasValue && 
+                        r.ObservationWindowStartUtc.Value <= currentTime &&
+                        r.ObservationWindowEndsAtUtc.Value > currentTime)
             .ToListAsync(cancellationToken);
     }
 

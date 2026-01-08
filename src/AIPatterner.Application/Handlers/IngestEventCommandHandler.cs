@@ -138,155 +138,80 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                 }
             }
             
+            // CRITICAL: Check if event is within routine learning window BEFORE any processing
+            // This must be checked FIRST to prevent any general reminder creation/updates
+            var isWithinRoutineLearningWindow = await _routineLearningService.IsEventWithinRoutineLearningWindowAsync(
+                actionEvent.PersonId,
+                actionEvent.TimestampUtc,
+                cancellationToken);
+            
             // Regular Action event - check if it falls within any open observation windows
+            // This processes routine reminders (which is allowed during learning windows)
             await _routineLearningService.ProcessObservedEventAsync(actionEvent, request.Event.UserPrompt, signalStates, cancellationToken);
 
             // Find matching reminder using strict policy-based matching (only for Action events)
-            // Probability values are now guaranteed to be set (defaults applied above)
-            // Get matching policies from configuration
-            var matchingCriteria = await _policyService.GetMatchingCriteriaAsync(cancellationToken);
-            
-            // Find matching reminders using strict criteria
-            var matchingResult = await _matchingService.FindMatchingRemindersAsync(
-                actionEvent.Id,
-                matchingCriteria,
-                signalStates,
-                cancellationToken);
-
+            // BUT skip if event is within a routine learning window (to prevent duplication)
             ReminderCandidate? matchingReminder = null;
-            if (matchingResult.Items.Any())
+            if (!isWithinRoutineLearningWindow)
             {
-                // Get the best matching reminder (highest confidence, most recent)
-                var bestMatch = matchingResult.Items
-                    .OrderByDescending(r => r.Confidence)
-                    .ThenByDescending(r => r.CheckAtUtc)
-                    .First();
-                
-                matchingReminder = await _reminderRepository.GetByIdAsync(bestMatch.Id, cancellationToken);
-            }
-
-            if (matchingReminder != null)
-            {
-                // Update existing reminder probability (increase/decrease based on event)
-                // Use the values from request (which now have defaults if not provided)
-                matchingReminder.UpdateConfidence(
-                    request.Event.ProbabilityValue!.Value,
-                    request.Event.ProbabilityAction!.Value);
-                
-                // Record new evidence for this matching event with context information
-                // This accumulates evidence across days without locking into a specific day/weekday
-                matchingReminder.RecordEvidence(
-                    actionEvent.TimestampUtc,
-                    actionEvent.Context.TimeBucket,
-                    actionEvent.Context.DayType);
-                
-                // Update CheckAtUtc to the most recent event (for scheduling purposes)
-                // But note: matching is now based on TimeWindowCenter, not CheckAtUtc
-                matchingReminder.UpdateCheckAtUtc(actionEvent.TimestampUtc);
-                
-                // Re-evaluate pattern inference based on accumulated evidence
-                // This gradually infers Daily/Weekly patterns only when there's enough evidence
-                var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
-                var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
-                matchingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
-                
-                // Update CustomData if provided
-                if (actionEvent.CustomData != null)
-                {
-                    matchingReminder.UpdateCustomData(actionEvent.CustomData);
-                }
-                
-                // Append userPrompt if provided
-                if (!string.IsNullOrWhiteSpace(request.Event.UserPrompt))
-                {
-                    matchingReminder.AppendUserPrompt(request.Event.UserPrompt, actionEvent.TimestampUtc);
-                }
-                
-                // Update signal profile baseline if signal selection is enabled and event has signals
-                var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
-                if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
-                {
-                    var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
-                    var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
-                    var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
-                    matchingReminder.UpdateSignalProfile(eventProfile, alpha);
-                }
-                
-                await _reminderRepository.UpdateAsync(matchingReminder, cancellationToken);
-                relatedReminderId = matchingReminder.Id;
-                actionEvent.SetRelatedReminder(matchingReminder.Id);
-                await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
-            }
-            else
-            {
-                // No matching reminder found - check if one exists for this person+action
-                // to avoid creating duplicates (prefer scheduled reminders within time window)
-                var existingReminders = await _reminderRepository.GetByPersonAndActionAsync(
-                    actionEvent.PersonId,
-                    actionEvent.ActionType,
+                // Probability values are now guaranteed to be set (defaults applied above)
+                // Get matching policies from configuration
+                var matchingCriteria = await _policyService.GetMatchingCriteriaAsync(cancellationToken);
+            
+                // Find matching reminders using strict criteria
+                var matchingResult = await _matchingService.FindMatchingRemindersAsync(
+                    actionEvent.Id,
+                    matchingCriteria,
+                    signalStates,
                     cancellationToken);
-                
-                // Prefer scheduled reminders that are within time window, otherwise any scheduled reminder
-                var timeWindowSize = 45; // minutes
-                ReminderCandidate? existingReminder = null;
-                
-                if (existingReminders.Any())
+
+                if (matchingResult.Items.Any())
                 {
-                    // First try to find one within time window
-                    var eventTimeOfDay = actionEvent.TimestampUtc.TimeOfDay;
-                    existingReminder = existingReminders
-                        .Where(r => r.Status == ReminderCandidateStatus.Scheduled && r.TimeWindowCenter.HasValue)
-                        .Where(r =>
-                        {
-                            var reminderTime = r.TimeWindowCenter!.Value;
-                            var timeDiff = Math.Abs((eventTimeOfDay - reminderTime).TotalMinutes);
-                            if (timeDiff > 12 * 60) timeDiff = 24 * 60 - timeDiff;
-                            return timeDiff <= timeWindowSize;
-                        })
-                        .OrderByDescending(r => r.CreatedAtUtc)
-                        .FirstOrDefault();
+                    // Get the best matching reminder (highest confidence, most recent)
+                    var bestMatch = matchingResult.Items
+                        .OrderByDescending(r => r.Confidence)
+                        .ThenByDescending(r => r.CheckAtUtc)
+                        .First();
                     
-                    // If none in time window, use any scheduled reminder
-                    if (existingReminder == null)
-                    {
-                        existingReminder = existingReminders
-                            .Where(r => r.Status == ReminderCandidateStatus.Scheduled)
-                            .OrderByDescending(r => r.CreatedAtUtc)
-                            .FirstOrDefault();
-                    }
+                    matchingReminder = await _reminderRepository.GetByIdAsync(bestMatch.Id, cancellationToken);
                 }
-                
-                if (existingReminder != null)
+
+                if (matchingReminder != null)
                 {
-                    // Update existing reminder instead of creating duplicate
-                    existingReminder.UpdateConfidence(
+                    // Update existing reminder probability (increase/decrease based on event)
+                    // Use the values from request (which now have defaults if not provided)
+                    matchingReminder.UpdateConfidence(
                         request.Event.ProbabilityValue!.Value,
                         request.Event.ProbabilityAction!.Value);
                     
-                    // Record new evidence with context
-                    existingReminder.RecordEvidence(
+                    // Record new evidence for this matching event with context information
+                    // This accumulates evidence across days without locking into a specific day/weekday
+                    matchingReminder.RecordEvidence(
                         actionEvent.TimestampUtc,
                         actionEvent.Context.TimeBucket,
                         actionEvent.Context.DayType);
                     
-                    existingReminder.UpdateCheckAtUtc(actionEvent.TimestampUtc);
+                    // Update CheckAtUtc to the most recent event (for scheduling purposes)
+                    // But note: matching is now based on TimeWindowCenter, not CheckAtUtc
+                    matchingReminder.UpdateCheckAtUtc(actionEvent.TimestampUtc);
+                    
+                    // Re-evaluate pattern inference based on accumulated evidence
+                    // This gradually infers Daily/Weekly patterns only when there's enough evidence
+                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                    matchingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
                     
                     // Update CustomData if provided
                     if (actionEvent.CustomData != null)
                     {
-                        existingReminder.UpdateCustomData(actionEvent.CustomData);
+                        matchingReminder.UpdateCustomData(actionEvent.CustomData);
                     }
                     
                     // Append userPrompt if provided
                     if (!string.IsNullOrWhiteSpace(request.Event.UserPrompt))
                     {
-                        existingReminder.AppendUserPrompt(request.Event.UserPrompt, actionEvent.TimestampUtc);
+                        matchingReminder.AppendUserPrompt(request.Event.UserPrompt, actionEvent.TimestampUtc);
                     }
-                    
-                    // Re-evaluate pattern inference
-                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
-                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
-                    existingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
                     
                     // Update signal profile baseline if signal selection is enabled and event has signals
                     var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
@@ -295,72 +220,176 @@ public class IngestEventCommandHandler : IRequestHandler<IngestEventCommand, Ing
                         var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
                         var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
                         var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
-                        existingReminder.UpdateSignalProfile(eventProfile, alpha);
+                        matchingReminder.UpdateSignalProfile(eventProfile, alpha);
                     }
                     
-                    await _reminderRepository.UpdateAsync(existingReminder, cancellationToken);
-                    relatedReminderId = existingReminder.Id;
-                    actionEvent.SetRelatedReminder(existingReminder.Id);
+                    await _reminderRepository.UpdateAsync(matchingReminder, cancellationToken);
+                    relatedReminderId = matchingReminder.Id;
+                    actionEvent.SetRelatedReminder(matchingReminder.Id);
                     await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
                 }
                 else
                 {
-                    // No existing reminder - create new one as a hypothesis
-                    var defaultConfidence = _configuration.GetValue<double>("Policy:DefaultReminderConfidence", 0.25);
-                    
-                    // CheckAtUtc must be identical to Event TimestampUtc (for scheduling)
-                    var checkAtUtc = actionEvent.TimestampUtc;
-                    
-                    // DO NOT set occurrence immediately - it starts as Unknown/Flexible
-                    // The ReminderCandidate constructor will initialize evidence tracking
-                    // Occurrence will be inferred gradually as evidence accumulates
-                    var newReminder = new ReminderCandidate(
+                    // No matching reminder found - check if one exists for this person+action
+                    // to avoid creating duplicates (prefer scheduled reminders within time window)
+                    var existingReminders = await _reminderRepository.GetByPersonAndActionAsync(
                         actionEvent.PersonId,
                         actionEvent.ActionType,
-                        checkAtUtc, // Use event timestamp
-                        ReminderStyle.Suggest,
-                        null,
-                        defaultConfidence,
-                        occurrence: null, // Start with no fixed occurrence pattern
-                        actionEvent.Id, // SourceEventId
-                        actionEvent.CustomData); // Copy CustomData
+                        cancellationToken);
                     
-                    // Record the first evidence with context information
-                    newReminder.RecordEvidence(
-                        actionEvent.TimestampUtc,
-                        actionEvent.Context.TimeBucket,
-                        actionEvent.Context.DayType);
+                    // Prefer scheduled reminders that are within time window, otherwise any scheduled reminder
+                    var timeWindowSize = 45; // minutes
+                    ReminderCandidate? existingReminder = null;
                     
-                    // The pattern inference is run to set initial status
-                    var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
-                    var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
-                    newReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
-                    
-                    // Initialize signal profile baseline if signal selection is enabled and event has signals
-                    var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
-                    if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+                    if (existingReminders.Any())
                     {
-                        var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
-                        var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
-                        var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
-                        newReminder.UpdateSignalProfile(eventProfile, alpha);
+                        // First try to find one within time window
+                        var eventTimeOfDay = actionEvent.TimestampUtc.TimeOfDay;
+                        existingReminder = existingReminders
+                            .Where(r => r.Status == ReminderCandidateStatus.Scheduled && r.TimeWindowCenter.HasValue)
+                            .Where(r =>
+                            {
+                                var reminderTime = r.TimeWindowCenter!.Value;
+                                var timeDiff = Math.Abs((eventTimeOfDay - reminderTime).TotalMinutes);
+                                if (timeDiff > 12 * 60) timeDiff = 24 * 60 - timeDiff;
+                                return timeDiff <= timeWindowSize;
+                            })
+                            .OrderByDescending(r => r.CreatedAtUtc)
+                            .FirstOrDefault();
+                        
+                        // If none in time window, use any scheduled reminder
+                        if (existingReminder == null)
+                        {
+                            existingReminder = existingReminders
+                                .Where(r => r.Status == ReminderCandidateStatus.Scheduled)
+                                .OrderByDescending(r => r.CreatedAtUtc)
+                                .FirstOrDefault();
+                        }
                     }
+                    
+                    if (existingReminder != null)
+                    {
+                        // Update existing reminder instead of creating duplicate
+                        existingReminder.UpdateConfidence(
+                            request.Event.ProbabilityValue!.Value,
+                            request.Event.ProbabilityAction!.Value);
+                        
+                        // Record new evidence with context
+                        existingReminder.RecordEvidence(
+                            actionEvent.TimestampUtc,
+                            actionEvent.Context.TimeBucket,
+                            actionEvent.Context.DayType);
+                        
+                        existingReminder.UpdateCheckAtUtc(actionEvent.TimestampUtc);
+                        
+                        // Update CustomData if provided
+                        if (actionEvent.CustomData != null)
+                        {
+                            existingReminder.UpdateCustomData(actionEvent.CustomData);
+                        }
+                        
+                        // Append userPrompt if provided
+                        if (!string.IsNullOrWhiteSpace(request.Event.UserPrompt))
+                        {
+                            existingReminder.AppendUserPrompt(request.Event.UserPrompt, actionEvent.TimestampUtc);
+                        }
+                        
+                        // Re-evaluate pattern inference
+                        var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                        var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                        existingReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                        
+                        // Update signal profile baseline if signal selection is enabled and event has signals
+                        var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
+                        if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+                        {
+                            var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                            var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                            var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                            existingReminder.UpdateSignalProfile(eventProfile, alpha);
+                        }
+                        
+                        await _reminderRepository.UpdateAsync(existingReminder, cancellationToken);
+                        relatedReminderId = existingReminder.Id;
+                        actionEvent.SetRelatedReminder(existingReminder.Id);
+                        await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
+                    }
+                    else
+                    {
+                        // No existing reminder - create new one as a hypothesis
+                        var defaultConfidence = _configuration.GetValue<double>("Policy:DefaultReminderConfidence", 0.25);
+                        
+                        // CheckAtUtc must be identical to Event TimestampUtc (for scheduling)
+                        var checkAtUtc = actionEvent.TimestampUtc;
+                        
+                        // DO NOT set occurrence immediately - it starts as Unknown/Flexible
+                        // The ReminderCandidate constructor will initialize evidence tracking
+                        // Occurrence will be inferred gradually as evidence accumulates
+                        var newReminder = new ReminderCandidate(
+                            actionEvent.PersonId,
+                            actionEvent.ActionType,
+                            checkAtUtc, // Use event timestamp
+                            ReminderStyle.Suggest,
+                            null,
+                            defaultConfidence,
+                            occurrence: null, // Start with no fixed occurrence pattern
+                            actionEvent.Id, // SourceEventId
+                            actionEvent.CustomData); // Copy CustomData
+                        
+                        // Record the first evidence with context information
+                        newReminder.RecordEvidence(
+                            actionEvent.TimestampUtc,
+                            actionEvent.Context.TimeBucket,
+                            actionEvent.Context.DayType);
+                        
+                        // The pattern inference is run to set initial status
+                        var minDailyEvidence = _configuration.GetValue<int>("Policy:MinDailyEvidence", 3);
+                        var minWeeklyEvidence = _configuration.GetValue<int>("Policy:MinWeeklyEvidence", 3);
+                        newReminder.UpdateInferredPattern(minDailyEvidence, minWeeklyEvidence);
+                        
+                        // Initialize signal profile baseline if signal selection is enabled and event has signals
+                        var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
+                        if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
+                        {
+                            var selectionLimit = await _signalPolicyService.GetSignalSelectionLimitAsync(cancellationToken);
+                            var eventProfile = _signalSelector.SelectAndNormalizeSignals(signalStates, selectionLimit);
+                            var alpha = await _signalPolicyService.GetSignalProfileUpdateAlphaAsync(cancellationToken);
+                            newReminder.UpdateSignalProfile(eventProfile, alpha);
+                        }
 
-                    await _reminderRepository.AddAsync(newReminder, cancellationToken);
-                    relatedReminderId = newReminder.Id;
-                    actionEvent.SetRelatedReminder(newReminder.Id);
-                    await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
+                        await _reminderRepository.AddAsync(newReminder, cancellationToken);
+                        relatedReminderId = newReminder.Id;
+                        actionEvent.SetRelatedReminder(newReminder.Id);
+                        await _eventRepository.UpdateAsync(actionEvent, cancellationToken);
+                    }
                 }
+            }
+            else
+            {
+                // Event is within a routine learning window - skip general reminder processing
+                // This event should ONLY affect routine reminders (already processed above)
+                // No general reminders should be created or updated
             }
         }
 
         // Continue with existing scheduler logic (for transition-based reminders)
         // CRITICAL: StateChange events must NOT trigger reminder scheduling
+        // CRITICAL: Events within routine learning windows must NOT create transition-based reminders (prevents duplication)
         List<ReminderCandidate> scheduledCandidates = new List<ReminderCandidate>();
         if (actionEvent.EventType != EventType.StateChange)
         {
-            scheduledCandidates = await _reminderScheduler.ScheduleCandidatesForEventAsync(
-                actionEvent, cancellationToken);
+            // Check if event is within routine learning window (only check for Action events)
+            var isWithinRoutineWindow = await _routineLearningService.IsEventWithinRoutineLearningWindowAsync(
+                actionEvent.PersonId,
+                actionEvent.TimestampUtc,
+                cancellationToken);
+            
+            // Only schedule transition-based reminders if NOT within a routine learning window
+            if (!isWithinRoutineWindow)
+            {
+                scheduledCandidates = await _reminderScheduler.ScheduleCandidatesForEventAsync(
+                    actionEvent, cancellationToken);
+            }
         }
 
         // Record execution history for event ingestion

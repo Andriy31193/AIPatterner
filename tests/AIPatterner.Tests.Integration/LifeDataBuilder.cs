@@ -88,13 +88,6 @@ public class LifeDataBuilder : IDisposable
             configuration,
             loggerFactory.CreateLogger<ReminderPolicyEvaluator>());
         
-        var reminderScheduler = new ReminderScheduler(
-            _context,
-            transitionRepo,
-            policyEvaluator,
-            configuration,
-            loggerFactory.CreateLogger<ReminderScheduler>());
-        
         var mapper = new AutoMapper.Mapper(new AutoMapper.MapperConfiguration(cfg =>
             cfg.AddProfile<AIPatterner.Application.Mappings.MappingProfile>()));
         
@@ -118,6 +111,14 @@ public class LifeDataBuilder : IDisposable
             signalSelector,
             similarityEvaluator,
             signalPolicyService);
+
+        var reminderScheduler = new ReminderScheduler(
+            _context,
+            transitionRepo,
+            policyEvaluator,
+            configuration,
+            loggerFactory.CreateLogger<ReminderScheduler>(),
+            _routineLearningService);
         
         _eventHandler = new IngestEventCommandHandler(
             eventRepo,

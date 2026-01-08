@@ -64,13 +64,6 @@ public class EventReminderMiddlewareTests : IDisposable
             _configuration,
             loggerFactory.CreateLogger<ReminderPolicyEvaluator>());
 
-        var reminderScheduler = new ReminderScheduler(
-            _context,
-            _transitionRepository,
-            policyEvaluator,
-            _configuration,
-            loggerFactory.CreateLogger<ReminderScheduler>());
-
         var mapper = new AutoMapper.Mapper(new AutoMapper.MapperConfiguration(cfg =>
             cfg.AddProfile<AIPatterner.Application.Mappings.MappingProfile>()));
 
@@ -94,6 +87,14 @@ public class EventReminderMiddlewareTests : IDisposable
             signalSelector,
             similarityEvaluator,
             signalPolicyService);
+
+        var reminderScheduler = new ReminderScheduler(
+            _context,
+            _transitionRepository,
+            policyEvaluator,
+            _configuration,
+            loggerFactory.CreateLogger<ReminderScheduler>(),
+            routineLearningService);
 
         _handler = new IngestEventCommandHandler(
             _eventRepository,
