@@ -47,6 +47,7 @@ public class RoutineLearningComprehensiveTests : RealDatabaseTestBase
         _routineLearningService = new RoutineLearningService(
             _routineRepository,
             _routineReminderRepository,
+            ReminderRepository,
             EventRepository,
             config,
             loggerFactory.CreateLogger<RoutineLearningService>(),

@@ -184,11 +184,21 @@ namespace AIPatterner.Infrastructure.Migrations
                     RoutineId = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     SuggestedAction = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TimeContextBucket = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "evening"),
                     Confidence = table.Column<double>(type: "double precision", precision: 18, scale: 4, nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastObservedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ObservationCount = table.Column<int>(type: "integer", nullable: false),
                     CustomData = table.Column<string>(type: "jsonb", nullable: true),
+                    DelaySampleCount = table.Column<double>(type: "double precision", nullable: false, defaultValue: 0.0),
+                    EmaDelaySeconds = table.Column<double>(type: "double precision", nullable: true),
+                    EmaVarianceSeconds = table.Column<double>(type: "double precision", nullable: true),
+                    DelayHistogramJson = table.Column<string>(type: "jsonb", nullable: true),
+                    MedianDelayApproxSeconds = table.Column<double>(type: "double precision", nullable: true),
+                    P90DelayApproxSeconds = table.Column<double>(type: "double precision", nullable: true),
+                    DelayStatsLastUpdatedUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DelayStatsLastDecayUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DelayEvidenceJson = table.Column<string>(type: "jsonb", nullable: true),
                     UserPromptsListJson = table.Column<string>(type: "jsonb", nullable: true),
                     IsSafeToAutoExecute = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     SignalProfileJson = table.Column<string>(type: "jsonb", nullable: true),
@@ -211,7 +221,8 @@ namespace AIPatterner.Infrastructure.Migrations
                     LastIntentOccurredAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ObservationWindowStartUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ObservationWindowEndsAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ObservationWindowMinutes = table.Column<int>(type: "integer", nullable: false, defaultValue: 60)
+                    ObservationWindowMinutes = table.Column<int>(type: "integer", nullable: false, defaultValue: 60),
+                    ActiveTimeContextBucket = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -346,9 +357,9 @@ namespace AIPatterner.Infrastructure.Migrations
                 column: "RoutineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_routinereminders_RoutineId_SuggestedAction",
+                name: "IX_routinereminders_RoutineId_TimeContextBucket_SuggestedAction",
                 table: "routinereminders",
-                columns: new[] { "RoutineId", "SuggestedAction" },
+                columns: new[] { "RoutineId", "TimeContextBucket", "SuggestedAction" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

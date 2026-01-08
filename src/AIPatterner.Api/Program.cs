@@ -142,6 +142,7 @@ builder.Services.AddHttpClient("Memory");
 builder.Services.AddHostedService<EventCleanupWorker>();
 builder.Services.AddHostedService<TransitionDecayWorker>();
 builder.Services.AddHostedService<CandidateSchedulerWorker>();
+builder.Services.AddHostedService<AIPatterner.Infrastructure.Workers.RoutineLearningWindowCloserWorker>();
 
 var app = builder.Build();
 

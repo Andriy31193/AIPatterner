@@ -111,6 +111,7 @@ public class LifeDataBuilder : IDisposable
         _routineLearningService = new RoutineLearningService(
             routineRepo,
             routineReminderRepo,
+            reminderRepo,
             eventRepo,
             configuration,
             loggerFactory.CreateLogger<RoutineLearningService>(),

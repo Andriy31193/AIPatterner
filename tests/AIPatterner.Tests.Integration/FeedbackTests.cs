@@ -93,6 +93,7 @@ public class FeedbackTests : IDisposable
         var routineLearningService = new RoutineLearningService(
             routineRepository,
             routineReminderRepository,
+            _reminderRepository,
             eventRepo,
             config,
             loggerFactory.CreateLogger<RoutineLearningService>(),

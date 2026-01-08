@@ -80,6 +80,7 @@ public class EventIngestionFlowTests
         var routineLearningService = new RoutineLearningService(
             routineRepository,
             routineReminderRepository,
+            candidateRepo,
             eventRepo,
             config,
             loggerFactory.CreateLogger<RoutineLearningService>(),

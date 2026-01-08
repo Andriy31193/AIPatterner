@@ -14,6 +14,7 @@ public class RoutineLearningService : IRoutineLearningService
 {
     private readonly IRoutineRepository _routineRepository;
     private readonly IRoutineReminderRepository _routineReminderRepository;
+    private readonly IReminderCandidateRepository _reminderCandidateRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IConfiguration _configuration;
     private readonly ILogger<RoutineLearningService> _logger;
@@ -24,6 +25,7 @@ public class RoutineLearningService : IRoutineLearningService
     public RoutineLearningService(
         IRoutineRepository routineRepository,
         IRoutineReminderRepository routineReminderRepository,
+        IReminderCandidateRepository reminderCandidateRepository,
         IEventRepository eventRepository,
         IConfiguration configuration,
         ILogger<RoutineLearningService> logger,
@@ -33,6 +35,7 @@ public class RoutineLearningService : IRoutineLearningService
     {
         _routineRepository = routineRepository;
         _routineReminderRepository = routineReminderRepository;
+        _reminderCandidateRepository = reminderCandidateRepository;
         _eventRepository = eventRepository;
         _configuration = configuration;
         _logger = logger;
@@ -83,7 +86,8 @@ public class RoutineLearningService : IRoutineLearningService
         {
             // Create new routine with default observation window
             routine = new Routine(intentEvent.PersonId, intentEvent.ActionType, intentEvent.TimestampUtc, defaultObservationWindowMinutes);
-            routine.OpenObservationWindow(intentEvent.TimestampUtc, routine.ObservationWindowMinutes);
+            var bucket = RoutineTimeContextBucketSelector.SelectBucket(intentEvent.TimestampUtc, _configuration);
+            routine.OpenObservationWindow(intentEvent.TimestampUtc, routine.ObservationWindowMinutes, bucket);
             await _routineRepository.AddAsync(routine, cancellationToken);
             _logger.LogInformation(
                 "Created new routine {RoutineId} for person {PersonId} with intent {IntentType}",
@@ -92,12 +96,16 @@ public class RoutineLearningService : IRoutineLearningService
         else
         {
             // Update existing routine - open new observation window using routine's configured minutes
-            routine.OpenObservationWindow(intentEvent.TimestampUtc, routine.ObservationWindowMinutes);
+            var bucket = RoutineTimeContextBucketSelector.SelectBucket(intentEvent.TimestampUtc, _configuration);
+            routine.OpenObservationWindow(intentEvent.TimestampUtc, routine.ObservationWindowMinutes, bucket);
             await _routineRepository.UpdateAsync(routine, cancellationToken);
             _logger.LogInformation(
                 "Opened observation window for routine {RoutineId} (person {PersonId}, intent {IntentType})",
                 routine.Id, intentEvent.PersonId, intentEvent.ActionType);
         }
+
+        // Schedule routine reminders for execution based on learned delays (bucket selected at activation)
+        await ScheduleRoutineRemindersForActivationAsync(routine, intentEvent, cancellationToken);
 
         return routine;
     }
@@ -114,8 +122,21 @@ public class RoutineLearningService : IRoutineLearningService
         // Use the event's timestamp to check if windows were open when the event occurred
         var eventTime = observedEvent.TimestampUtc;
 
+        var routinesToClose = new List<Routine>();
+
         foreach (var routine in routines)
         {
+            // Strict enforcement: if the window has ended, close it and do not learn.
+            if (routine.ObservationWindowEndsAtUtc.HasValue && eventTime > routine.ObservationWindowEndsAtUtc.Value)
+            {
+                if (routine.ObservationWindowStartUtc.HasValue)
+                {
+                    routine.CloseObservationWindow();
+                    routinesToClose.Add(routine);
+                }
+                continue;
+            }
+
             if (!routine.IsObservationWindowOpen(eventTime))
             {
                 continue; // Skip routines with closed windows
@@ -134,6 +155,11 @@ public class RoutineLearningService : IRoutineLearningService
             }
 
             await LearnFromObservedActionAsync(routine, observedEvent, userPrompt, signalStates, cancellationToken);
+        }
+
+        if (routinesToClose.Count > 0)
+        {
+            await _routineRepository.UpdateMultipleAsync(routinesToClose, cancellationToken);
         }
     }
 
@@ -173,8 +199,10 @@ public class RoutineLearningService : IRoutineLearningService
             // Check if reminder has state signal requirements (stored in CustomData)
             // For new reminders, we'll check the event's state signals
             // For existing reminders, check if event matches the reminder's required state signals
-            var existingReminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
+            var bucketKey = routine.ActiveTimeContextBucket ?? "evening";
+            var existingReminder = await _routineReminderRepository.GetByRoutineBucketAndActionAsync(
                 routine.Id,
+                bucketKey,
                 observedEvent.ActionType,
                 cancellationToken);
 
@@ -209,8 +237,10 @@ public class RoutineLearningService : IRoutineLearningService
         var isSignalSelectionEnabled = await _signalPolicyService.IsSignalSelectionEnabledAsync(cancellationToken);
         if (isSignalSelectionEnabled && signalStates != null && signalStates.Count > 0)
         {
-            var existingReminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
+            var bucketKey = routine.ActiveTimeContextBucket ?? "evening";
+            var existingReminder = await _routineReminderRepository.GetByRoutineBucketAndActionAsync(
                 routine.Id,
+                bucketKey,
                 observedEvent.ActionType,
                 cancellationToken);
             
@@ -244,8 +274,10 @@ public class RoutineLearningService : IRoutineLearningService
         }
 
         // Try to find existing routine reminder for this action
-        var reminder = await _routineReminderRepository.GetByRoutineAndActionAsync(
+        var activeBucket = routine.ActiveTimeContextBucket ?? "evening";
+        var reminder = await _routineReminderRepository.GetByRoutineBucketAndActionAsync(
             routine.Id,
+            activeBucket,
             observedEvent.ActionType,
             cancellationToken);
 
@@ -257,6 +289,27 @@ public class RoutineLearningService : IRoutineLearningService
             // Update existing reminder - increase probability
             reminder.IncreaseConfidence(increaseStep);
             reminder.RecordObservation(observedEvent.TimestampUtc);
+
+            // Delay learning (relative to routine activation; updated only within learning window)
+            if (routine.ObservationWindowStartUtc.HasValue)
+            {
+                var observedDelaySeconds = (observedEvent.TimestampUtc - routine.ObservationWindowStartUtc.Value).TotalSeconds;
+                if (observedDelaySeconds >= 0)
+                {
+                    var baseAlpha = _configuration.GetValue<double>("Routine:DelayLearning:BaseAlpha", 0.2);
+                    var halfLifeDays = _configuration.GetValue<double>("Routine:DelayLearning:HalfLifeDays", 30.0);
+                    var maxEvidence = _configuration.GetValue<int>("Routine:DelayLearning:MaxEvidenceItems", 200);
+
+                    reminder.RecordDelayObservation(
+                        routine.ObservationWindowStartUtc.Value,
+                        observedEvent.TimestampUtc,
+                        observedDelaySeconds,
+                        observedEvent.Id,
+                        baseAlpha,
+                        halfLifeDays,
+                        maxEvidence);
+                }
+            }
             
             if (observedEvent.CustomData != null)
             {
@@ -303,9 +356,30 @@ public class RoutineLearningService : IRoutineLearningService
                 routine.PersonId,
                 observedEvent.ActionType,
                 defaultProbability,
-                customData.Count > 0 ? customData : null);
+                customData.Count > 0 ? customData : null,
+                activeBucket);
             
             newReminder.RecordObservation(observedEvent.TimestampUtc);
+
+            if (routine.ObservationWindowStartUtc.HasValue)
+            {
+                var observedDelaySeconds = (observedEvent.TimestampUtc - routine.ObservationWindowStartUtc.Value).TotalSeconds;
+                if (observedDelaySeconds >= 0)
+                {
+                    var baseAlpha = _configuration.GetValue<double>("Routine:DelayLearning:BaseAlpha", 0.2);
+                    var halfLifeDays = _configuration.GetValue<double>("Routine:DelayLearning:HalfLifeDays", 30.0);
+                    var maxEvidence = _configuration.GetValue<int>("Routine:DelayLearning:MaxEvidenceItems", 200);
+
+                    newReminder.RecordDelayObservation(
+                        routine.ObservationWindowStartUtc.Value,
+                        observedEvent.TimestampUtc,
+                        observedDelaySeconds,
+                        observedEvent.Id,
+                        baseAlpha,
+                        halfLifeDays,
+                        maxEvidence);
+                }
+            }
             
             // Append userPrompt if provided
             if (!string.IsNullOrWhiteSpace(userPrompt))
@@ -327,6 +401,72 @@ public class RoutineLearningService : IRoutineLearningService
             _logger.LogInformation(
                 "Created new routine reminder {ReminderId} for routine {RoutineId} (action: {ActionType}, confidence: {Confidence})",
                 newReminder.Id, routine.Id, observedEvent.ActionType, newReminder.Confidence);
+        }
+    }
+
+    private async Task ScheduleRoutineRemindersForActivationAsync(
+        Routine routine,
+        ActionEvent intentEvent,
+        CancellationToken cancellationToken)
+    {
+        // Bucket is selected only at activation (classifier, not scheduler)
+        var bucket = routine.ActiveTimeContextBucket ?? "evening";
+
+        var remindersInBucket = await _routineReminderRepository.GetByRoutineAndBucketAsync(
+            routine.Id,
+            bucket,
+            cancellationToken);
+
+        if (remindersInBucket.Count == 0 || !routine.ObservationWindowStartUtc.HasValue)
+        {
+            return;
+        }
+
+        var minSamples = _configuration.GetValue<double>("Routine:DelayLearning:MinSamplesForTiming", 3.0);
+        var defaultSuggestionDelaySeconds = _configuration.GetValue<int>("Routine:DelayLearning:DefaultSuggestionDelaySeconds", 120);
+
+        foreach (var rr in remindersInBucket)
+        {
+            var delaySeconds = rr.MedianDelayApproxSeconds ?? rr.EmaDelaySeconds ?? defaultSuggestionDelaySeconds;
+            delaySeconds = Math.Clamp(delaySeconds, 0, routine.ObservationWindowMinutes * 60.0);
+
+            var executeAt = routine.ObservationWindowStartUtc.Value.AddSeconds(delaySeconds);
+
+            var style = rr.DelaySampleCount < 1.0 ? ReminderStyle.Ask :
+                        rr.DelaySampleCount < minSamples ? ReminderStyle.Suggest :
+                        ReminderStyle.Suggest;
+
+            // For routine candidates, confidence controls whether we auto-execute; the evaluation layer still decides speak vs skip.
+            var confidence = rr.Confidence;
+            if (rr.DelaySampleCount < minSamples)
+            {
+                confidence = Math.Min(confidence, 0.6);
+            }
+
+            var customData = new Dictionary<string, string>
+            {
+                { "source", "routine" },
+                { "routineId", routine.Id.ToString() },
+                { "intentType", routine.IntentType },
+                { "timeContextBucket", bucket },
+                { "activationTimestampUtc", routine.ObservationWindowStartUtc.Value.ToString("o") },
+                { "learnedDelaySeconds", delaySeconds.ToString("F0") },
+                { "delaySampleCount", rr.DelaySampleCount.ToString("F2") }
+            };
+
+            var candidate = new ReminderCandidate(
+                routine.PersonId,
+                rr.SuggestedAction,
+                executeAt,
+                style,
+                null,
+                confidence,
+                null,
+                intentEvent.Id,
+                customData);
+
+            candidate.SetIsSafeToAutoExecute(rr.IsSafeToAutoExecute);
+            await _reminderCandidateRepository.AddAsync(candidate, cancellationToken);
         }
     }
 
