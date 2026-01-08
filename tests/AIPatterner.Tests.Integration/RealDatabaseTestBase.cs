@@ -93,13 +93,6 @@ public abstract class RealDatabaseTestBase : IDisposable
             Configuration,
             loggerFactory.CreateLogger<ReminderPolicyEvaluator>());
 
-        var reminderScheduler = new ReminderScheduler(
-            Context,
-            TransitionRepository,
-            policyEvaluator,
-            Configuration,
-            loggerFactory.CreateLogger<ReminderScheduler>());
-
         var mapper = new AutoMapper.Mapper(new AutoMapper.MapperConfiguration(cfg =>
             cfg.AddProfile<AIPatterner.Application.Mappings.MappingProfile>()));
 
@@ -123,6 +116,14 @@ public abstract class RealDatabaseTestBase : IDisposable
             signalSelector,
             similarityEvaluator,
             signalPolicyService);
+
+        var reminderScheduler = new ReminderScheduler(
+            Context,
+            TransitionRepository,
+            policyEvaluator,
+            Configuration,
+            loggerFactory.CreateLogger<ReminderScheduler>(),
+            routineLearningService);
 
         EventHandler = new IngestEventCommandHandler(
             EventRepository,

@@ -9,5 +9,6 @@ public interface IRoutineLearningService
     Task ProcessObservedEventAsync(ActionEvent observedEvent, string? userPrompt, List<AIPatterner.Domain.ValueObjects.SignalState>? signalStates, CancellationToken cancellationToken);
     Task HandleFeedbackAsync(Guid routineReminderId, ProbabilityAction action, double value, CancellationToken cancellationToken);
     Task<List<RoutineReminder>> GetRemindersForIntentAsync(string personId, string intentType, CancellationToken cancellationToken);
+    Task<bool> IsEventWithinRoutineLearningWindowAsync(string personId, DateTime eventTimestampUtc, CancellationToken cancellationToken);
 }
 

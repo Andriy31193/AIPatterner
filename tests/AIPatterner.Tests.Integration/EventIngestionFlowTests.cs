@@ -54,13 +54,6 @@ public class EventIngestionFlowTests
             config,
             loggerFactory.CreateLogger<ReminderPolicyEvaluator>());
 
-        var reminderScheduler = new ReminderScheduler(
-            context,
-            transitionRepo,
-            policyEvaluator,
-            config,
-            loggerFactory.CreateLogger<ReminderScheduler>());
-
         var mapper = new AutoMapper.Mapper(new AutoMapper.MapperConfiguration(cfg =>
             cfg.AddProfile<AIPatterner.Application.Mappings.MappingProfile>()));
 
@@ -87,6 +80,14 @@ public class EventIngestionFlowTests
             signalSelector,
             similarityEvaluator,
             signalPolicyService);
+
+        var reminderScheduler = new ReminderScheduler(
+            context,
+            transitionRepo,
+            policyEvaluator,
+            config,
+            loggerFactory.CreateLogger<ReminderScheduler>(),
+            routineLearningService);
         
         var handler = new IngestEventCommandHandler(
             eventRepo,

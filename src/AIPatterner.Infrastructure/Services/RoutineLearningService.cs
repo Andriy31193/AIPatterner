@@ -511,5 +511,22 @@ public class RoutineLearningService : IRoutineLearningService
 
         return await _routineReminderRepository.GetByRoutineAsync(routine.Id, cancellationToken);
     }
+
+    /// <summary>
+    /// Checks if an event is within any routine's learning window for the given person.
+    /// Events within learning windows should ONLY affect routine reminders, not general reminders.
+    /// </summary>
+    public async Task<bool> IsEventWithinRoutineLearningWindowAsync(
+        string personId,
+        DateTime eventTimestampUtc,
+        CancellationToken cancellationToken)
+    {
+        var activeRoutines = await _routineRepository.GetActiveRoutinesAsync(
+            personId,
+            eventTimestampUtc,
+            cancellationToken);
+
+        return activeRoutines.Any(r => r.IsObservationWindowOpen(eventTimestampUtc));
+    }
 }
 

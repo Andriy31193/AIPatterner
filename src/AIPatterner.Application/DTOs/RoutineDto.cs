@@ -8,7 +8,9 @@ public class RoutineDto
     public string IntentType { get; set; } = string.Empty;
     public DateTime CreatedAtUtc { get; set; }
     public DateTime? LastActivatedUtc { get; set; }
+    public DateTime? ObservationWindowStartUtc { get; set; }
     public DateTime? ObservationWindowEndsUtc { get; set; }
     public int ObservationWindowMinutes { get; set; }
+    public string? ActiveTimeContextBucket { get; set; }
 }
 

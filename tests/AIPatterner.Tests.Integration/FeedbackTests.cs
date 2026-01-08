@@ -70,13 +70,6 @@ public class FeedbackTests : IDisposable
             config,
             loggerFactory.CreateLogger<ReminderPolicyEvaluator>());
 
-        var reminderScheduler = new ReminderScheduler(
-            _context,
-            _transitionRepository,
-            policyEvaluator,
-            config,
-            loggerFactory.CreateLogger<ReminderScheduler>());
-
         var mapper = new AutoMapper.Mapper(new AutoMapper.MapperConfiguration(cfg =>
             cfg.AddProfile<AIPatterner.Application.Mappings.MappingProfile>()));
 
@@ -100,6 +93,14 @@ public class FeedbackTests : IDisposable
             signalSelector,
             similarityEvaluator,
             signalPolicyService);
+
+        var reminderScheduler = new ReminderScheduler(
+            _context,
+            _transitionRepository,
+            policyEvaluator,
+            config,
+            loggerFactory.CreateLogger<ReminderScheduler>(),
+            routineLearningService);
 
         _eventHandler = new IngestEventCommandHandler(
             eventRepo,

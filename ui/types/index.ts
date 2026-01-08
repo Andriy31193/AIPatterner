@@ -258,21 +258,34 @@ export interface RoutineDto {
   intentType: string;
   createdAtUtc: string;
   lastActivatedUtc?: string;
+  observationWindowStartUtc?: string;
   observationWindowEndsUtc?: string;
   observationWindowMinutes: number;
+  activeTimeContextBucket?: string | null;
 }
 
 export interface RoutineReminderDto {
   id: string;
   routineId: string;
   suggestedAction: string;
+  timeContextBucket: string;
   confidence: number;
   createdAtUtc: string;
   lastObservedAtUtc?: string;
+  observationCount: number;
   customData?: Record<string, string>;
   signalProfile?: SignalProfileDto;
   signalProfileUpdatedAtUtc?: string;
   signalProfileSamplesCount?: number;
+  // Delay learning statistics
+  delaySampleCount: number;
+  emaDelaySeconds?: number | null;
+  emaVarianceSeconds?: number | null;
+  medianDelayApproxSeconds?: number | null;
+  p90DelayApproxSeconds?: number | null;
+  delayStatsLastUpdatedUtc?: string | null;
+  delayStatsLastDecayUtc?: string | null;
+  delayEvidenceCount: number;
 }
 
 export interface RoutineListResponse {
