@@ -44,6 +44,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         _routineLearningService = new RoutineLearningService(
             _routineRepository,
             _routineReminderRepository,
+            ReminderRepository,
             EventRepository,
             config,
             loggerFactory.CreateLogger<RoutineLearningService>(),
@@ -58,7 +59,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         // Arrange
         var personId = "routine_test_user_1";
         var intentType = "ArrivalHome";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         var intentEvent = new ActionEventDto
         {
@@ -102,7 +103,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         // Arrange
         var personId = "routine_test_user_2";
         var intentType = "ArrivalHome";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         // Step 1: Send StateChange intent
         var intentEvent = new ActionEventDto
@@ -181,7 +182,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         // Arrange
         var personId = "routine_test_user_3";
         var intentType = "ArrivalHome";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         // First occurrence
         var intentEvent1 = new ActionEventDto
@@ -276,7 +277,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         // Arrange
         var personId = "routine_test_user_4";
         var intentType = "ArrivalHome";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         // Create a general reminder first
         var generalReminder = new ReminderCandidate(
@@ -328,7 +329,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         // Arrange
         var personId = "routine_test_user_5";
         var intentType = "ArrivalHome";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         // Create routine with high-probability reminder
         var intentEvent = new ActionEventDto
@@ -377,7 +378,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
         // Arrange
         var personId = "routine_test_user_6";
         var intentType = "ArrivalHome";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         // Create routine with reminder
         var intentEvent = new ActionEventDto
@@ -439,7 +440,7 @@ public class RoutineLearningTests : RealDatabaseTestBase
     {
         // Arrange
         var personId = "routine_test_user_7";
-        var now = DateTime.UtcNow;
+        var now = new DateTime(2026, 1, 5, 19, 0, 0, DateTimeKind.Utc); // deterministic "evening"
 
         // Create first routine (ArrivalHome)
         var arrivalIntent = new ActionEventDto

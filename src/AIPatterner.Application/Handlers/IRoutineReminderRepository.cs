@@ -5,7 +5,8 @@ using AIPatterner.Domain.Entities;
 
 public interface IRoutineReminderRepository
 {
-    Task<RoutineReminder?> GetByRoutineAndActionAsync(Guid routineId, string actionType, CancellationToken cancellationToken);
+    Task<RoutineReminder?> GetByRoutineBucketAndActionAsync(Guid routineId, string timeContextBucket, string actionType, CancellationToken cancellationToken);
+    Task<List<RoutineReminder>> GetByRoutineAndBucketAsync(Guid routineId, string timeContextBucket, CancellationToken cancellationToken);
     Task<List<RoutineReminder>> GetByRoutineAsync(Guid routineId, CancellationToken cancellationToken);
     Task<RoutineReminder?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task AddAsync(RoutineReminder reminder, CancellationToken cancellationToken);

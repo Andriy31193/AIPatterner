@@ -203,6 +203,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.IntentType).IsRequired().HasMaxLength(100);
             entity.Property(e => e.ObservationWindowMinutes).HasDefaultValue(60);
+            entity.Property(e => e.ActiveTimeContextBucket).IsRequired(false).HasMaxLength(20);
             entity.HasIndex(e => new { e.PersonId, e.IntentType }).IsUnique();
             entity.HasIndex(e => e.PersonId);
         });
@@ -214,18 +215,31 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.RoutineId).IsRequired();
             entity.Property(e => e.PersonId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.SuggestedAction).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.TimeContextBucket).IsRequired().HasMaxLength(20).HasDefaultValue("evening");
             entity.Property(e => e.Confidence).HasPrecision(18, 4);
             entity.Property(e => e.CustomData)
                 .HasConversion(
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                     v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null))
                 .HasColumnType("jsonb");
+            
+            // Delay learning summary + evidence (hybrid model)
+            entity.Property(e => e.DelaySampleCount).HasDefaultValue(0.0);
+            entity.Property(e => e.EmaDelaySeconds).IsRequired(false);
+            entity.Property(e => e.EmaVarianceSeconds).IsRequired(false);
+            entity.Property(e => e.DelayHistogramJson).HasColumnType("jsonb");
+            entity.Property(e => e.MedianDelayApproxSeconds).IsRequired(false);
+            entity.Property(e => e.P90DelayApproxSeconds).IsRequired(false);
+            entity.Property(e => e.DelayStatsLastUpdatedUtc).IsRequired(false);
+            entity.Property(e => e.DelayStatsLastDecayUtc).IsRequired(false);
+            entity.Property(e => e.DelayEvidenceJson).HasColumnType("jsonb");
+
             entity.Property(e => e.UserPromptsListJson).HasColumnType("jsonb");
             entity.Property(e => e.IsSafeToAutoExecute).HasDefaultValue(false);
             entity.Property(e => e.SignalProfileJson).HasColumnType("jsonb");
             entity.Property(e => e.SignalProfileUpdatedAtUtc).IsRequired(false);
             entity.Property(e => e.SignalProfileSamplesCount).HasDefaultValue(0);
-            entity.HasIndex(e => new { e.RoutineId, e.SuggestedAction }).IsUnique();
+            entity.HasIndex(e => new { e.RoutineId, e.TimeContextBucket, e.SuggestedAction }).IsUnique();
             entity.HasIndex(e => e.RoutineId);
             entity.HasIndex(e => e.PersonId);
         });

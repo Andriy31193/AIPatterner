@@ -47,19 +47,23 @@ public class CandidateSchedulerWorker : BackgroundService
 
                 var dueCandidates = await repository.GetDueCandidatesAsync(DateTime.UtcNow, batchSize, stoppingToken);
                 
-                // Only process high-confidence candidates for auto-execution
-                // Low probability reminders should NOT be executed automatically
+                // Default behavior: only auto-process high-confidence + safe candidates.
+                // Routine-triggered candidates are an exception: they are contextual (user intent) and should be processed
+                // even when confidence is low, so we can Ask/Suggest during/after activation.
                 var minProbability = configuration.GetValue<double>("Policy:MinimumProbabilityForExecution", 0.7);
-                var highProbabilityCandidates = dueCandidates
-                    .Where(c => c.Confidence >= minProbability)
-                    .OrderByDescending(c => c.Confidence)
+                var candidatesToProcess = dueCandidates
+                    .Where(c =>
+                        IsRoutineCandidate(c) ||
+                        (c.Confidence >= minProbability))
+                    .OrderByDescending(c => IsRoutineCandidate(c) ? 1 : 0)
+                    .ThenByDescending(c => c.Confidence)
                     .ToList();
 
                 _logger.LogInformation(
-                    "Found {TotalDue} due candidates, processing {HighProbability} high-probability candidates (threshold: {Threshold})",
-                    dueCandidates.Count, highProbabilityCandidates.Count, minProbability);
+                    "Found {TotalDue} due candidates, processing {ToProcess} candidates (threshold: {Threshold}, routine exceptions enabled)",
+                    dueCandidates.Count, candidatesToProcess.Count, minProbability);
 
-                foreach (var candidate in highProbabilityCandidates)
+                foreach (var candidate in candidatesToProcess)
                 {
                     try
                     {
@@ -72,9 +76,9 @@ public class CandidateSchedulerWorker : BackgroundService
                     }
                 }
 
-                if (highProbabilityCandidates.Any())
+                if (candidatesToProcess.Any())
                 {
-                    _logger.LogInformation("Processed {Count} high-probability reminder candidates", highProbabilityCandidates.Count);
+                    _logger.LogInformation("Processed {Count} reminder candidates", candidatesToProcess.Count);
                 }
             }
             catch (Exception ex)
@@ -82,6 +86,13 @@ public class CandidateSchedulerWorker : BackgroundService
                 _logger.LogError(ex, "Error in candidate scheduler worker");
             }
         }
+    }
+
+    private static bool IsRoutineCandidate(AIPatterner.Domain.Entities.ReminderCandidate candidate)
+    {
+        return candidate.CustomData != null &&
+               candidate.CustomData.TryGetValue("source", out var source) &&
+               string.Equals(source, "routine", StringComparison.OrdinalIgnoreCase);
     }
 }
 

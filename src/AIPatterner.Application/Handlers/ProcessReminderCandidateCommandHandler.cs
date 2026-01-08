@@ -53,19 +53,29 @@ public class ProcessReminderCandidateCommandHandler : IRequestHandler<ProcessRem
             };
         }
 
-        // Check if high confidence and should auto-execute
         var minProbabilityForExecution = _configuration.GetValue<double>("Policy:MinimumProbabilityForExecution", 0.7);
-        var shouldAutoExecute = candidate.Confidence >= minProbabilityForExecution;
+        var isRoutineCandidate =
+            candidate.CustomData != null &&
+            candidate.CustomData.TryGetValue("source", out var source) &&
+            string.Equals(source, "routine", StringComparison.OrdinalIgnoreCase);
 
-        // Low probability reminders should NOT be executed automatically
-        // They can only be executed manually via "Execute now" button (BypassDateCheck = true)
-        if (!request.BypassDateCheck && candidate.Confidence < minProbabilityForExecution)
+        // Auto-execution:
+        // - General reminders: preserve existing behavior (high confidence auto-exec).
+        // - Routine reminders: only allow auto-exec when explicitly marked safe.
+        // Routine candidates may still be evaluated for Ask/Suggest even with low confidence.
+        var shouldAutoExecute =
+            candidate.Confidence >= minProbabilityForExecution &&
+            (!isRoutineCandidate || candidate.IsSafeToAutoExecute);
+
+        // Non-routine, low probability reminders should not execute automatically.
+        // They can still be executed manually via "Execute now" (BypassDateCheck = true).
+        if (!isRoutineCandidate && !request.BypassDateCheck && candidate.Confidence < minProbabilityForExecution)
         {
             return new ProcessReminderCandidateResponse
             {
                 Executed = false,
                 ShouldSpeak = false,
-                Reason = $"Low probability reminder (confidence: {candidate.Confidence:P0} < threshold: {minProbabilityForExecution:P0}). Only high-probability reminders are auto-executed."
+                Reason = $"Low probability reminder (confidence: {candidate.Confidence:P0} < threshold: {minProbabilityForExecution:P0})."
             };
         }
 

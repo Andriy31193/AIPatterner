@@ -116,6 +116,7 @@ public abstract class RealDatabaseTestBase : IDisposable
         var routineLearningService = new RoutineLearningService(
             routineRepository,
             routineReminderRepository,
+            ReminderRepository,
             EventRepository,
             Configuration,
             loggerFactory.CreateLogger<RoutineLearningService>(),

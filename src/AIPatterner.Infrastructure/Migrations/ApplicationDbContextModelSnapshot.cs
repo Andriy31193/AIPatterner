@@ -432,6 +432,10 @@ namespace AIPatterner.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ActiveTimeContextBucket")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -485,6 +489,29 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<string>("CustomData")
                         .HasColumnType("jsonb");
 
+                    b.Property<string>("DelayEvidenceJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("DelayHistogramJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<double>("DelaySampleCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("double precision")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<DateTime?>("DelayStatsLastDecayUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DelayStatsLastUpdatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double?>("EmaDelaySeconds")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("EmaVarianceSeconds")
+                        .HasColumnType("double precision");
+
                     b.Property<bool>("IsSafeToAutoExecute")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -493,8 +520,14 @@ namespace AIPatterner.Infrastructure.Migrations
                     b.Property<DateTime?>("LastObservedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<double?>("MedianDelayApproxSeconds")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("ObservationCount")
                         .HasColumnType("integer");
+
+                    b.Property<double?>("P90DelayApproxSeconds")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("PersonId")
                         .IsRequired()
@@ -520,6 +553,13 @@ namespace AIPatterner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("TimeContextBucket")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("evening");
+
                     b.Property<string>("UserPromptsListJson")
                         .HasColumnType("jsonb");
 
@@ -529,7 +569,7 @@ namespace AIPatterner.Infrastructure.Migrations
 
                     b.HasIndex("RoutineId");
 
-                    b.HasIndex("RoutineId", "SuggestedAction")
+                    b.HasIndex("RoutineId", "TimeContextBucket", "SuggestedAction")
                         .IsUnique();
 
                     b.ToTable("routinereminders", (string)null);

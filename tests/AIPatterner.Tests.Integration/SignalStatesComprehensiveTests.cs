@@ -794,7 +794,7 @@ public class SignalStatesComprehensiveTests : RealDatabaseTestBase
     {
         // Arrange: Create routine and activate it
         var routine = new Routine(TestPersonId, "ArrivalHome", DateTime.UtcNow);
-        routine.OpenObservationWindow(DateTime.UtcNow, 60);
+        routine.OpenObservationWindow(DateTime.UtcNow, 60, "evening");
         await Context.Routines.AddAsync(routine);
         await Context.SaveChangesAsync();
         
@@ -848,7 +848,7 @@ public class SignalStatesComprehensiveTests : RealDatabaseTestBase
     {
         // Arrange: Create routine and activate it
         var routine = new Routine(TestPersonId, "ArrivalHome", DateTime.UtcNow);
-        routine.OpenObservationWindow(DateTime.UtcNow, 60); // 60 minute window
+        routine.OpenObservationWindow(DateTime.UtcNow, 60, "evening"); // 60 minute window
         await Context.Routines.AddAsync(routine);
         await Context.SaveChangesAsync();
         

@@ -15,6 +15,12 @@ public class Routine
     public DateTime? ObservationWindowStartUtc { get; private set; } // When the current observation window starts
     public DateTime? ObservationWindowEndsAtUtc { get; private set; } // When the current observation window closes
     public int ObservationWindowMinutes { get; private set; } = 60; // Duration of observation window in minutes (default 60)
+    
+    /// <summary>
+    /// The active time-of-day context bucket selected at activation time.
+    /// This is a classifier, not a scheduler. It must remain fixed for the duration of the learning window.
+    /// </summary>
+    public string? ActiveTimeContextBucket { get; private set; }
 
     private Routine() { } // EF Core
 
@@ -36,13 +42,15 @@ public class Routine
     }
 
     /// <summary>
-    /// Opens an observation window starting from the intent occurrence time.
+    /// Opens an observation (learning) window starting from the intent occurrence time.
+    /// Also sets the active time context bucket for this activation.
     /// </summary>
-    public void OpenObservationWindow(DateTime intentOccurredAtUtc, int windowMinutes)
+    public void OpenObservationWindow(DateTime intentOccurredAtUtc, int windowMinutes, string activeTimeContextBucket)
     {
         LastIntentOccurredAtUtc = intentOccurredAtUtc;
         ObservationWindowStartUtc = intentOccurredAtUtc;
         ObservationWindowEndsAtUtc = intentOccurredAtUtc.AddMinutes(windowMinutes);
+        ActiveTimeContextBucket = activeTimeContextBucket;
     }
 
     /// <summary>
@@ -67,6 +75,7 @@ public class Routine
     {
         ObservationWindowStartUtc = null;
         ObservationWindowEndsAtUtc = null;
+        ActiveTimeContextBucket = null;
     }
 
     /// <summary>

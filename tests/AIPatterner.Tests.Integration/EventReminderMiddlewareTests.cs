@@ -87,6 +87,7 @@ public class EventReminderMiddlewareTests : IDisposable
         var routineLearningService = new RoutineLearningService(
             routineRepository,
             routineReminderRepository,
+            _reminderRepository,
             _eventRepository,
             _configuration,
             loggerFactory.CreateLogger<RoutineLearningService>(),
